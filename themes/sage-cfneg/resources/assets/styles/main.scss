@@ -1,0 +1,25 @@
+@import "common/variables";
+
+// Import npm dependencies
+@import "~font-awesome/scss/font-awesome";
+@import "~foundation-sites/scss/foundation";
+@include foundation-everything;
+
+@import "common/a11y";
+@import "common/global";
+@import "common/typography";
+
+@import "components/buttons";
+@import "components/comments";
+@import "components/forms";
+@import "components/menu";
+@import "components/search";
+@import "components/social";
+@import "components/wp-classes";
+
+@import "layouts/header";
+@import "layouts/sidebar";
+@import "layouts/footer";
+@import "layouts/pages";
+@import "layouts/posts";
+@import "layouts/tinymce";

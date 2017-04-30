@@ -1,0 +1,8 @@
+/* Flex grid */
+.flex-row {
+  @include flex-grid-row();
+}
+
+.flex-column, .flex-columns {
+  @include flex-grid-column();
+}

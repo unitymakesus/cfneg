@@ -1,0 +1,33 @@
+$fa-socials: "facebook" "twitter" "linkedin-square" "envelope-open-o";
+
+@mixin has-fa {
+  @each $icon in $fa-socials {
+    .has-fa-#{$icon} {
+      * {
+        @extend .fa;
+        @extend .fa-#{$icon};
+      }
+    }
+  }
+}
+
+@include has-fa;
+
+.social-buttons, .menu-social-media-container {
+  a {
+    width: 32px;
+    text-indent: 100px;
+    overflow: hidden;
+    position: relative;
+
+    &::before {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      text-indent: 0;
+      text-align: center;
+    }
+  }
+}

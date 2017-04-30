@@ -1,0 +1,136 @@
+.global-footer {
+  @include pattern;
+  padding-top: 40px;
+  font-size: 15px;
+
+  p {
+    line-height: 1.5em;
+  }
+
+  a {
+    color: $medium-gray;
+
+    &:hover, &:active {
+      color: $primary-color;
+      text-decoration: underline;
+    }
+  }
+
+  .attachment-logo-2x {
+    max-width: 226px !important;
+    margin-left: -12px;
+    margin-bottom: 10px;
+  }
+
+  .menu-social-media-container {
+    a {
+      color: $primary-color;
+      font-size: 2em;
+      height: 32px;
+      width: 32px;
+      margin-right: 20px;
+    }
+  }
+
+  .search-form {
+    margin-bottom: 17px;
+  }
+
+  .flex-row {
+    margin-bottom: 4rem;
+  }
+
+  .flex-columns:last-child {
+    background: $light-green;
+    text-align: center;
+
+    .widget_sp_image {
+      border-bottom: 7px solid $white;
+
+      img {
+        max-width: 190px !important;
+        margin: 20px auto;
+      }
+    }
+
+    a.button {
+      width: 100%;
+      display: block;
+      background: $white;
+      margin: 20px 0;
+    }
+  }
+}
+
+.menu-cta-buttons-container {
+  @extend .cta-buttons;
+
+  li {
+    display: block;
+
+    &:first-child {
+      margin-bottom: 17px;
+
+      a {
+        background: $medium-green;
+      }
+    }
+
+    a {
+      color: $white !important;
+      text-align: center;
+      text-decoration: none !important;
+      padding: 20px;
+      font-size: 16px;
+    }
+  }
+}
+
+.footer-menu {
+  margin: 0 0 4rem;
+  padding: 0 15px;
+  column-count: 4;
+  column-gap: 15px;
+
+  ul {
+    list-style: none;
+    margin: 0;
+  }
+
+  .menu-item-has-children {
+    break-inside: avoid-column;
+    margin-bottom: 1.5em;
+
+    &:nth-child(2n) {
+      break-after: always;
+    }
+
+    & > a {
+      @extend h6;
+      color: $rose !important;
+      text-decoration: none;
+      cursor: default;
+    }
+  }
+
+  .sub-menu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    line-height: 1.3em;
+
+    li {
+      margin-bottom: .5em;
+    }
+  }
+}
+
+.bottom-bar {
+  background: $primary-color;
+  color: $white;
+
+  p {
+    margin: 0;
+    padding: 15px 0;
+  }
+}

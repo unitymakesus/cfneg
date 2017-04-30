@@ -1,0 +1,44 @@
+// Colors
+$medium-gray: #707372;
+$light-gray: #EAEBEB;
+
+$medium-blue: #0093B2;
+$light-blue: #3EB1C8;
+$lighter-blue: #77C5D5;
+
+$medium-green: #279989;
+$light-green: #6BCABA;
+$lighter-green: #98DBCE;
+
+$rose: #E56A54;
+$gold: #FCB659;
+
+$white: #FFFFFF;
+
+$foundation-palette: (
+  primary: #4298b5,
+  secondary: $medium-gray,
+  success: $medium-green,
+  warning: $gold,
+  alert: $rose,
+);
+
+// Fonts
+$fa-font-path: '~font-awesome/fonts';
+
+$global-font-size: 18px;
+
+$body-font-family: 'Open Sans', Helvetica, Arial, sans-serif;
+$body-font-color: $medium-gray;
+
+// Width
+$global-width: 960px;
+
+// Top Bar
+$topbar-background: $white;
+$dropdownmenu-arrows: false;
+
+// Background pattern
+@mixin pattern {
+  background:url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAARUlEQVQoU2NkgIIPHz78h7FhtICAACOMDWYgKwJJovNBarAKYtMMV4hsDTbngBViU4SumDQTsfkS3UPE+5qkcMSmGN2DAJxaQ3h25GHKAAAAAElFTkSuQmCC') repeat;
+}

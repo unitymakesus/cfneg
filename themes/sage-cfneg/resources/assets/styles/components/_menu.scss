@@ -1,0 +1,43 @@
+.main-menu {
+  & > li {
+    width: 96px;
+    height: 66px;
+    padding: 0;
+    display: inline-block;
+    position: relative;
+
+    $i: 1;
+    @each $color in $primary-color, $rose, $medium-gray, $medium-green, $gold, $lighter-blue, $light-green {
+      &:nth-child(#{$i}) {
+        background: $color;
+
+        &::before {
+          content: '#{$i}';
+          position: absolute;
+          top: 0;
+          left: 0;
+          font-size: 90px;
+          line-height: 66px;
+          color: rgba($white, .3);
+          font-family: 'Amethysta';
+          letter-spacing: 0;
+        }
+      }
+
+      $i: $i + 1;
+    }
+
+    & > a {
+      position: relative;
+      color: $white;
+      text-align: center;
+      font-size: 14px;
+      font-weight: bold;
+      line-height: 1.4em;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+    }
+  }
+}

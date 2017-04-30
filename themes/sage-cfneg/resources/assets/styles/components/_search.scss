@@ -1,0 +1,27 @@
+.search-dropdown-button {
+  width: 32px;
+  text-align: center;
+}
+
+.search-form {
+  background: $primary-color;
+  padding: 15px;
+  display: flex;
+
+  label {
+    width: calc(100% - 32px);
+  }
+}
+
+.search-field {
+  border: none;
+  margin: 0;
+}
+
+.search-submit {
+  background: $primary-color;
+  border: none;
+  color: $white;
+  width: 39px;
+  height: 39px;
+}
