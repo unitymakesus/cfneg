@@ -3,25 +3,27 @@
   text-align: center;
 }
 
-.search-form {
-  background: $primary-color;
-  padding: 15px;
-  display: flex;
+:not(.wp-core-ui) {
+  .search-form {
+    background: $brand-blue;
+    padding: 15px;
+    display: flex;
 
-  label {
-    width: calc(100% - 32px);
+    label {
+      width: calc(100% - 32px);
+    }
   }
-}
 
-.search-field {
-  border: none;
-  margin: 0;
-}
+  .search-field {
+    border: none;
+    margin: 0;
+  }
 
-.search-submit {
-  background: $primary-color;
-  border: none;
-  color: $white;
-  width: 39px;
-  height: 39px;
+  .search-submit {
+    background: $brand-blue;
+    border: none;
+    color: $white;
+    width: 39px;
+    height: 39px;
+  }
 }

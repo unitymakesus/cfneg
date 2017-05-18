@@ -592,16 +592,22 @@ function et_pb_retrieve_templates( $layout_type = 'layout', $module_width = '', 
 					$this_layout_type = 'on' === get_post_meta( $single_post->ID, '_et_pb_predefined_layout', true ) ? 'predefined' : 'library';
 				}
 
+				// get unsynced global optoins for module
+				if ( 'module' === $layout_type && 'false' !== $is_global ) {
+					$unsynced_options = get_post_meta( $single_post->ID, '_et_pb_excluded_global_options' );
+				}
+
 				$templates_data[] = array(
-					'ID'           => $single_post->ID,
-					'title'        => esc_html( $single_post->post_title ),
-					'shortcode'    => $single_post->post_content,
-					'is_global'    => $global_scope,
-					'layout_type'  => $layout_type,
-					'layouts_type' => $this_layout_type,
-					'module_type'  => $module_type,
-					'categories'   => $categories_processed,
-					'row_layout'   => $row_layout,
+					'ID'               => $single_post->ID,
+					'title'            => esc_html( $single_post->post_title ),
+					'shortcode'        => $single_post->post_content,
+					'is_global'        => $global_scope,
+					'layout_type'      => $layout_type,
+					'layouts_type'     => $this_layout_type,
+					'module_type'      => $module_type,
+					'categories'       => $categories_processed,
+					'row_layout'       => $row_layout,
+					'unsynced_options' => ! empty( $unsynced_options ) ? json_decode( $unsynced_options[0], true ) : array(),
 				);
 			}
 		}
@@ -681,10 +687,10 @@ if ( ! function_exists( 'et_pb_add_new_layout' ) ) {
 				$args['layout_content'] = '[et_pb_section template_type="section"][et_pb_row][/et_pb_row][/et_pb_section]';
 				break;
 			case 'module' :
-				$args['layout_content'] = sprintf( '[et_pb_module_placeholder selected_tabs="%1$s"]', ! empty( $processed_data_array['selected_tabs'] ) ? $processed_data_array['selected_tabs'] : 'all' );
+				$args['layout_content'] = '[et_pb_module_placeholder selected_tabs="all"]';
 				break;
 			case 'fullwidth_module' :
-				$args['layout_content'] = sprintf( '[et_pb_fullwidth_module_placeholder selected_tabs="%1$s"]', ! empty( $processed_data_array['selected_tabs'] ) ? $processed_data_array['selected_tabs'] : 'all' );
+				$args['layout_content'] = '[et_pb_fullwidth_module_placeholder selected_tabs="all"]';
 				$args['module_width'] = 'fullwidth';
 				$args['layout_type'] = 'module';
 				break;
@@ -725,6 +731,11 @@ if ( ! function_exists( 'et_pb_submit_layout' ) ) {
 
 		if ( 'module' === $args['layout_type'] ) {
 			$meta = array_merge( $meta, array( '_et_pb_module_type' => $args['module_type'] ) );
+
+			// save unsynced options for global modules. Always empty for new modules.
+			if ( 'global' === $args['layout_scope'] ) {
+				$meta = array_merge( $meta, array( '_et_pb_excluded_global_options' => json_encode( array() ) ) );
+			}
 		}
 
 		//et_layouts_built_for_post_type
@@ -826,6 +837,11 @@ function et_pb_get_global_module() {
 
 		if ( !empty( $query->post ) ) {
 			$global_shortcode['shortcode'] = $query->post->post_content;
+			$excluded_global_options = get_post_meta( $post_id, '_et_pb_excluded_global_options' );
+			$selective_sync_status = empty( $excluded_global_options ) ? '' : 'updated';
+
+			$global_shortcode['sync_status'] = $selective_sync_status;
+			$global_shortcode['excluded_options'] = $excluded_global_options;
 		}
 	}
 
@@ -848,6 +864,7 @@ function et_pb_update_layout() {
 
 	$post_id = isset( $_POST['et_template_post_id'] ) ? $_POST['et_template_post_id'] : '';
 	$new_content = isset( $_POST['et_layout_content'] ) ? et_pb_builder_post_content_capability_check( $_POST['et_layout_content'] ) : '';
+	$layout_type = isset( $_POST['et_layout_type'] ) ? sanitize_text_field( $_POST['et_layout_type'] ) : '';
 
 	if ( '' !== $post_id ) {
 		$update = array(
@@ -856,6 +873,12 @@ function et_pb_update_layout() {
 		);
 
 		wp_update_post( $update );
+
+		if ( 'module' === $layout_type && isset( $_POST['et_unsynced_options'] ) ) {
+			$unsynced_options = stripslashes( $_POST['et_unsynced_options'] );
+
+			update_post_meta( $post_id, '_et_pb_excluded_global_options', $unsynced_options );
+		}
 	}
 
 	die();
@@ -3500,6 +3523,14 @@ function et_fb_get_saved_templates() {
 		} else {
 			foreach( $templates_data as $index => $data ) {
 				$templates_data_processed[ $index ]['shortcode'] = et_fb_process_shortcode( $data['shortcode'] );
+
+				if ( 'global' === $templates_data_processed[ $index ]['is_global'] && 'module' === $templates_data_processed[ $index ]['layout_type'] ) {
+					$templates_data_processed[ $index ]['shortcode'][0]['unsyncedGlobalSettings'] = $templates_data_processed[ $index ]['unsynced_options'];
+
+					if ( empty( $templates_data_processed[ $index ]['unsynced_options'] ) && isset( $templates_data_processed[ $index ]['shortcode'][0]['attrs']['saved_tabs'] ) && 'all' !== $templates_data_processed[ $index ]['shortcode'][0]['attrs']['saved_tabs'] ) {
+						$templates_data_processed[ $index ]['shortcode'][0]['unsyncedGlobalSettings'] = et_pb_get_unsynced_legacy_options( $post_type, $templates_data_processed[ $index ]['shortcode'][0] );
+					}
+				}
 			}
 			$next_page = 'all' === $is_global ? $start_from + 25 : $start_from + 50;
 		}
@@ -3510,6 +3541,33 @@ function et_fb_get_saved_templates() {
 	die( $json_templates );
 }
 add_action( 'wp_ajax_et_fb_get_saved_templates', 'et_fb_get_saved_templates' );
+
+function et_pb_get_unsynced_legacy_options( $post_type, $shortcode_data ) {
+	if ( ! isset( $shortcode_data['attrs']['saved_tabs'] ) && 'all' === $shortcode_data['attrs']['saved_tabs'] ) {
+		return array();
+	}
+
+	// get all options
+	$general_fields = ET_Builder_Element::get_general_fields( $post_type, 'all', $shortcode_data['type'] );
+	$advanced_fields = ET_Builder_Element::get_advanced_fields( $post_type, 'all', $shortcode_data['type'] );
+	$css_fields = ET_Builder_Element::get_custom_css_fields( $post_type, 'all', $shortcode_data['type'] );
+	$saved_fields = array_keys( $shortcode_data['attrs'] );
+
+	// content fields should never be included into unsynced options. We use different key for the content options.
+	$saved_fields[] = 'content_new';
+	$saved_fields[] = 'raw_content';
+
+	$all_fields = array_merge( array_keys( $general_fields ), array_keys( $advanced_fields ), array_keys( $css_fields ) );
+
+	// compare all options with saved options to get array of unsynced ones.
+	$unsynced_options = array_diff( $all_fields, $saved_fields );
+
+	if ( false === strpos( $shortcode_data['attrs']['saved_tabs'], 'general' ) ) {
+		$unsynced_options[] = 'et_pb_content_field';
+	}
+
+	return $unsynced_options;
+}
 
 // prepare the ssl link for FB
 function et_fb_prepare_ssl_link( $link ) {

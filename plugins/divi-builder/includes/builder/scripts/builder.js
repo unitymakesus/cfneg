@@ -2,13 +2,15 @@ var ET_PageBuilder = ET_PageBuilder || {};
 
 window.wp = window.wp || {};
 
-window.et_builder_version = '3.0.42';
+window.et_builder_version = '3.0.45';
 
 ( function($) {
 	var et_error_modal_shown = window.et_error_modal_shown,
 		et_is_loading_missing_modules = false,
 		et_pb_bulder_loading_attempts = 0,
 		et_pb_hovered_item_buffer = {},
+		et_pb_all_unsynced_options = {},
+		et_pb_all_legacy_synced_options = [],
 		et_pb_key_pressed = {
 			's' : false,
 			'r' : false,
@@ -1094,15 +1096,10 @@ window.et_builder_version = '3.0.42';
 
 				if ( ( typeof modal_view.model.get( 'et_pb_global_module' ) !== 'undefined' && '' !== modal_view.model.get( 'et_pb_global_module' ) ) || ( typeof this.model.get( 'et_pb_template_type' ) !== 'undefined' && 'section' === this.model.get( 'et_pb_template_type' ) && 'global' === et_pb_options.is_global_template ) ) {
 					$( '.et_pb_modal_settings_container' ).addClass( 'et_pb_saved_global_modal' );
-
-					var saved_tabs = [ 'general', 'advanced', 'custom_css' ];
-					_.each( saved_tabs, function( tab_name ) {
-						$( '.et_pb_options_tab_' + tab_name ).addClass( 'et_pb_saved_global_tab' );
-					});
 				}
 
-				if ( typeof this.model.get( 'et_pb_specialty' ) === 'undefined' || 'on' !== this.model.get( 'et_pb_specialty' ) ) {
-					$( '.et_pb_modal_settings_container' ).addClass( 'et_pb_hide_advanced_tab' );
+				if ( typeof this.model.get( 'et_pb_specialty' ) !== 'undefined' || 'on' === this.model.get( 'et_pb_specialty' ) ) {
+					$( '.et_pb_modal_settings_container' ).addClass( 'et_pb_specialty_section_settings' );
 				}
 
 				et_pb_open_current_tab();
@@ -1908,11 +1905,6 @@ window.et_builder_version = '3.0.42';
 
 				if ( ( typeof modal_view.model.get( 'et_pb_global_module' ) !== 'undefined' && '' !== modal_view.model.get( 'et_pb_global_module' ) ) || ( ET_PageBuilder_Layout.getView( modal_view.model.get('cid') ).$el.closest( '.et_pb_global' ).length ) || ( typeof this.model.get( 'et_pb_template_type' ) !== 'undefined' && 'row' === this.model.get( 'et_pb_template_type' ) && 'global' === et_pb_options.is_global_template ) ) {
 					$( '.et_pb_modal_settings_container' ).addClass( 'et_pb_saved_global_modal' );
-
-					var saved_tabs = [ 'general', 'advanced', 'custom_css' ];
-					_.each( saved_tabs, function( tab_name ) {
-						$( '.et_pb_options_tab_' + tab_name ).addClass( 'et_pb_saved_global_tab' );
-					});
 				}
 			},
 
@@ -2379,9 +2371,7 @@ window.et_builder_version = '3.0.42';
 				}
 
 				if ( typeof this.model !== 'undefined' ) {
-					var this_parent_view = ET_PageBuilder_Layout.getView( this.model.get( 'parent' ) ),
-						this_template_type = typeof this.model.get( 'et_pb_template_type' ) !== 'undefined' && 'module' === this.model.get( 'et_pb_template_type' ) || typeof this.model.get( 'template_type' ) !== 'undefined' && 'module' === this.model.get( 'template_type' ),
-						saved_tabs = typeof this.model.get( 'et_pb_saved_tabs' ) !== 'undefined' && 'all' !== this.model.get( 'et_pb_saved_tabs' ) || typeof this_parent_view !== 'undefined' && typeof this_parent_view.model.get( 'et_pb_saved_tabs' ) !== 'undefined' && 'all' !== this_parent_view.model.get( 'et_pb_saved_tabs' )
+					var this_parent_view = ET_PageBuilder_Layout.getView( this.model.get( 'parent' ) );
 
 					if ( this.attributes['data-open_view'] === 'column_specialty_settings' ) {
 						this.model.set( 'open_view', 'column_specialty_settings', { silent : true } );
@@ -2391,33 +2381,6 @@ window.et_builder_version = '3.0.42';
 
 					if ( this.attributes['data-open_view'] === 'column_specialty_settings' ) {
 						this.model.unset( 'open_view', 'column_specialty_settings', { silent : true } );
-					}
-
-					if ( this_template_type && saved_tabs ) {
-						var selected_tabs = typeof this.model.get( 'et_pb_saved_tabs' ) !== 'undefined' ? this.model.get( 'et_pb_saved_tabs' ) : this_parent_view.model.get( 'et_pb_saved_tabs' ) ,
-							selected_tabs_array = selected_tabs.split( ',' ),
-							possible_tabs_array = [ 'general', 'advanced', 'css' ],
-							css_class = '',
-							start_from_tab = '';
-
-						if ( selected_tabs_array[0] !== 'all' ) {
-							_.each( possible_tabs_array, function ( tab ) {
-								if ( -1 === $.inArray( tab, selected_tabs_array ) ) {
-									css_class += ' et_pb_hide_' + tab + '_tab';
-								} else {
-									start_from_tab = '' === start_from_tab ? tab : start_from_tab;
-								}
-							} );
-
-							start_from_tab = 'css' === start_from_tab ? 'custom_css' : start_from_tab;
-
-						}
-
-						this.$el.addClass( css_class );
-
-						if ( typeof this.model.get( 'et_pb_saved_tabs' ) === 'undefined' ) {
-							this.model.set( 'et_pb_saved_tabs', selected_tabs, { silent : true } );
-						}
 					}
 				}
 				else
@@ -2538,12 +2501,24 @@ window.et_builder_version = '3.0.42';
 				var that = this,
 					global_module_cid = '',
 					this_view = ET_PageBuilder_Layout.getView( that.model.get( 'cid' ) ),
-					this_parent_view = typeof that.model.get( 'parent' ) !== 'undefined' ? ET_PageBuilder_Layout.getView( that.model.get( 'parent' ) ) : '',
-					global_holder_view = '' !== this_parent_view && ( typeof that.model.get( 'et_pb_global_module' ) === 'undefined' || '' === that.model.get( 'et_pb_global_module' ) ) ? this_parent_view : this_view,
+					this_parent_view = ! _.isUndefined( that.model.get( 'parent' ) ) ? ET_PageBuilder_Layout.getView( that.model.get( 'parent' ) ) : '',
+					global_holder_view = this_view,
 					update_template_only = false,
 					close_modal = _.isUndefined( close_modal ) ? true : close_modal,
 					is_disabled = 'not-allowed' === $( event.target ).css( 'cursor' );
 
+				// get the global module ID if exists.
+				if ( ! _.isUndefined( global_holder_view.model.get( 'et_pb_global_module' ) )  ) {
+					// if the module is global
+					global_module_cid = global_holder_view.model.get( 'cid' );
+				} else {
+					// check all parents to find the global parent if exists
+					while ( ! _.isUndefined( global_holder_view.model.get( 'parent' ) ) && '' === global_module_cid ) {
+						// Refresh global holder for new loop
+						global_holder_view = ET_PageBuilder_Layout.getView( global_holder_view.model.get( 'parent' ) );
+						global_module_cid = '' === global_module_cid && ! _.isUndefined( global_holder_view.model.get( 'et_pb_global_module' ) ) ? global_holder_view.model.get( 'cid' ) : global_module_cid;
+					}
+				}
 
 				event.preventDefault();
 
@@ -2561,52 +2536,10 @@ window.et_builder_version = '3.0.42';
 					global_module_cid = typeof global_holder_view.model.get( 'global_parent_cid' ) !== 'undefined' ? global_holder_view.model.get( 'global_parent_cid' ) : global_holder_view.model.get( 'cid' );
 				}
 
-				if ( ( typeof that.model.get( 'et_pb_template_type' ) !== 'undefined' && 'module' === that.model.get( 'et_pb_template_type' ) || '' !== global_module_cid ) && ( typeof that.model.get( 'et_pb_saved_tabs' ) !== 'undefined' ) || ( '' !== this_parent_view && typeof this_parent_view.model.get( 'et_pb_saved_tabs' ) !== 'undefined' ) ) {
-					var selected_tabs_array    = typeof that.model.get( 'et_pb_saved_tabs' ) === 'undefined' ? this_parent_view.model.get( 'et_pb_saved_tabs' ).split( ',' ) : that.model.get( 'et_pb_saved_tabs' ).split( ',' ),
-						selected_tabs_selector = '',
-						existing_attributes    = that.model.attributes;
-
-					_.each( selected_tabs_array, function ( tab ) {
-						switch ( tab ) {
-							case 'general' :
-								selected_tabs_selector += '' !== selected_tabs_selector ? ',' : '';
-								selected_tabs_selector += '.et-pb-options-tab-general input, .et-pb-options-tab-general select, .et-pb-options-tab-general textarea';
-								break;
-							case 'advanced' :
-								selected_tabs_selector += '' !== selected_tabs_selector ? ',' : '';
-								selected_tabs_selector += '.et-pb-options-tab-advanced input, .et-pb-options-tab-advanced select, .et-pb-options-tab-advanced textarea';
-								break;
-							case 'css' :
-								selected_tabs_selector += '' !== selected_tabs_selector ? ',' : '';
-								selected_tabs_selector += '.et-pb-options-tab-custom_css input, .et-pb-options-tab-custom_css select, .et-pb-options-tab-custom_css textarea';
-								break;
-						}
-					});
-
-					_.each( existing_attributes, function( value, key ) {
-						if ( -1 !== key.indexOf( 'et_pb_' ) && 'et_pb_template_type' !== key && 'et_pb_saved_tabs' !== key && 'et_pb_global_module' !== key ) {
-							that.model.unset( key, { silent : true } );
-						}
-					} );
-
-					if ( typeof that.model.get( 'et_pb_saved_tabs' ) === 'undefined' ) {
-						that.model.set( 'et_pb_saved_tabs', this_parent_view.model.get( 'et_pb_saved_tabs' ) );
-					}
-
-					if ( typeof that.model.get( 'et_pb_template_type' ) !== 'undefined' && 'module' === that.model.get( 'et_pb_template_type' ) ) {
-						update_template_only = true;
-					}
-				}
-
-				that.performSaving( selected_tabs_selector );
+				that.performSaving();
 
 				if ( '' !== global_module_cid ) {
 					et_pb_update_global_template( global_module_cid );
-				}
-
-				// update all module settings only if we're updating not partially saved template
-				if ( false === update_template_only && typeof selected_tabs_selector !== 'undefined' ) {
-					that.performSaving();
 				}
 
 				// Enable history saving and set meta for history
@@ -2763,6 +2696,35 @@ window.et_builder_version = '3.0.42';
 						return;
 					}
 					et_builder_debug_message('passed form validation');
+				}
+
+				var global_module_id = 'global' === et_pb_options.is_global_template ? et_pb_options.template_post_id : this.model.get( 'et_pb_global_module' );
+
+				// update the unsynced options for the module
+				if ( $( '.et_pb_global_sync_switcher' ).length > 0 && typeof global_module_id !== 'undefined' && '' !== global_module_id ) {
+					var unsynced_options_array = [];
+
+					if ( $( '.et_pb_global_unsynced' ).length > 0 ) {
+						$( '.et_pb_global_unsynced' ).each( function() {
+							var $this_el = $( this );
+							var this_option_name = $this_el.data( 'option_name' );
+
+							unsynced_options_array.push( this_option_name );
+
+							// unsync mobile options if exist
+							if ( ! _.isUndefined( $this_el.data( 'additional_options' ) ) && 'mobile' === $this_el.data( 'additional_options' ) ) {
+								unsynced_options_array.push( this_option_name + '_tablet' );
+								unsynced_options_array.push( this_option_name + '_phone' );
+							}
+						});
+					}
+
+					et_pb_all_unsynced_options[ global_module_id ] = unsynced_options_array;
+
+					// update the value in hidden option so unsynced options will be saved on post Update.
+					if ( 'global' === et_pb_options.is_global_template && $( '#et_pb_unsynced_global_attrs' ).length !== 0 ) {
+						$( '#et_pb_unsynced_global_attrs' ).val( JSON.stringify( unsynced_options_array ) );
+					}
 				}
 
 				ET_PageBuilder.Events.trigger( 'et-modal-settings:save', this );
@@ -5102,10 +5064,10 @@ window.et_builder_version = '3.0.42';
 				if ( ( typeof this.model.get( 'et_pb_global_parent' ) !== 'undefined' && '' !== this.model.get( 'et_pb_global_parent' ) ) || ( ET_PageBuilder_Layout.getView( this.model.get('cid') ).$el.closest( '.et_pb_global' ).length ) ) {
 					$( '.et_pb_modal_settings_container' ).addClass( 'et_pb_saved_global_modal' );
 
-					var saved_tabs = [ 'general', 'advanced', 'custom_css' ];
-					_.each( saved_tabs, function( tab_name ) {
-						$( '.et_pb_options_tab_' + tab_name ).addClass( 'et_pb_saved_global_tab' );
-					});
+					if ( 'module' === et_pb_options.global_module_type ) {
+						et_pb_add_selective_sync_buttons( $( '.et_pb_modal_settings_container' ), et_pb_options.template_post_id );
+						$( '.et_pb_modal_settings_container' ).addClass( 'et_pb_modal_selective_sync' );
+					}
 				}
 			},
 
@@ -7077,10 +7039,12 @@ window.et_builder_version = '3.0.42';
 						module_settings,
 						prefixed_attributes = {},
 						found_inner_shortcodes = typeof shortcode_content !== 'undefined' && shortcode_content !== '' && shortcode_content.match( reg_exp ),
-						global_module_id = '';
+						global_module_id = '',
+						is_structure_element = $.inArray( shortcode_name, [ 'et_pb_section', 'et_pb_row', 'et_pb_column', 'et_pb_row_inner', 'et_pb_column_inner' ] ) > -1 ;
 
-					if ( shortcode_name === 'et_pb_section' || shortcode_name === 'et_pb_row' || shortcode_name === 'et_pb_column' || shortcode_name === 'et_pb_row_inner' || shortcode_name === 'et_pb_column_inner' )
+					if ( is_structure_element ) {
 						shortcode_name = shortcode_name.replace( 'et_pb_', '' );
+					}
 
 					module_settings = {
 						type : shortcode_name,
@@ -7115,11 +7079,28 @@ window.et_builder_version = '3.0.42';
 					}
 
 					if ( _.isObject( shortcode_attributes['named'] ) ) {
+						var fill_legacy_global_options = false;
+
+						// prepare global module selective sync attributes
+						if ( 'global' === et_pb_options.is_global_template && ! is_structure_element && typeof shortcode_attributes['named']['template_type'] !== 'undefined' && 'module' === shortcode_attributes['named']['template_type'] ) {
+							if ( 'updated' === et_pb_options.selective_sync_status ) {
+								et_pb_all_unsynced_options[ et_pb_options.template_post_id ] = et_pb_options.excluded_global_options;
+							} else {
+								fill_legacy_global_options = true;
+								et_pb_all_legacy_synced_options[ et_pb_options.template_post_id ] = [];
+							}
+						}
+
 						global_module_id = typeof shortcode_attributes['named']['global_module'] !== 'undefined' && '' === global_module_id ? shortcode_attributes['named']['global_module'] : global_module_id;
 
 						for ( var key in shortcode_attributes['named'] ) {
 							if ( typeof additional_options_received.ignore_template_tag === 'undefined' || '' === additional_options_received.ignore_template_tag || ( 'ignore_template' === additional_options_received.ignore_template_tag && 'template_type' !== key ) ) {
 								var prefixed_key = key !== 'admin_label' && key !== 'specialty_columns' ? 'et_pb_' + key : key;
+
+								// fill the array of legacy global synced options for module
+								if ( fill_legacy_global_options ) {
+									et_pb_all_legacy_synced_options[ et_pb_options.template_post_id ].push( key );
+								}
 
 								if ( ( shortcode_name === 'column' || shortcode_name === 'column_inner' ) && prefixed_key === 'et_pb_type' )
 									prefixed_key = 'layout';
@@ -7145,6 +7126,11 @@ window.et_builder_version = '3.0.42';
 						} else {
 							module_settings['et_pb_content_new'] = shortcode_content;
 						}
+					}
+
+					// convert line break placeholders into real line-breaks for the message pattern option in Contact Form module
+					if ( 'et_pb_contact_form' === shortcode_name && typeof module_settings['et_pb_custom_message'] !== 'undefined' ) {
+						module_settings['et_pb_custom_message'] = module_settings['et_pb_custom_message'].replace( /\|\|et_pb_line_break_holder\|\|/g, '\r\n' );
 					}
 
 					if ( ! module_settings['et_pb_disabled'] !== 'undefined' && module_settings['et_pb_disabled'] === 'on' ) {
@@ -7459,7 +7445,7 @@ window.et_builder_version = '3.0.42';
 				}, 500 );
 			},
 
-			generateCompleteShortcode : function( cid, layout_type, ignore_global_tag, ignore_global_tabs ) {
+			generateCompleteShortcode : function( cid, layout_type, ignore_global_tag, ignore_global_tabs, is_saving_global ) {
 				var shortcode = '',
 					this_el = this,
 					all_sections = typeof cid === 'undefined' ? true : false,
@@ -7539,7 +7525,7 @@ window.et_builder_version = '3.0.42';
 									var specialty_module_cid = $( this ).data( 'cid' );
 
 									if ( ( false === all_sections && ( cid === specialty_module_cid || true === include_whole_section ) ) || true === all_sections ) {
-										shortcode += this_el.generateModuleShortcode( $(this), false, layout_type, ignore_global_tag, '', ignore_global_tabs );
+										shortcode += this_el.generateModuleShortcode( $(this), false, layout_type, ignore_global_tag, '', ignore_global_tabs, is_saving_global );
 									}
 								} );
 							}
@@ -7573,7 +7559,7 @@ window.et_builder_version = '3.0.42';
 								$this_column.find( '.et_pb_module_block' ).each( function() {
 									var module_cid = $( this ).data( 'cid' );
 									if ( ( false === all_sections && ( cid === module_cid || true === include_whole_section || true === include_whole_row ) ) || true === all_sections ) {
-										shortcode += this_el.generateModuleShortcode( $(this), false, layout_type, ignore_global_tag, '', ignore_global_tabs );
+										shortcode += this_el.generateModuleShortcode( $(this), false, layout_type, ignore_global_tag, '', ignore_global_tabs, is_saving_global );
 									}
 								} );
 
@@ -7598,10 +7584,11 @@ window.et_builder_version = '3.0.42';
 			return shortcode;
 			},
 
-			generateModuleShortcode : function( $module, open_tag_only, layout_type, ignore_global_tag, defined_module_type, ignore_global_tabs ) {
+			generateModuleShortcode : function( $module, open_tag_only, layout_type, ignore_global_tag, defined_module_type, ignore_global_tabs, is_saving_global ) {
 				var attributes = '',
 					content = '',
 					$this_module = $module,
+					is_module_type = ! $this_module.is( '.et_pb_section' ) && ! $this_module.is( '.et_pb_row' ) && ! $this_module.is( '.et_pb_row_inner' ) && ! $this_module.is( '.et_pb_column' ) && ! $this_module.is( '.et_pb_column_inner' ),
 					prefix = $this_module.is( '.et_pb_section' ) || $this_module.is( '.et_pb_row' ) || $this_module.is( '.et_pb_row_inner' )
 						? 'et_pb_'
 						: '',
@@ -7614,7 +7601,8 @@ window.et_builder_version = '3.0.42';
 					module_type = typeof module !== 'undefined' ? module.get( 'module_type' ) : 'undefined',
 					module_settings,
 					shortcode,
-					template_module_type;
+					template_module_type,
+					unsynced_options = [];
 
 				if ( typeof defined_module_type !== 'undefined' && '' !== defined_module_type ) {
 					module_type = defined_module_type;
@@ -7626,7 +7614,21 @@ window.et_builder_version = '3.0.42';
 
 				module_settings = module.attributes;
 
+				// save only synced options for the global modules
+				if ( is_saving_global && is_module_type && typeof module_settings['et_pb_global_module'] !== 'undefined' ) {
+					unsynced_options = ! _.isEmpty( et_pb_all_unsynced_options[ module_settings['et_pb_global_module'] ] ) ? et_pb_all_unsynced_options[ module_settings['et_pb_global_module'] ] : [];
+				}
+
 				for ( var key in module_settings ) {
+					if ( ! _.isEmpty( unsynced_options ) ) {
+						var global_option_name = $.inArray( key, ['et_pb_content_new', 'et_pb_raw_content'] ) !== -1 ? 'et_pb_content_field' : key.replace( 'et_pb_', '' );
+
+						// skip unsynced options
+						if ( $.inArray( global_option_name, unsynced_options ) !== -1 ) {
+							continue;
+						}
+					}
+
 					if ( typeof ignore_global_tag === 'undefined' || 'ignore_global' !== ignore_global_tag || ( typeof ignore_global_tag !== 'undefined' && 'ignore_global' === ignore_global_tag && 'et_pb_global_module' !== key && 'et_pb_global_parent' !== key ) ) {
 						if ( typeof ignore_global_tabs === 'undefined' || 'ignore_global_tabs' !== ignore_global_tabs || ( typeof ignore_global_tabs !== 'undefined' && 'ignore_global_tabs' === ignore_global_tabs && 'et_pb_saved_tabs' !== key ) ) {
 							var setting_name = key,
@@ -7671,8 +7673,13 @@ window.et_builder_version = '3.0.42';
 
 								setting_name = setting_name.replace( 'et_pb_', '' );
 
-								// Make sure double quotes are encoded, before adding values to shortcode
+								if ( 'et_pb_contact_form' === module_type && setting_name === 'custom_message' ) {
+									// save the line breaks in contact message pattern correctly
+									setting_value = setting_value.replace( /\r?\n|\r/g, '||et_pb_line_break_holder||' );
+								}
+
 								if ( typeof setting_value === 'string' ) {
+									// Make sure double quotes are encoded, before adding values to shortcode
 									setting_value = setting_value.replace( /\"/g, '%22' ).replace( /\\/g, '%92' );
 									setting_value = setting_value.replace( /\[/g, '%91' ).replace( /\]/g, '%93' );
 								}
@@ -8148,8 +8155,8 @@ window.et_builder_version = '3.0.42';
 		function et_pb_activate_gallery( $gallery_button ) {
 			$gallery_button.click( function( event ) {
 				var $this_el = $(this),
-					$gallery_ids = $gallery_button.closest( '.et-pb-option' ).siblings( '.et-pb-option-gallery_ids' ).find( '.et-pb-gallery-ids-field' ),
-					$gallery_orderby = $gallery_button.closest( '.et-pb-option' ).siblings( '.et-pb-option-gallery_orderby' ).find( '.et-pb-gallery-ids-field' );
+					$gallery_ids = $gallery_button.closest( '.et-pb-options-tab' ).find( '.et-pb-option-gallery_ids .et-pb-gallery-ids-field' ),
+					$gallery_orderby = $gallery_button.closest( '.et-pb-options-tab' ).find( '.et-pb-option-gallery_orderby .et-pb-gallery-ids-field' );
 
 				event.preventDefault();
 
@@ -10674,7 +10681,6 @@ window.et_builder_version = '3.0.42';
 							module_width_upd             = typeof module_width !== 'undefined' ? module_width : 'regular',
 							module_cid                   = cid_or_element.model.get( 'cid' ),
 							template_shortcode           = '',
-							selected_tabs                = '',
 							selected_cats                = '',
 							new_cat                      = $prompt_modal.find( '#et_pb_new_cat_name' ).val(),
 							ignore_global                = is_global || ( typeof has_global !== 'undefined' && 'has_global' === has_global && 'global' === layout_scope ) ? 'ignore_global' : 'include_global',
@@ -10690,56 +10696,6 @@ window.et_builder_version = '3.0.42';
 							return;
 						}
 
-						if ( $( '.et_pb_select_module_tabs' ).length ) {
-							if ( ! $( '.et_pb_select_module_tabs input' ).is( ':checked' ) ) {
-								$( '.et_pb_error_message_save_template' ).css( "display", "block" );
-								return;
-							} else {
-								selected_tabs = '';
-
-								$( '.et_pb_select_module_tabs input' ).each( function() {
-									var this_input = $( this );
-
-									if ( this_input.is( ':checked' ) ) {
-										selected_tabs += '' !== selected_tabs ? ',' + this_input.val() : this_input.val();
-									}
-
-								});
-
-								selected_tabs = 'general,advanced,css' === selected_tabs ? 'all' : selected_tabs;
-							}
-
-							if ( 'all' !== selected_tabs ) {
-								var selected_tabs_selector = '',
-									selected_tabs_array = selected_tabs.split(','),
-									existing_attributes = cid_or_element.model.attributes;
-
-								_.each( selected_tabs_array, function ( tab ) {
-									switch ( tab ) {
-										case 'general' :
-											selected_tabs_selector += '.et-pb-options-tab-general input, .et-pb-options-tab-general select, .et-pb-options-tab-general textarea';
-											break;
-										case 'advanced' :
-											selected_tabs_selector += '' !== selected_tabs_selector ? ',' : '';
-											selected_tabs_selector += '.et-pb-options-tab-advanced input, .et-pb-options-tab-advanced select, .et-pb-options-tab-advanced textarea';
-											break;
-										case 'css' :
-											selected_tabs_selector += '' !== selected_tabs_selector ? ',' : '';
-											selected_tabs_selector += '.et-pb-options-tab-custom_css input, .et-pb-options-tab-custom_css select, .et-pb-options-tab-custom_css textarea';
-											break;
-									}
-								});
-
-								_.each( existing_attributes, function( value, key ) {
-									if ( -1 !== key.indexOf( 'et_pb_' ) ) {
-										cid_or_element.model.unset( key, { silent : true } );
-									}
-								} );
-							}
-
-							cid_or_element.model.set( 'et_pb_saved_tabs', selected_tabs, { silent : true } );
-						}
-
 						if ( $( '.layout_cats_container input' ).is( ':checked' ) ) {
 
 							$( '.layout_cats_container input' ).each( function() {
@@ -10752,7 +10708,11 @@ window.et_builder_version = '3.0.42';
 
 						}
 
-						cid_or_element.performSaving( selected_tabs_selector );
+						if ( 'module' === layout_type ) {
+							cid_or_element.model.set( 'et_pb_saved_tabs', 'all', { silent : true } );
+						}
+
+						cid_or_element.performSaving();
 
 						template_shortcode = ET_PageBuilder_App.generateCompleteShortcode( module_cid, layout_type, ignore_global, ignore_saved_tabs );
 
@@ -10761,15 +10721,14 @@ window.et_builder_version = '3.0.42';
 							template_shortcode = template_shortcode.replace( /et_pb_column_inner/g, 'et_pb_column' );
 						}
 
-						// save all the settings after template was generated.
-						if ( 'all' !== selected_tabs ) {
-							cid_or_element.performSaving();
-						}
-
 						$modal_settings_container.addClass( 'et_pb_modal_closing' );
 						$modal_overlay.addClass( 'et_pb_overlay_closing' );
 
 						setTimeout( function() {
+							if ( 'module' === layout_type ) {
+								et_pb_tinymce_remove_control( 'et_pb_content_new' );
+							}
+
 							$modal_settings_container.remove();
 							$modal_overlay.remove();
 							$( 'body' ).removeClass( 'et_pb_stop_scroll' );
@@ -10789,7 +10748,7 @@ window.et_builder_version = '3.0.42';
 								et_layout_type : layout_type,
 								et_module_width : module_width_upd,
 								et_columns_layout : columns_layout,
-								et_selected_tabs : selected_tabs,
+								et_selected_tabs : 'all',
 								et_module_type : module_type,
 								et_layout_cats : selected_cats,
 								et_layout_new_cat : new_cat,
@@ -11242,6 +11201,36 @@ window.et_builder_version = '3.0.42';
 				$affected_fields.each( function() {
 					$(this).trigger( 'change' );
 				} );
+			}
+		}
+
+		function et_pb_hide_empty_toggles( $option_el ) {
+			if ( $option_el.lenght === 0 ) {
+				return;
+			}
+
+			var $toggle_container = $option_el.closest( '.et-pb-options-toggle-container' );
+
+			if ( $toggle_container.length === 0 ) {
+				return;
+			}
+
+			var has_visible_options = false;
+
+			// check if toggle has visible options by checking the `display` property of each option inside the toggle
+			if ( $toggle_container.find( '.et-pb-option' ).length > 0 ) {
+				$toggle_container.find( '.et-pb-option' ).each(function() {
+					if ( 'none' !== $( this ).css( 'display' ) ) {
+						has_visible_options = true;
+					}
+				});
+			}
+
+			// add/remove empty toggle class depending of visibility of options inside
+			if ( has_visible_options ) {
+				$toggle_container.removeClass( 'et-pb-options-toggle-empty' );
+			} else {
+				$toggle_container.addClass( 'et-pb-options-toggle-empty' );
 			}
 		}
 
@@ -12163,6 +12152,7 @@ window.et_builder_version = '3.0.42';
 
 						setTimeout( function() {
 							$affected_container.removeClass( 'et_pb_animate_affected' );
+							et_pb_hide_empty_toggles( $affected_field );
 						}, 500 );
 
 						// if the affected field affects other fields, find out if we need to hide/show them
@@ -12180,6 +12170,7 @@ window.et_builder_version = '3.0.42';
 
 								$inner_affected_elements.each( function() {
 									$(this).closest( '.et-pb-option' ).hide();
+									et_pb_hide_empty_toggles( $(this) );
 								} );
 							} else {
 								// if the main affected field is displayed, trigger the change event for all fields it affects
@@ -12200,6 +12191,15 @@ window.et_builder_version = '3.0.42';
 					// After all affected fields is being processed return all tabs to the initial state
 					$settings_tab.css( { 'display' : 'none' } );
 					et_pb_open_current_tab();
+
+					// Remove all empty toggles which may appear in Section settings
+					if ( $( '.et-pb-option-toggle-content' ).length > 0 ) {
+						$( '.et-pb-option-toggle-content' ).each( function() {
+							if ( '' === $.trim( $( this ).text() ) ) {
+								$( this ).closest( '.et-pb-options-toggle-container' ).remove();
+							}
+						});
+					}
 				}, 100 );
 			}
 
@@ -12249,6 +12249,18 @@ window.et_builder_version = '3.0.42';
 					}
 				});
 			}
+
+			// handle global module options sync button clicks
+			$container.on( 'click', '.et_pb_global_sync_switcher', function() {
+				var $clicked_button = $( this );
+				var option_unsynced = $clicked_button.hasClass( 'et_pb_global_unsynced' );
+
+				if ( option_unsynced ) {
+					$clicked_button.removeClass( 'et_pb_global_unsynced' );
+				} else {
+					$clicked_button.addClass( 'et_pb_global_unsynced' );
+				}
+			});
 		}
 
 		// check the range slider boundaries against the provided value and extend min or max boundary if needed
@@ -13227,11 +13239,9 @@ window.et_builder_version = '3.0.42';
 			if ( -1 !== content.indexOf( '[et_pb_' ) ) {
 				if  ( -1 === content.indexOf( 'et_pb_row' ) && -1 === content.indexOf( 'et_pb_section' ) ) {
 					if ( -1 === content.indexOf( 'et_pb_fullwidth' ) ) {
-						var saved_tabs = /(\\?")(.*?)\1/.exec( content );
-						content = '[et_pb_section template_type="module" skip_module="true"][et_pb_row template_type="module" skip_module="true"][et_pb_column type="4_4" saved_tabs="' + saved_tabs[2] + '"]' + content + '[/et_pb_column][/et_pb_row][/et_pb_section]';
+						content = '[et_pb_section template_type="module" skip_module="true"][et_pb_row template_type="module" skip_module="true"][et_pb_column type="4_4"]' + content + '[/et_pb_column][/et_pb_row][/et_pb_section]';
 					} else {
-						var saved_tabs = /(\\?")(.*?)\1/.exec( content );
-						content = '[et_pb_section fullwidth="on" template_type="module" skip_module="true" saved_tabs="' + saved_tabs[2] + '"]' + content + '[/et_pb_section]';
+						content = '[et_pb_section fullwidth="on" template_type="module" skip_module="true"]' + content + '[/et_pb_section]';
 					}
 				} else if ( -1 === content.indexOf( 'et_pb_section' ) ) {
 					content = '[et_pb_section template_type="row" skip_module="true"]' + content + '[/et_pb_section]';
@@ -13434,7 +13444,8 @@ window.et_builder_version = '3.0.42';
 
 		function et_builder_get_global_module( view_settings ) {
 			var modal_view,
-				shortcode_atts;
+				shortcode_atts,
+				global_module_id = view_settings.model.get( 'et_pb_global_module' );
 
 			$.ajax( {
 				type: "POST",
@@ -13444,7 +13455,7 @@ window.et_builder_version = '3.0.42';
 				{
 					action : 'et_pb_get_global_module',
 					et_admin_load_nonce : et_pb_options.et_admin_load_nonce,
-					et_global_id : view_settings.model.get( 'et_pb_global_module' )
+					et_global_id : global_module_id
 				},
 				beforeSend : function() {
 					ET_PageBuilder_Events.trigger( 'et-pb-loading:started' );
@@ -13452,7 +13463,7 @@ window.et_builder_version = '3.0.42';
 				complete : function() {
 					ET_PageBuilder_Events.trigger( 'et-pb-loading:ended' );
 				},
-				success: function( data ){
+				success: function( data ) {
 					if ( data.error ) {
 						// if global template not found, then make module not global.
 						view_settings.model.unset( 'et_pb_global_module' );
@@ -13461,7 +13472,14 @@ window.et_builder_version = '3.0.42';
 						var et_pb_shortcodes_tags = ET_PageBuilder_App.getShortCodeParentTags(),
 							reg_exp = window.wp.shortcode.regexp( et_pb_shortcodes_tags ),
 							inner_reg_exp = ET_PageBuilder_App.wp_regexp_not_global( et_pb_shortcodes_tags ),
-							matches = data.shortcode.match( reg_exp );
+							matches = data.shortcode.match( reg_exp ),
+							selective_sync_method = data.sync_status,
+							unsynced_options = 'updated' === selective_sync_method ? JSON.parse( data.excluded_options ) : [];
+						if ( 'updated' === selective_sync_method ) {
+							et_pb_all_unsynced_options[ global_module_id ] = 0 < unsynced_options.length ? unsynced_options : [];
+						} else {
+							et_pb_all_legacy_synced_options[ global_module_id ] = [];
+						}
 
 						_.each( matches, function ( shortcode ) {
 							var shortcode_element = shortcode.match( inner_reg_exp ),
@@ -13472,24 +13490,49 @@ window.et_builder_version = '3.0.42';
 								shortcode_content = shortcode_element[5],
 								module_settings,
 								found_inner_shortcodes = typeof shortcode_content !== 'undefined' && shortcode_content !== '' && shortcode_content.match( reg_exp ),
-								saved_tabs = shortcode_attributes['named']['saved_tabs'] || view_settings.model.get('et_pb_saved_tabs') || '',
-								ignore_admin_label = 'all' !== saved_tabs && -1 === saved_tabs.indexOf( 'general' ); // we should load Admin Label only if General tab is synced
+								saved_tabs = shortcode_attributes['named']['saved_tabs'] || view_settings.model.get('et_pb_saved_tabs'),
+								ignore_admin_label = 'updated' !== selective_sync_method && 'all' !== saved_tabs && -1 === saved_tabs.indexOf( 'general' ), // we should load Admin Label only if General tab is synced
+								sync_content = 'updated' === selective_sync_method ? -1 === et_pb_all_unsynced_options[ global_module_id ].indexOf( 'et_pb_content_field' ) : ( '' !== saved_tabs && ( -1 !== saved_tabs.indexOf( 'general' ) || 'all' === saved_tabs ) );
+
+								// no need to perform specific actions if module is fully global, so process it as updated module.
+								if ( 'all' === saved_tabs && 'updated' !== selective_sync_method ) {
+									et_pb_all_unsynced_options[ global_module_id ] = [];
+									selective_sync_method = 'updated';
+								}
 
 								if ( _.isObject( shortcode_attributes['named'] ) ) {
 									for ( var key in shortcode_attributes['named'] ) {
 										if ( 'template_type' !== key && ( 'admin_label' !== key || ( 'admin_label' === key && ! ignore_admin_label ) ) ) {
-											var prefixed_key = key !== 'admin_label' ? 'et_pb_' + key : key;
+											// skip unsynced options
+											if ( 'updated' === selective_sync_method && -1 !== et_pb_all_unsynced_options[ global_module_id ].indexOf( key ) ) {
+												return;
+											}
+
+											var prefixed_key = 'admin_label' !== key ? ( 'et_pb_' + key ) : key;
 
 											if ( '' !== key ) {
 												view_settings.model.set( prefixed_key, shortcode_attributes['named'][key], { silent : true } );
+											}
+
+											// fill in array of synced legacy optoins to determine which options are not synced
+											if ( 'updated' !== selective_sync_method ) {
+												et_pb_all_legacy_synced_options[ global_module_id ].push( key );
 											}
 										}
 									}
 								}
 
-								if ( '' !== saved_tabs && ( -1 !== saved_tabs.indexOf( 'general' ) || 'all' === saved_tabs ) ) {
+								if ( sync_content ) {
 									view_settings.model.set( 'et_pb_content_new', shortcode_content, { silent : true } );
+
+									if ( 'updated' !== selective_sync_method ) {
+										et_pb_all_legacy_synced_options[ global_module_id ].push( 'et_pb_content_field' );
+									}
 								}
+
+							if ( 'updated' !== selective_sync_method ) {
+								view_settings.model.set( 'legacy_synced_options', et_pb_all_legacy_synced_options[ global_module_id ], { silent : true } );
+							}
 						} );
 					}
 
@@ -13501,16 +13544,8 @@ window.et_builder_version = '3.0.42';
 						$('.et-pb-modal-preview-template').trigger( 'click' );
 					}
 
-					var saved_tabs = view_settings.model.get( 'et_pb_saved_tabs' );
-
-					if ( typeof saved_tabs !== 'undefined' ) {
-						saved_tabs = 'all' === saved_tabs ? [ 'general', 'advanced', 'css' ] : saved_tabs.split( ',' );
-						_.each( saved_tabs, function( tab_name ) {
-							tab_name = 'css' === tab_name ? 'custom_css' : tab_name;
-							$( '.et_pb_options_tab_' + tab_name ).addClass( 'et_pb_saved_global_tab' );
-						});
-						$( '.et_pb_modal_settings_container' ).addClass( 'et_pb_saved_global_modal' );
-					}
+					$( '.et_pb_modal_settings_container' ).addClass( 'et_pb_saved_global_modal et_pb_modal_selective_sync' );
+					et_pb_add_selective_sync_buttons( $( '.et_pb_modal_settings_container' ), global_module_id )
 				}
 			} );
 		}
@@ -13558,6 +13593,11 @@ window.et_builder_version = '3.0.42';
 						processed_shortcode = processed_shortcode.replace( /]\s+/g, ']' ).replace( /\s+\[/g, '[' );
 						processed_content = processed_content.replace( /]\s+/g, ']' ).replace( /\s+\[/g, '[' );
 
+						// remove line-breaks from the shortcode before comparison if editor is in Visual mode
+						if ( et_pb_is_editor_in_visual_mode() ) {
+							processed_shortcode = processed_shortcode.replace( /\r?\n|\r/g, '' );
+						}
+
 						if ( processed_shortcode !== processed_content ) {
 							global_content_is_different = true;
 							// call createLayoutFromContent only if current_shortcode is different than received shortcode
@@ -13588,7 +13628,8 @@ window.et_builder_version = '3.0.42';
 				post_id                      = global_module_view.model.get( 'et_pb_global_module' ),
 				layout_type                  = global_module_view.model.get( 'type' );
 				layout_type_updated          = 'row_inner' === layout_type ? 'row' : layout_type,
-				template_shortcode           = ET_PageBuilder_App.generateCompleteShortcode( global_module_cid, layout_type_updated, 'ignore_global' );
+				template_shortcode           = ET_PageBuilder_App.generateCompleteShortcode( global_module_cid, layout_type_updated, 'ignore_global', false, true );
+				unsynced_global_options      = ! _.isEmpty( et_pb_all_unsynced_options[ post_id ] ) ? et_pb_all_unsynced_options[ post_id ] : [];
 
 			// do not proceed if global post ID is not defined or empty.
 			if ( typeof post_id === 'undefined' || '' === post_id ) {
@@ -13609,6 +13650,8 @@ window.et_builder_version = '3.0.42';
 					et_admin_load_nonce : et_pb_options.et_admin_load_nonce,
 					et_layout_content : template_shortcode,
 					et_template_post_id : post_id,
+					et_layout_type : layout_type,
+					et_unsynced_options : JSON.stringify( unsynced_global_options )
 				}
 			} );
 		}
@@ -13695,6 +13738,42 @@ window.et_builder_version = '3.0.42';
 			var prepared_item = new ET_PageBuilder.RightClickOptionsView( view_settings, true );
 
 			return prepared_item;
+		}
+
+		function et_pb_add_selective_sync_buttons( $options_container, global_id ) {
+			if ( $options_container.length === 0 ) {
+				return;
+			}
+
+			var $options_array = $options_container.find( '.et-pb-option' );
+
+			if ( $options_container.find( '.et-pb-option-advanced-module-settings' ).length > 0 ) {
+				var disabled_class = et_pb_is_option_unsynced( 'et_pb_content_field', global_id ) ? ' et_pb_global_unsynced' : '';
+
+				$options_container.find( '.et-pb-option-advanced-module-settings' ).append( '<span class="et_pb_global_sync_switcher' + disabled_class + '" data-option_name="et_pb_content_field" data-additional_options="none"></span>' );
+			}
+
+			if ( $options_array.length === 0 ) {
+				return;
+			}
+
+			_.each( $options_array, function( $single_option ) {
+				var option_name = 'content_new' === $( $single_option ).data( 'option_name' ) ? 'et_pb_content_field' : $( $single_option ).data( 'option_name' );
+				var disabled_class = et_pb_is_option_unsynced( option_name, global_id ) ? ' et_pb_global_unsynced' : '';
+				var additional_options = $( $single_option ).find( '.et_pb_mobile_settings_tabs' ).length !== 0 ? 'mobile' : 'none';
+
+				$( $single_option ).append( '<span class="et_pb_global_sync_switcher' + disabled_class + '" data-option_name="' + option_name + '" data-additional_options="' + additional_options + '"></span>' );
+			} );
+		}
+
+		function et_pb_is_option_unsynced( option_name, global_id ) {
+			var sync_method = ! _.isUndefined( et_pb_all_unsynced_options[ global_id ] ) ? 'updated' : 'legacy';
+
+			if ( 'legacy' === sync_method ) {
+				return ( -1 === et_pb_all_legacy_synced_options[ global_id ].indexOf( option_name ) );
+			} else {
+				return ( -1 !== et_pb_all_unsynced_options[ global_id ].indexOf( option_name ) );
+			}
 		}
 
 		/**

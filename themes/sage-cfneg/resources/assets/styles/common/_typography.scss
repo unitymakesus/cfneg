@@ -1,42 +1,63 @@
 h1, .h1 {
-  font-family: 'Amethysta';
+  font-family: $font-serif;
   font-size: 50px;
   color: $rose;
 }
 
 h2, .h2 {
+  font-family: $body-font-family;
   font-weight: 800;
   font-size: 34px;
-  color: $primary-color;
+  color: $brand-blue;
 }
 
 h3, .h3 {
   font-weight: 800;
   font-size: 20px;
   color: $white;
-  background: $primary-color;
+  background: $brand-blue;
 }
 
 h4, .h4 {
   font-weight: 800;
   font-size: 16px;
   color: $white;
-  background: $primary-color;
+  background: $brand-blue;
 }
 
 h5, .h5 {
   font-weight: 800;
   font-size: 24px;
-  color: $primary-color;
+  color: $brand-blue;
 }
 
 h6, .h6 {
   font-weight: 400;
   font-size: 20px;
-  font-family: 'Amethysta';
+  font-family: $font-serif;
   color: $rose;
 }
 
 .text-small {
   font-size: .9em;
+}
+
+.caps {
+  text-transform: uppercase;
+}
+
+.script {
+  font-family: "Playball";
+}
+
+body.home.et_divi_builder #et_builder_outer_content {
+  .et_pb_text {
+    h2 {
+      @extend h1;
+    }
+
+    h3 {
+      @extend h2;
+    }
+  }
 }

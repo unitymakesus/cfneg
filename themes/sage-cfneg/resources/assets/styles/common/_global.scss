@@ -1,8 +1,46 @@
 /* Flex grid */
 .flex-row {
   @include flex-grid-row();
+
+  &.column, &.columns {
+    @include flex-grid-column();
+  }
 }
 
 .flex-column, .flex-columns {
   @include flex-grid-column();
+}
+
+.large-up-5 {
+  @include flex-grid-layout(5, '.column');
+
+  .et_divi_builder #et_builder_outer_content &.et_pb_row .et_pb_column {
+    @include flex-grid-row();
+    @include flex-grid-layout(5, '.et_pb_module');
+    margin-left: -8px;
+    margin-right: -8px;
+
+    .et_pb_module {
+      padding: 0 8px;
+    }
+  }
+}
+
+/* Divi grid */
+#et_builder_outer_content {
+  .et_pb_row.et_pb_row.et_pb_row {
+    width: 960px;
+    max-width: 100%;
+  }
+}
+
+.absolute-bottom {
+  position: absolute;
+  bottom: 0;
+  z-index: 100;
+
+  h2 {
+    margin: 0 !important;
+    line-height: .7em;
+  }
 }

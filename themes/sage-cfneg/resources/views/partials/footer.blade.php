@@ -26,3 +26,5 @@
     </div>
   </div>
 </footer>
+
+@include ('partials.form-contact')

@@ -28,10 +28,14 @@ function et_fb_prepare_library_cats() {
 }
 
 function et_fb_get_layout_type( $post_id ) {
-	$post_terms  = wp_get_post_terms( $post_id, 'layout_type' );
-	$layout_type = $post_terms[0]->slug;
+	return et_fb_get_layout_term_slug( $post_id, 'layout_type' );
+}
 
-	return $layout_type;
+function et_fb_get_layout_term_slug( $post_id, $term_name ) {
+	$post_terms  = wp_get_post_terms( $post_id, $term_name );
+	$slug = $post_terms[0]->slug;
+
+	return $slug;
 }
 
 function et_fb_comments_template() {
@@ -104,6 +108,7 @@ function et_fb_backend_helpers() {
 	global $post, $paged, $wp_query;
 
 	$layout_type = '';
+	$layout_scope = '';
 
 	$post_type    = isset( $post->post_type ) ? $post->post_type : false;
 	$post_id      = isset( $post->ID ) ? $post->ID : false;
@@ -112,6 +117,7 @@ function et_fb_backend_helpers() {
 
 	if ( 'et_pb_layout' === $post_type ) {
 		$layout_type = et_fb_get_layout_type( $post_id );
+		$layout_scope = et_fb_get_layout_term_slug( $post_id, 'scope' );
 	}
 
 	$google_fonts = array_merge( array( 'Default' => array() ), et_builder_get_google_fonts() );
@@ -128,6 +134,7 @@ function et_fb_backend_helpers() {
 		'postStatus'                   => $post_status,
 		'postType'                     => $post_type,
 		'layoutType'                   => $layout_type,
+		'layoutScope'                  => $layout_scope,
 		'publishCapability'            => ( is_page() && ! current_user_can( 'publish_pages' ) ) || ( ! is_page() && ! current_user_can( 'publish_posts' ) ) ? 'no_publish' : 'publish',
 		'shortcodeObject'              => array(),
 		'autosaveShortcodeObject'      => array(),
@@ -141,6 +148,7 @@ function et_fb_backend_helpers() {
 			'customCssFields'              => array(),
 			'fieldsDefaults'               => array(),
 			'defaults'                     => array(),
+			'optionsToggles'               => array(),
 		),
 		'moduleParentShortcodes'       => ET_Builder_Element::get_parent_shortcodes( $post_type ),
 		'moduleChildShortcodes'        => ET_Builder_Element::get_child_shortcodes( $post_type ),
@@ -209,7 +217,7 @@ function et_fb_backend_helpers() {
 		),
 		'saveModuleLibraryCategories'      => et_fb_prepare_library_cats(),
 		'columnSettingFields'              => array(
-			'advanced'                     => array(
+			'general'                      => array(
 				'bg_img_%s'                => array(
 					'label'                => esc_html__( 'Column %s Background Image', 'et_builder' ),
 					'type'                 => 'upload',
@@ -219,7 +227,19 @@ function et_fb_backend_helpers() {
 					'update_text'          => esc_attr__( 'Set As Background', 'et_builder' ),
 					'description'          => esc_html__( 'If defined, this image will be used as the background for this module. To remove a background image, simply delete the URL from the settings field.', 'et_builder' ),
 					'tab_slug'             => 'advanced',
+					'toggle_slug'          => 'background',
+					'sub_toggle'           => 'column_%s',
 				),
+				'background_color_%s'      => array(
+					'label'                => esc_html__( 'Column %s Background Color', 'et_builder' ),
+					'type'                 => 'color-alpha',
+					'custom_color'         => true,
+					'tab_slug'             => 'advanced',
+					'toggle_slug'          => 'background',
+					'sub_toggle'           => 'column_%s',
+				),
+			),
+			'advanced'                     => array(
 				'parallax_%s'              => array(
 					'label'                => esc_html__( 'Column %s Parallax Effect', 'et_builder' ),
 					'type'                 => 'yes_no_button',
@@ -233,6 +253,8 @@ function et_fb_backend_helpers() {
 					),
 					'description'          => esc_html__( 'Here you can choose whether or not use parallax effect for the featured image', 'et_builder' ),
 					'tab_slug'             => 'advanced',
+					'toggle_slug'          => 'parallax',
+					'sub_toggle'           => 'column_%s',
 				),
 				'parallax_method_%s'       => array(
 					'label'                => esc_html__( 'Column %s Parallax Method', 'et_builder' ),
@@ -248,12 +270,8 @@ function et_fb_backend_helpers() {
 					),
 					'description'          => esc_html__( 'Here you can choose which parallax method to use for the featured image', 'et_builder' ),
 					'tab_slug'             => 'advanced',
-				),
-				'background_color_%s'      => array(
-					'label'                => esc_html__( 'Column %s Background Color', 'et_builder' ),
-					'type'                 => 'color-alpha',
-					'custom_color'         => true,
-					'tab_slug'             => 'advanced',
+					'toggle_slug'          => 'parallax',
+					'sub_toggle'           => 'column_%s',
 				),
 				'padding_%s'               => array(
 					'label'                => esc_html__( 'Column %s Custom Padding', 'et_builder' ),
@@ -262,6 +280,8 @@ function et_fb_backend_helpers() {
 					'option_category'      => 'layout',
 					'description'          => esc_html__( 'Adjust padding to specific values, or leave blank to use the default padding.', 'et_builder' ),
 					'tab_slug'             => 'advanced',
+					'toggle_slug'          => 'margin_padding',
+					'sub_toggle'           => 'column_%s',
 				),
 			),
 			'css'                     => array(
@@ -270,6 +290,8 @@ function et_fb_backend_helpers() {
 					'type'            => 'text',
 					'option_category' => 'configuration',
 					'tab_slug'        => 'custom_css',
+					'toggle_slug'     => 'classes',
+					'sub_toggle'      => 'column_%s',
 					'option_class'    => 'et_pb_custom_css_regular',
 				),
 				'module_class_%s'     => array(
@@ -277,20 +299,31 @@ function et_fb_backend_helpers() {
 					'type'            => 'text',
 					'option_category' => 'configuration',
 					'tab_slug'        => 'custom_css',
+					'toggle_slug'     => 'classes',
+					'sub_toggle'      => 'column_%s',
 					'option_class'    => 'et_pb_custom_css_regular',
 				),
 				'custom_css_before_%s'=> array(
 					'label'           => esc_html__( 'Column %s before', 'et_builder' ),
 					'no_space_before_selector' => true,
 					'selector'        => ':before',
+					'tab_slug'        => 'custom_css',
+					'toggle_slug'     => 'custom_css',
+					'sub_toggle'      => 'column_%s',
 				),
 				'custom_css_main_%s'  => array(
 					'label'           => esc_html__( 'Column %s Main Element', 'et_builder' ),
+					'tab_slug'        => 'custom_css',
+					'toggle_slug'     => 'custom_css',
+					'sub_toggle'      => 'column_%s',
 				),
 				'custom_css_after_%s' => array(
 					'label'           => esc_html__( 'Column %s After', 'et_builder' ),
 					'no_space_before_selector' => true,
 					'selector'        => ':after',
+					'tab_slug'        => 'custom_css',
+					'toggle_slug'     => 'custom_css',
+					'sub_toggle'      => 'column_%s',
 				),
 
 			),
@@ -395,14 +428,15 @@ function et_fb_backend_helpers() {
 				'mapPinAddressInvalid' => esc_html__( 'Invalid Pin and address data. Please try again.', 'et_builder' ),
 			),
 			'tabs'                     => array(
-				'general'              => esc_html__( 'General', 'et_builder' ),
+				'general'              => esc_html__( 'Content', 'et_builder' ),
 				'design'               => esc_html__( 'Design', 'et_builder' ),
-				'css'                  => esc_html__( 'CSS', 'et_builder' ),
+				'css'                  => esc_html__( 'Advanced', 'et_builder' ),
 			),
 			'additionalButton'         => array(
 				'changeApiKey'         => esc_html__( 'Change API Key', 'et_builder' ),
 				'generateImageUrlFromVideo' => esc_html__( 'Generate From Video', 'et_builder' ),
 			),
+			'cssText'                  => esc_html__( 'CSS', 'et_builder'),
 		),
 		'rightClickMenuItems' => array(
 			'undo'            => esc_html__( 'Undo', 'et_builder' ),
@@ -464,7 +498,6 @@ function et_fb_backend_helpers() {
 			'css'                   => esc_html__( 'Include Custom CSS', 'et_builder' ),
 			'selectCategoriesText'  => esc_html__( 'Select category(ies) for new template or type a new name ( optional )', 'et_builder' ),
 			'templateName'          => esc_html__( 'Template Name', 'et_builder' ),
-			'selectiveSync'         => esc_html__( 'Selective Sync', 'et_builder' ),
 			'selectiveError'        => esc_html__( 'Please select at least 1 tab to save', 'et_builder' ),
 			'globalTitle'           => esc_html__( 'Save as Global', 'et_builder' ),
 			'globalText'            => esc_html__( 'Make this a global item', 'et_builder' ),
@@ -487,6 +520,7 @@ function et_fb_backend_helpers() {
 			'pageSettings' => array(
 				'title' => esc_html__( 'Page Settings', 'et_builder' ),
 			),
+			'searchOptions' => esc_html__( 'Search Options', 'et_builder' ),
 		),
 		'history' => array(
 			'modal' => array(
@@ -519,6 +553,7 @@ function et_fb_backend_helpers() {
 		'tooltip' => array(
 			'pageSettingsBar' => array(
 				'responsive' => array(
+					'wireframe'    => esc_html__( 'Wireframe View', 'et_builder' ),
 					'zoom'    => esc_html__( 'Zoom Out', 'et_builder' ),
 					'desktop' => esc_html__( 'Desktop View', 'et_builder' ),
 					'tablet'  => esc_html__( 'Tablet View', 'et_builder' ),

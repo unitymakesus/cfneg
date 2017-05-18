@@ -76,6 +76,14 @@ add_action('after_setup_theme', function () {
      * @see resources/assets/styles/layouts/_tinymce.scss
      */
     add_editor_style(asset_path('styles/main.css'));
+
+    /**
+     * Allow SVG uploads
+     */
+    add_filter('upload_mimes', function($mimes) {
+      $mimes['svg'] = 'image/svg+xml';
+      return $mimes;
+    });
 }, 20);
 
 /**
@@ -113,6 +121,7 @@ add_action('widgets_init', function () {
 add_action('the_post', function ($post) {
     sage('blade')->share('post', $post);
 });
+
 
 /**
  * Setup Sage options

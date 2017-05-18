@@ -1,0 +1,96 @@
+.et_divi_builder #et_builder_outer_content {
+  .et_pb_section {
+    &.pattern {
+      @include pattern;
+    }
+
+    &.watermark {
+      padding: 2%;
+
+      &::before {
+        $watermark-width: 23%;
+        content: "";
+        width: $watermark-width;
+        position: absolute;
+        left: 3%;
+        top: 0;
+        height: 100%;
+        background: url('../images/column.svg') no-repeat top left;
+        background-size: cover;
+      }
+
+      .et_pb_row {
+        width: 80% !important;
+        padding-left: 13%;
+      }
+    }
+  }
+
+  .et_pb_blurb {
+    &[class*="impact-"] {
+      .et_pb_main_blurb_image {
+        margin: 0;
+
+        a {
+          margin: 0;
+          padding: 0;
+          display: block;
+        }
+
+        img {
+          display: block;
+        }
+      }
+
+      .et_pb_blurb_container {
+        text-align: center;
+
+        h4 {
+          background: $light-gray;
+          padding: 20px 0;
+
+          a {
+            font-size: 22px;
+            line-height: 2em;
+            text-transform: uppercase;
+            font-weight: bold;
+            color: $brand-blue;
+            display: block;
+            padding: 0;
+          }
+        }
+
+        img {
+          display: block;
+        }
+
+        p {
+          margin: 0;
+          padding: 0;
+
+          &:last-child a {
+            color: $white;
+            font-weight: bold;
+            padding: 20px 0;
+            display: block;
+          }
+        }
+      }
+
+      &.et_pb_blurb_1 {
+        h4 a {
+          line-height: 1em;
+        }
+      }
+    }
+
+    $colors: ('brand-blue': $brand-blue, 'medium-green': $medium-green, 'gold': $gold, 'light-blue': $light-blue, 'light-green': $light-green);
+    @each $name, $color in $colors {
+      &.impact-#{$name} {
+        .et_pb_blurb_container {
+          background: #{$color};
+        }
+      }
+    }
+  }
+}

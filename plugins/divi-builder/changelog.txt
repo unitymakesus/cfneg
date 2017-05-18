@@ -1,3 +1,65 @@
+version 2.0.7 ( updated 5-11-2016 )
+- Improved option organization.
+- Added second tier option groups for all Divi Builder settings.
+- Added option search functionality to the Visual Builder.
+- Improved the global module selective sync system, allowing for selective sync of all individual module options.
+- Fixed a bug that caused line breaks to not render when added in the Visual Builder while TinyMCE was in text mode.
+- Fixed issue with responsive column breakdown of the Wireframe View interface when triggering pseudo breakpoints via snapped modal resizing. 
+- Fixed issue that prevented multiple invisible divider modules from being edited in the Visual Builder when they were placed in a row of 3+ in a single column.
+- Fixed bug that caused incorrect icons to be shown in the comments module when customizing icon selection in the Visual Builder.
+- Max width settings will now render correctly when customizing the fullwidth header module in the Visual Builder when text alignment is set to centered.
+- Fixed a bug that caused fullwidth header images to break down incorrectly on smaller screens when the module was set to fullscreen mode.
+- Fixed an error that occurred when dragging snapped settings modals in the Visual Builder and triggering pseudo responsive breakpoints.
+- The page will now re-render correctly when disabling the "remove space below image" setting in the image module in the Visual Builder.
+- Fixed a bug that caused CSS parallax backgrounds to bleed into true parallax backgrounds when the two sections were placed next to each other on the page.
+- Fixed a bug that caused an error to occur if the settings modal cancel button was clicked during an Ajax load when editing the blog module in the Visual Builder.
+- Bar counter module widths will now re-render correctly when a settings modal is snapped to the side of the screen in the Visual Builder.
+- Fixed a bug that caused unwanted comas to be added to number counter modules in some situations.
+- Updated theme options UI to prevent icon overlap on small screens.
+- Fixed a bug that prevented custom specialty section widths to be set using pixels.
+- Correctly centered the testimonial module quote icon in all situations.
+- Improved the positioning of fullwidth portfolio hover elements when title display has been disabled.
+	* includes/builder/main-structure-elements.php
+	* includes/builder/class-et-builder-element.php
+	* includes/builder/functions.php
+	* includes/builder/main-modules.php
+	* includes/builder/scripts/builder.js
+	* includes/builder/scripts/library_scripts.js
+	* includes/builder/scripts/frontend-builder-scripts.js
+	* includes/builder/styles/notification_popup_styles.css
+	* includes/builder/styles/style.css
+	* includes/builder/frontend-builder/helpers.php
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/frontend-builder/assets/css/style.css
+	* core/core.php
+	* epanel/css/panel.css
+	* style.css
+
+version 2.0.6 ( updated 5-5-2017 )
+- Added new Wireframe View mode to the Visual Builder.
+- Fixed issue with email optin module failing to subscribe users in some cases due to request caching system.
+- Fixed issue with unwanted save warning appearing when global sections were on the page but no content was changed while TinyMCE was in Visual mode.
+- Fixed issue where initial updates to global sections were not saved correctly in some cases.
+- Fixed issue with line breaks being stripped from global modules upon saving. 
+- Disabled right click menu while settings modals are open in the Visual Builder.
+- Fixed bug that made the TinyMCE paragraph dropdown menu inaccessible in the Visual Builder.
+- Fixed bug that prevented breakpoints from triggering in the Visual Builder while dragging snapped settings modals.
+- Added pseudo breakpoints for Wireframe View in the Visual Builder to ensure responsiveness when dragging snapped settings modals.
+- Fixed bug with the contact form module that caused line breaks to not be saved and sent correctly in the email message.
+- Fixed a bug that made it impossible edit module labels in the Visual Builder while in Wireframe View in some situations. 
+- Fixed a bug that caused broken styles when the portability system was disabled via the Divi Role Editor.
+- Improved Wireframe View compatibility for the Divi Builder Plugin. 
+	* core/components/HTTPInterface.php
+	* core/components/api/email/MailChimp.php
+	* includes/builder/scripts/builder.js
+	* includes/builder/class-et-builder-element.php
+	* includes/builder/main-structure-elements.php
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/functions.php
+	* includes/builder/main-modules.php
+	* includes/builder/scripts/roles_admin.js
+	* includes/builder/frontend-builder/assets.php
+
 version 2.0.5 ( updated 4-26-2017 )
 - Fixed error that occured on websites running PHP 5.2. 
 - Fixed error that occured when updating plugins for some customers.

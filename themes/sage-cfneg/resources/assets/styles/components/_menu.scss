@@ -7,7 +7,7 @@
     position: relative;
 
     $i: 1;
-    @each $color in $primary-color, $rose, $medium-gray, $medium-green, $gold, $lighter-blue, $light-green {
+    @each $color in $brand-blue, $rose, $medium-gray, $medium-green, $gold, $lighter-blue, $light-green {
       &:nth-child(#{$i}) {
         background: $color;
 
@@ -19,7 +19,7 @@
           font-size: 90px;
           line-height: 66px;
           color: rgba($white, .3);
-          font-family: 'Amethysta';
+          font-family: $font-serif;
           letter-spacing: 0;
         }
       }

@@ -301,7 +301,7 @@ class ET_Core_HTTPInterface {
 	 */
 	public function __construct( $owner = 'ET_Core', $request_details = array(), $json = true ) {
 		$this->expects_json  = $json;
-		$this->cache_timeout = 3 * HOUR_IN_SECONDS;
+		$this->cache_timeout = 15 * MINUTE_IN_SECONDS;
 		$this->owner         = $owner;
 
 		if ( ! empty( $request_details ) ) {
@@ -345,7 +345,7 @@ class ET_Core_HTTPInterface {
 	 */
 	protected static function _get_cache_key_for_request( $url, $body ) {
 		if ( is_array( $body ) ) {
-			$url .= implode( '&', array_keys( $body ) );
+			$url .= json_encode( $body );
 
 		} else if ( ! empty( $body ) ) {
 			$url .= $body;

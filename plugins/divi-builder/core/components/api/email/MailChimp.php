@@ -155,7 +155,7 @@ class ET_Core_API_Email_MailChimp extends ET_Core_API_Email_Provider {
 				'subscribers_count' => 'member_count'
 			),
 			'error' => array(
-				'error_message' => 'title',
+				'error_message' => 'detail',
 			),
 		);
 
@@ -167,7 +167,8 @@ class ET_Core_API_Email_MailChimp extends ET_Core_API_Email_Provider {
 	 */
 	public function subscribe( $args, $url = '' ) {
 		$dbl_optin = empty( $args['dbl_optin'] );
-		$url       = "{$this->BASE_URL}/lists/{$args['list_id']}/members";
+		$list_id   = $args['list_id'];
+		$url       = "{$this->BASE_URL}/lists/{$list_id}/members";
 		$args      = $this->transform_data_to_provider_format( $args, 'subscriber' );
 
 		$args['ip_signup'] = et_core_get_ip_address();
@@ -181,9 +182,20 @@ class ET_Core_API_Email_MailChimp extends ET_Core_API_Email_Provider {
 			$this->_add_note_to_subscriber( $args['email_address'], $url );
 		}
 
-		if ( false !== stripos( $result, 'member exists' ) ) {
+		// Try updating the list data and subscribe to a new list if subscriber already exists
+
+		if ( false !== stripos( $result, 'already a list member' ) ) {
+			$md_5_email = md5( $args['email_address'] );
+			$url        = "{$this->BASE_URL}/lists/{$list_id}/members/{$md_5_email}";
+
+			$this->prepare_request( $url, 'PUT', false, $args, true );
+
+			$result = parent::subscribe( $args, $url );
+		}
+
+		if ( false !== stripos( $result, 'has signed up to a lot of lists ' ) ) {
 			// return message which can be translated. Generic Mailchimp messages are not translatable.
-			return esc_html__( 'Already subscribed', 'et_core' );
+			return esc_html__( 'You have signed up to a lot of lists very recently, please try again later', 'et_core' );
 		}
 
 		return $result;

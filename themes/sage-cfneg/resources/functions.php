@@ -55,7 +55,57 @@ array_map(function ($file) use ($sage_error) {
     if (!locate_template($file, true, true)) {
         $sage_error(sprintf(__('Error locating <code>%s</code> for inclusion.', 'sage'), $file), 'File not found');
     }
-}, ['helpers', 'setup', 'filters', 'admin']);
+}, ['helpers', 'setup', 'filters', 'admin', 'shortcodes']);
+
+/**
+* Autoloads files when requested
+*
+* @since  1.0.0
+* @param  string $class_name Name of the class being requested
+*/
+function cfneg_class_file_autoloader( $class_name ) {
+   /**
+    * If the class being requested does not start with our prefix,
+    * we know it's not one in our project
+    */
+   if ( 0 !== strpos( $class_name, 'CFNEG_' ) ) {
+     return;
+   }
+
+   $file_name = str_replace(
+     array( 'cfneg_', '_' ),   // Prefix | Underscores
+     array( 'class-', '-' ),         // Remove | Replace with hyphens
+     strtolower( $class_name ) // lowercase
+   );
+
+   // Compile our path from the current location
+   $file = dirname( __FILE__ ) . '/includes/'. $file_name .'.php';
+
+   // If a file is found
+   if ( file_exists( $file ) ) {
+       // Then load it up!
+       require( $file );
+   }
+}
+spl_autoload_register( 'cfneg_class_file_autoloader' );
+
+/**
+ * Load custom divi blog module
+ *
+ */
+add_action( 'wp', function() {
+  // Only do this if ET Divi Builder plugin is active
+  if ( ! class_exists('ET_Builder_Module') ) {
+    return;
+  }
+
+ // get_template_part( 'custom-modules/cbm' );
+  $cbm = new CFNEG_ET_Builder_Module_Blog();
+  remove_shortcode( 'et_pb_blog' );
+  add_shortcode( 'et_pb_blog', array($cbm, '_shortcode_callback') );
+}, 9999 );
+
+
 
 /**
  * Here's what's happening with these hooks:

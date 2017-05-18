@@ -278,7 +278,6 @@
   /* Divider Module */
   /* Fullwidth Header Module */
   /* Center */
-  /* fix vertical alignment in IE */
   /* Left and Right */
   /* Content and Image Styling */
   /* Header Content Styling */
@@ -4840,10 +4839,16 @@
 }
 .et_divi_builder #et_builder_outer_content .et_pb_space {
   border: none;
+  display: inline-block;
+  width: 100%;
+  vertical-align: top;
 }
 .et_divi_builder #et_builder_outer_content .et_pb_divider {
   margin: 0 0 30px 0;
   position: relative;
+  display: inline-block;
+  vertical-align: top;
+  width: 100%;
 }
 .et_divi_builder #et_builder_outer_content .et_pb_divider:before {
   content: '';
@@ -4910,9 +4915,6 @@
   -ms-justify-content: center;
   justify-content: center;
 }
-.et_divi_builder #et_builder_outer_content .et_pb_fullscreen .et_pb_fullwidth_header_container.center {
-  height: 1px;
-}
 .et_divi_builder #et_builder_outer_content .et_pb_fullscreen .et_pb_fullwidth_header_container.center.bottom-bottom {
   -webkit-flex-flow: column wrap;
   -moz-flex-flow: column wrap;
@@ -4924,10 +4926,10 @@
   justify-content: flex-end;
 }
 .et_divi_builder #et_builder_outer_content .et_pb_fullscreen .et_pb_fullwidth_header_container.center.center-center {
-  -webkit-flex-flow: column wrap;
-  -moz-flex-flow: column wrap;
-  -ms-flex-flow: column wrap;
-  flex-flow: column wrap;
+  -webkit-flex-flow: column nowrap;
+  -moz-flex-flow: column nowrap;
+  -ms-flex-flow: column nowrap;
+  flex-flow: column nowrap;
 }
 .et_divi_builder #et_builder_outer_content .et_pb_fullscreen .et_pb_fullwidth_header_container.center.center-bottom .header-content-container {
   display: -webkit-flex;
@@ -5415,6 +5417,13 @@
 .et_divi_builder #et_builder_outer_content .et_pb_fullwidth_portfolio .et_pb_portfolio_image h3 {
   margin-top: 40%;
   padding: 0 5px;
+}
+.et_divi_builder #et_builder_outer_content .et_pb_fullwidth_portfolio .et_pb_portfolio_image .et_overlay + p.post-meta {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  transform: translateY(-50%);
 }
 .et_divi_builder #et_builder_outer_content .et_pb_fullwidth_portfolio .et_pb_portfolio_image:hover h3 {
   margin-top: 35%;

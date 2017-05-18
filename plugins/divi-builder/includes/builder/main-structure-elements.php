@@ -88,6 +88,72 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 			'custom_css_after_3',
 		);
 
+		$this->options_toggles = array(
+			'general' => array(
+				'toggles' => array(
+					'background'     => array(
+						'title'       => esc_html__( 'Background', 'et_builder' ),
+						'sub_toggles' => array(
+							'main'     => '',
+							'column_1' => esc_html__( 'Column 1', 'et_builder' ),
+							'column_2' => esc_html__( 'Column 2', 'et_builder' ),
+							'column_3' => esc_html__( 'Column 3', 'et_builder' ),
+						),
+					),
+				),
+			),
+			'advanced' => array(
+				'toggles' => array(
+					'layout'          => esc_html__( 'Layout', 'et_builder' ),
+					'parallax'        => array(
+						'title'       => esc_html__( 'Parallax', 'et_builder' ),
+						'sub_toggles' => array(
+							'main'     => '',
+							'column_1' => esc_html__( 'Column 1', 'et_builder' ),
+							'column_2' => esc_html__( 'Column 2', 'et_builder' ),
+							'column_3' => esc_html__( 'Column 3', 'et_builder' ),
+						),
+					),
+					'width'           => array(
+						'title'    => esc_html__( 'Sizing', 'et_builder' ),
+						'priority' => 65,
+					),
+					'margin_padding'  => array(
+						'title'       => esc_html__( 'Spacing', 'et_builder' ),
+						'sub_toggles' => array(
+							'main'     => '',
+							'column_1' => esc_html__( 'Column 1', 'et_builder' ),
+							'column_2' => esc_html__( 'Column 2', 'et_builder' ),
+							'column_3' => esc_html__( 'Column 3', 'et_builder' ),
+						),
+						'priority'   => 70,
+					),
+				),
+			),
+			'custom_css' => array(
+				'toggles' => array(
+					'classes' => array(
+						'title'  => esc_html__( 'CSS ID & Classes', 'et_builder' ),
+						'sub_toggles' => array(
+							'main'     => '',
+							'column_1' => esc_html__( 'Column 1', 'et_builder' ),
+							'column_2' => esc_html__( 'Column 2', 'et_builder' ),
+							'column_3' => esc_html__( 'Column 3', 'et_builder' ),
+						),
+					),
+					'custom_css' => array(
+						'title'  => esc_html__( 'Custom CSS', 'et_builder' ),
+						'sub_toggles' => array(
+							'main'     => '',
+							'column_1' => esc_html__( 'Column 1', 'et_builder' ),
+							'column_2' => esc_html__( 'Column 2', 'et_builder' ),
+							'column_3' => esc_html__( 'Column 3', 'et_builder' ),
+						),
+					),
+				),
+			),
+		);
+
 		$this->fields_defaults = array(
 			'transparent_background' => array( 'default' ),
 			'background_color'       => array( '', 'only_default_setting' ),
@@ -98,7 +164,7 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 			'padding_mobile'         => array( '' ),
 			'make_fullwidth'         => array( 'off' ),
 			'use_custom_width'       => array( 'off' ),
-			'width_unit'             => array( 'off' ),
+			'width_unit'             => array( 'on' ),
 			'custom_width_px'        => array( '1080px', 'only_default_setting' ),
 			'custom_width_percent'   => array( '80%', 'only_default_setting' ),
 			'make_equal'             => array( 'off' ),
@@ -113,15 +179,6 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 
 	function get_fields() {
 		$fields = array(
-			'background_image' => array(
-				'label'              => esc_html__( 'Background Image', 'et_builder' ),
-				'type'               => 'upload',
-				'option_category'    => 'basic_option',
-				'upload_button_text' => esc_attr__( 'Upload an image', 'et_builder' ),
-				'choose_text'        => esc_attr__( 'Choose a Background Image', 'et_builder' ),
-				'update_text'        => esc_attr__( 'Set As Background', 'et_builder' ),
-				'description'        => esc_html__( 'If defined, this image will be used as the background for this module. To remove a background image, simply delete the URL from the settings field.', 'et_builder' ),
-			),
 			'transparent_background' => array(
 				'label'             => esc_html__( 'Transparent Background Color', 'et_builder' ),
 				'type'              => 'yes_no_button',
@@ -135,6 +192,7 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 					'background_color',
 				),
 				'description'       => esc_html__( 'Enabling this option will remove the background color of this section, allowing the website background color or background image to show through.', 'et_builder' ),
+				'toggle_slug'       => 'background',
 			),
 			'transparent_background_fb' => array(
 				'type' => 'skip',
@@ -146,6 +204,18 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 				'depends_show_if' => 'off',
 				'description'     => esc_html__( 'Define a custom background color for your module, or leave blank to use the default color.', 'et_builder' ),
 				'additional_code' => '<span class="et-pb-reset-setting reset-default-color" style="display: none;"></span>',
+				'toggle_slug'     => 'background',
+
+			),
+			'background_image' => array(
+				'label'              => esc_html__( 'Background Image', 'et_builder' ),
+				'type'               => 'upload',
+				'option_category'    => 'basic_option',
+				'upload_button_text' => esc_attr__( 'Upload an image', 'et_builder' ),
+				'choose_text'        => esc_attr__( 'Choose a Background Image', 'et_builder' ),
+				'update_text'        => esc_attr__( 'Set As Background', 'et_builder' ),
+				'description'        => esc_html__( 'If defined, this image will be used as the background for this module. To remove a background image, simply delete the URL from the settings field.', 'et_builder' ),
+				'toggle_slug'        => 'background',
 			),
 			'background_video_mp4' => array(
 				'label'              => esc_html__( 'Background Video MP4', 'et_builder' ),
@@ -156,6 +226,7 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 				'choose_text'        => esc_attr__( 'Choose a Background Video MP4 File', 'et_builder' ),
 				'update_text'        => esc_attr__( 'Set As Background Video', 'et_builder' ),
 				'description'        => et_get_safe_localization( __( 'All videos should be uploaded in both .MP4 .WEBM formats to ensure maximum compatibility in all browsers. Upload the .MP4 version here. <b>Important Note: Video backgrounds are disabled from mobile devices. Instead, your background image will be used. For this reason, you should define both a background image and a background video to ensure best results.</b>', 'et_builder' ) ),
+				'toggle_slug'        => 'background',
 				'computed_affects'   => array(
 					'__video_background',
 				),
@@ -169,6 +240,7 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 				'choose_text'        => esc_attr__( 'Choose a Background Video WEBM File', 'et_builder' ),
 				'update_text'        => esc_attr__( 'Set As Background Video', 'et_builder' ),
 				'description'        => et_get_safe_localization( __( 'All videos should be uploaded in both .MP4 .WEBM formats to ensure maximum compatibility in all browsers. Upload the .WEBM version here. <b>Important Note: Video backgrounds are disabled from mobile devices. Instead, your background image will be used. For this reason, you should define both a background image and a background video to ensure best results.</b>', 'et_builder' ) ),
+				'toggle_slug'        => 'background',
 				'computed_affects'   => array(
 					'__video_background',
 				),
@@ -178,6 +250,7 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 				'type'            => 'text',
 				'option_category' => 'basic_option',
 				'description'     => esc_html__( 'In order for videos to be sized correctly, you must input the exact width (in pixels) of your video here.', 'et_builder' ),
+				'toggle_slug'     => 'background',
 				'computed_affects'   => array(
 					'__video_background',
 				),
@@ -187,6 +260,7 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 				'type'            => 'text',
 				'option_category' => 'basic_option',
 				'description'     => esc_html__( 'In order for videos to be sized correctly, you must input the exact height (in pixels) of your video here.', 'et_builder' ),
+				'toggle_slug'     => 'background',
 				'computed_affects'   => array(
 					'__video_background',
 				),
@@ -201,6 +275,7 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 				),
 				'default'         => 'off',
 				'description'     => esc_html__( 'Allow video to be paused by other players when they begin playing', 'et_builder' ),
+				'toggle_slug'     => 'background',
 			),
 			'inner_shadow' => array(
 				'label'           => esc_html__( 'Show Inner Shadow', 'et_builder' ),
@@ -212,6 +287,8 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 				),
 				'default'         => 'off',
 				'description'     => esc_html__( 'Here you can select whether or not your section has an inner shadow. This can look great when you have colored backgrounds or background images.', 'et_builder' ),
+				'tab_slug'        => 'advanced',
+				'toggle_slug'     => 'layout',
 			),
 			'parallax' => array(
 				'label'             => esc_html__( 'Use Parallax Effect', 'et_builder' ),
@@ -226,6 +303,8 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 					'parallax_method',
 				),
 				'description'       => esc_html__( 'If enabled, your background image will stay fixed as your scroll, creating a fun parallax-like effect.', 'et_builder' ),
+				'tab_slug'          => 'advanced',
+				'toggle_slug'       => 'parallax',
 			),
 			'parallax_method' => array(
 				'label'             => esc_html__( 'Parallax Method', 'et_builder' ),
@@ -238,6 +317,8 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 				'default'           => 'on',
 				'depends_show_if'   => 'on',
 				'description'       => esc_html__( 'Define the method, used for the parallax effect.', 'et_builder' ),
+				'tab_slug'          => 'advanced',
+				'toggle_slug'       => 'parallax',
 			),
 			'custom_padding' => array(
 				'label'           => esc_html__( 'Custom Padding', 'et_builder' ),
@@ -245,16 +326,24 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 				'mobile_options'  => true,
 				'option_category' => 'layout',
 				'description'     => esc_html__( 'Adjust padding to specific values, or leave blank to use the default padding.', 'et_builder' ),
+				'tab_slug'        => 'advanced',
+				'toggle_slug'     => 'margin_padding',
 			),
 			'custom_padding_tablet' => array(
-				'type' => 'skip',
+				'type'        => 'skip',
+				'tab_slug'    => 'advanced',
+				'toggle_slug' => 'margin_padding',
 			),
 			'custom_padding_phone' => array(
-				'type' => 'skip',
+				'type'        => 'skip',
+				'tab_slug'    => 'advanced',
+				'toggle_slug' => 'margin_padding',
 			),
 			'padding_mobile' => array(
 				'label' => esc_html__( 'Keep Custom Padding on Mobile', 'et_builder' ),
-				'type'  => 'skip', // Remaining attribute for backward compatibility
+				'type'        => 'skip', // Remaining attribute for backward compatibility
+				'tab_slug'    => 'advanced',
+				'toggle_slug' => 'margin_padding',
 			),
 			'make_fullwidth' => array(
 				'label'             => esc_html__( 'Make This Section Fullwidth', 'et_builder' ),
@@ -266,7 +355,9 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 				),
 				'default'           => 'off',
 				'depends_show_if'   => 'off',
-				'tab_slug' => 'advanced',
+				'tab_slug'          => 'advanced',
+				'toggle_slug'       => 'width',
+				'specialty_only'    => 'yes',
 			),
 			'use_custom_width' => array(
 				'label'             => esc_html__( 'Use Custom Width', 'et_builder' ),
@@ -282,7 +373,9 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 					'custom_width',
 					'width_unit',
 				),
-				'tab_slug' => 'advanced',
+				'tab_slug'          => 'advanced',
+				'toggle_slug'       => 'width',
+				'specialty_only'    => 'yes',
 			),
 			'width_unit' => array(
 				'label'             => esc_html__( 'Unit', 'et_builder' ),
@@ -296,12 +389,14 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 				'button_options'    => array(
 					'button_type' => 'equal',
 				),
-				'depends_show_if' => 'on',
+				'depends_show_if'   => 'on',
 				'affects'           => array(
 					'custom_width_px',
 					'custom_width_percent',
 				),
-				'tab_slug' => 'advanced',
+				'tab_slug'          => 'advanced',
+				'toggle_slug'       => 'width',
+				'specialty_only'    => 'yes',
 			),
 			'custom_width_px' => array(
 				'label'               => esc_html__( 'Custom Width', 'et_builder' ),
@@ -314,6 +409,8 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 					'step' => 1,
 				),
 				'tab_slug'            => 'advanced',
+				'toggle_slug'         => 'width',
+				'specialty_only'      => 'yes',
 			),
 			'custom_width_percent' => array(
 				'label'           => esc_html__( 'Custom Width', 'et_builder' ),
@@ -325,8 +422,10 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 					'max'  => 100,
 					'step' => 1,
 				),
-				'tab_slug' => 'advanced',
-				'validate_unit' => false,
+				'tab_slug'        => 'advanced',
+				'toggle_slug'     => 'width',
+				'specialty_only'  => 'yes',
+				'validate_unit'   => false,
 			),
 			'make_equal' => array(
 				'label'             => esc_html__( 'Equalize Column Heights', 'et_builder' ),
@@ -338,6 +437,8 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 				),
 				'default'           => 'off',
 				'tab_slug'          => 'advanced',
+				'toggle_slug'       => 'width',
+				'specialty_only'    => 'yes',
 			),
 			'use_custom_gutter' => array(
 				'label'             => esc_html__( 'Use Custom Gutter Width', 'et_builder' ),
@@ -351,7 +452,9 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 				'affects'           => array(
 					'gutter_width',
 				),
-				'tab_slug' => 'advanced',
+				'tab_slug'          => 'advanced',
+				'toggle_slug'       => 'width',
+				'specialty_only'    => 'yes',
 			),
 			'gutter_width' => array(
 				'label'           => esc_html__( 'Gutter Width', 'et_builder' ),
@@ -364,13 +467,30 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 				),
 				'depends_show_if' => 'on',
 				'tab_slug'        => 'advanced',
+				'toggle_slug'     => 'width',
+				'specialty_only'  => 'yes',
 				'validate_unit'   => false,
 				'fixed_range'     => true,
 			),
-			'columns' => array(
-				'type'            => 'column_settings',
+			'columns_background' => array(
+				'type'            => 'column_settings_background',
+				'option_category' => 'configuration',
+				'toggle_slug'     => 'background',
+				'specialty_only'  => 'yes',
+			),
+			'columns_parallax' => array(
+				'type'            => 'column_settings_parallax',
 				'option_category' => 'configuration',
 				'tab_slug'        => 'advanced',
+				'toggle_slug'     => 'parallax',
+				'specialty_only'  => 'yes',
+			),
+			'columns_padding' => array(
+				'type'            => 'column_settings_padding',
+				'option_category' => 'configuration',
+				'tab_slug'        => 'advanced',
+				'toggle_slug'     => 'margin_padding',
+				'specialty_only'  => 'yes',
 			),
 			'fullwidth' => array(
 				'type' => 'skip',
@@ -526,6 +646,7 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 				'type'            => 'column_settings_css',
 				'option_category' => 'configuration',
 				'tab_slug'        => 'custom_css',
+				'toggle_slug'     => 'custom_css',
 				'priority'        => '20',
 			),
 			'disabled_on' => array(
@@ -539,17 +660,21 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 				'additional_att'  => 'disable_on',
 				'option_category' => 'configuration',
 				'description'     => esc_html__( 'This will disable the module on selected devices', 'et_builder' ),
+				'tab_slug'        => 'custom_css',
+				'toggle_slug'     => 'visibility',
 			),
 			'admin_label' => array(
 				'label'       => esc_html__( 'Admin Label', 'et_builder' ),
 				'type'        => 'text',
 				'description' => esc_html__( 'This will change the label of the section in the builder for easy identification when collapsed.', 'et_builder' ),
+				'toggle_slug' => 'admin_label',
 			),
 			'module_id' => array(
 				'label'           => esc_html__( 'CSS ID', 'et_builder' ),
 				'type'            => 'text',
 				'option_category' => 'configuration',
 				'tab_slug'        => 'custom_css',
+				'toggle_slug'     => 'classes',
 				'option_class'    => 'et_pb_custom_css_regular',
 			),
 			'module_class' => array(
@@ -557,16 +682,19 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 				'type'            => 'text',
 				'option_category' => 'configuration',
 				'tab_slug'        => 'custom_css',
+				'toggle_slug'     => 'classes',
 				'option_class'    => 'et_pb_custom_css_regular',
 			),
 			'columns_css_fields' => array(
 				'type'            => 'column_settings_css_fields',
 				'option_category' => 'configuration',
 				'tab_slug'        => 'custom_css',
+				'toggle_slug'     => 'classes',
 			),
 			'custom_padding_last_edited' =>array(
-				'type'     => 'skip',
-				'tab_slug' => 'advanced',
+				'type'           => 'skip',
+				'tab_slug'       => 'advanced',
+				'specialty_only' => 'yes',
 			),
 			'__video_background' => array(
 				'type' => 'computed',
@@ -695,7 +823,7 @@ class ET_Builder_Section extends ET_Builder_Structure_Element {
 			$global_content = et_pb_load_global_module( $global_module );
 
 			if ( '' !== $global_content ) {
-				return do_shortcode( $global_content );
+				return do_shortcode( et_pb_fix_shortcodes( wpautop( $global_content ) ) );
 			}
 		}
 
@@ -1002,6 +1130,77 @@ class ET_Builder_Row extends ET_Builder_Structure_Element {
 					'main' => '%%order_class%%.et_pb_row',
 					'important' => 'all',
 				),
+				'toggle_slug' => 'margin_padding',
+			),
+		);
+
+		$this->options_toggles = array(
+			'general' => array(
+				'toggles' => array(
+					'background'     => array(
+						'title'       => esc_html__( 'Background', 'et_builder' ),
+						'sub_toggles' => array(
+							'main'     => '',
+							'column_1' => esc_html__( 'Column 1', 'et_builder' ),
+							'column_2' => esc_html__( 'Column 2', 'et_builder' ),
+							'column_3' => esc_html__( 'Column 3', 'et_builder' ),
+							'column_4' => esc_html__( 'Column 4', 'et_builder' ),
+						),
+					),
+				),
+			),
+			'advanced' => array(
+				'toggles' => array(
+					'parallax'       => array(
+						'title'       => esc_html__( 'Parallax', 'et_builder' ),
+						'sub_toggles' => array(
+							'main'     => '',
+							'column_1' => esc_html__( 'Column 1', 'et_builder' ),
+							'column_2' => esc_html__( 'Column 2', 'et_builder' ),
+							'column_3' => esc_html__( 'Column 3', 'et_builder' ),
+							'column_4' => esc_html__( 'Column 4', 'et_builder' ),
+						),
+					),
+					'width'          => array(
+						'title'    => esc_html__( 'Sizing', 'et_builder' ),
+						'priority' => 65,
+					),
+					'margin_padding' => array(
+						'title'       => esc_html__( 'Spacing', 'et_builder' ),
+						'sub_toggles' => array(
+							'main'     => '',
+							'column_1' => esc_html__( 'Column 1', 'et_builder' ),
+							'column_2' => esc_html__( 'Column 2', 'et_builder' ),
+							'column_3' => esc_html__( 'Column 3', 'et_builder' ),
+							'column_4' => esc_html__( 'Column 4', 'et_builder' ),
+						),
+						'priority' => 70,
+					),
+				),
+			),
+			'custom_css' => array(
+				'toggles' => array(
+					'classes' => array(
+						'title'  => esc_html__( 'CSS ID & Classes', 'et_builder' ),
+						'sub_toggles' => array(
+							'main'     => '',
+							'column_1' => esc_html__( 'Column 1', 'et_builder' ),
+							'column_2' => esc_html__( 'Column 2', 'et_builder' ),
+							'column_3' => esc_html__( 'Column 3', 'et_builder' ),
+							'column_4' => esc_html__( 'Column 4', 'et_builder' ),
+						),
+					),
+					'custom_css' => array(
+						'title'  => esc_html__( 'Custom CSS', 'et_builder' ),
+						'sub_toggles' => array(
+							'main'     => '',
+							'column_1' => esc_html__( 'Column 1', 'et_builder' ),
+							'column_2' => esc_html__( 'Column 2', 'et_builder' ),
+							'column_3' => esc_html__( 'Column 3', 'et_builder' ),
+							'column_4' => esc_html__( 'Column 4', 'et_builder' ),
+						),
+					),
+				),
 			),
 		);
 
@@ -1140,6 +1339,8 @@ class ET_Builder_Row extends ET_Builder_Structure_Element {
 				'default'           => 'off',
 				'depends_show_if'   => 'off',
 				'description'       => esc_html__( 'Enable this option to extend the width of this row to the edge of the browser window.', 'et_builder' ),
+				'tab_slug'          => 'advanced',
+				'toggle_slug'       => 'width',
 			),
 			'use_custom_width' => array(
 				'label'             => esc_html__( 'Use Custom Width', 'et_builder' ),
@@ -1156,6 +1357,8 @@ class ET_Builder_Row extends ET_Builder_Structure_Element {
 					'width_unit',
 				),
 				'description'       => esc_html__( 'Change to Yes if you would like to adjust the width of this row to a non-standard width.', 'et_builder' ),
+				'tab_slug'          => 'advanced',
+				'toggle_slug'       => 'width',
 			),
 			'width_unit' => array(
 				'label'             => esc_html__( 'Unit', 'et_builder' ),
@@ -1174,6 +1377,8 @@ class ET_Builder_Row extends ET_Builder_Structure_Element {
 					'custom_width_px',
 					'custom_width_percent',
 				),
+				'tab_slug'          => 'advanced',
+				'toggle_slug'       => 'width',
 			),
 			'custom_width_px' => array(
 				'label'               => esc_html__( 'Custom Width', 'et_builder' ),
@@ -1188,6 +1393,8 @@ class ET_Builder_Row extends ET_Builder_Structure_Element {
 					'step' => 1,
 				),
 				'description'         => esc_html__( 'Define custom width for this Row', 'et_builder' ),
+				'tab_slug'            => 'advanced',
+				'toggle_slug'         => 'width',
 			),
 			'custom_width_percent' => array(
 				'label'           => esc_html__( 'Custom Width', 'et_builder' ),
@@ -1202,6 +1409,8 @@ class ET_Builder_Row extends ET_Builder_Structure_Element {
 					'step' => 1,
 				),
 				'description'     => esc_html__( 'Define custom width for this Row', 'et_builder' ),
+				'tab_slug'        => 'advanced',
+				'toggle_slug'     => 'width',
 			),
 			'use_custom_gutter' => array(
 				'label'             => esc_html__( 'Use Custom Gutter Width', 'et_builder' ),
@@ -1216,6 +1425,8 @@ class ET_Builder_Row extends ET_Builder_Structure_Element {
 					'gutter_width',
 				),
 				'description'       => esc_html__( 'Enable this option to define custom gutter width for this row.', 'et_builder' ),
+				'tab_slug'          => 'advanced',
+				'toggle_slug'       => 'width',
 			),
 			'gutter_width' => array(
 				'label'           => esc_html__( 'Gutter Width', 'et_builder' ),
@@ -1230,6 +1441,8 @@ class ET_Builder_Row extends ET_Builder_Structure_Element {
 				'description'     => esc_html__( 'Adjust the spacing between each column in this row.', 'et_builder' ),
 				'validate_unit'   => false,
 				'fixed_range'     => true,
+				'tab_slug'        => 'advanced',
+				'toggle_slug'     => 'width',
 			),
 			'custom_padding' => array(
 				'label'           => esc_html__( 'Custom Padding', 'et_builder' ),
@@ -1237,22 +1450,37 @@ class ET_Builder_Row extends ET_Builder_Structure_Element {
 				'mobile_options'  => true,
 				'option_category' => 'layout',
 				'description'     => esc_html__( 'Adjust padding to specific values, or leave blank to use the default padding.', 'et_builder' ),
+				'tab_slug'        => 'advanced',
+				'toggle_slug'     => 'margin_padding',
 			),
 			'custom_padding_tablet' => array(
-				'type' => 'skip',
+				'type'        => 'skip',
+				'tab_slug'    => 'advanced',
+				'toggle_slug' => 'margin_padding',
 			),
 			'custom_padding_phone' => array(
-				'type' => 'skip',
+				'type'        => 'skip',
+				'tab_slug'    => 'advanced',
+				'toggle_slug' => 'margin_padding',
 			),
 			'padding_mobile' => array(
 				'label' => esc_html__( 'Keep Custom Padding on Mobile', 'et_builder' ),
-				'type'  => 'skip', // Remaining attribute for backward compatibility
+				'type'        => 'skip', // Remaining attribute for backward compatibility
+				'tab_slug'    => 'advanced',
+				'toggle_slug' => 'margin_padding',
 			),
 			'custom_margin' => array(
 				'label'           => esc_html__( 'Custom Margin', 'et_builder' ),
 				'type'            => 'custom_margin',
 				'option_category' => 'layout',
 				'tab_slug'        => 'advanced',
+				'toggle_slug'     => 'margin_padding',
+			),
+			'background_color' => array(
+				'label'        => esc_html__( 'Background Color', 'et_builder' ),
+				'type'         => 'color-alpha',
+				'custom_color' => true,
+				'toggle_slug'  => 'background',
 			),
 			'background_image' => array(
 				'label'              => esc_html__( 'Background Image', 'et_builder' ),
@@ -1261,13 +1489,7 @@ class ET_Builder_Row extends ET_Builder_Structure_Element {
 				'upload_button_text' => esc_attr__( 'Upload an image', 'et_builder' ),
 				'choose_text'        => esc_attr__( 'Choose a Background Image', 'et_builder' ),
 				'update_text'        => esc_attr__( 'Set As Background', 'et_builder' ),
-				'tab_slug'           => 'advanced',
-			),
-			'background_color' => array(
-				'label'        => esc_html__( 'Background Color', 'et_builder' ),
-				'type'         => 'color-alpha',
-				'custom_color' => true,
-				'tab_slug'     => 'advanced',
+				'toggle_slug'        => 'background',
 			),
 			'background_video_mp4' => array(
 				'label'              => esc_html__( 'Background Video MP4', 'et_builder' ),
@@ -1277,7 +1499,7 @@ class ET_Builder_Row extends ET_Builder_Structure_Element {
 				'upload_button_text' => esc_attr__( 'Upload a video', 'et_builder' ),
 				'choose_text'        => esc_attr__( 'Choose a Background Video MP4 File', 'et_builder' ),
 				'update_text'        => esc_attr__( 'Set As Background Video', 'et_builder' ),
-				'tab_slug'           => 'advanced',
+				'toggle_slug'        => 'background',
 				'computed_affects'   => array(
 					'__video_background',
 				),
@@ -1290,26 +1512,26 @@ class ET_Builder_Row extends ET_Builder_Structure_Element {
 				'upload_button_text' => esc_attr__( 'Upload a video', 'et_builder' ),
 				'choose_text'        => esc_attr__( 'Choose a Background Video WEBM File', 'et_builder' ),
 				'update_text'        => esc_attr__( 'Set As Background Video', 'et_builder' ),
-				'tab_slug'           => 'advanced',
+				'toggle_slug'        => 'background',
 				'computed_affects'   => array(
 					'__video_background',
 				),
 			),
 			'background_video_width' => array(
-				'label'           => esc_html__( 'Background Video Width', 'et_builder' ),
-				'type'            => 'text',
-				'option_category' => 'basic_option',
-				'tab_slug'        => 'advanced',
-				'computed_affects'   => array(
+				'label'            => esc_html__( 'Background Video Width', 'et_builder' ),
+				'type'             => 'text',
+				'option_category'  => 'basic_option',
+				'toggle_slug'      => 'background',
+				'computed_affects' => array(
 					'__video_background',
 				),
 			),
 			'background_video_height' => array(
-				'label'           => esc_html__( 'Background Video Height', 'et_builder' ),
-				'type'            => 'text',
-				'option_category' => 'basic_option',
-				'tab_slug'        => 'advanced',
-				'computed_affects'   => array(
+				'label'            => esc_html__( 'Background Video Height', 'et_builder' ),
+				'type'             => 'text',
+				'option_category'  => 'basic_option',
+				'toggle_slug'      => 'background',
+				'computed_affects' => array(
 					'__video_background',
 				),
 			),
@@ -1322,7 +1544,7 @@ class ET_Builder_Row extends ET_Builder_Structure_Element {
 					'on'  => esc_html__( 'Yes', 'et_builder' ),
 				),
 				'default'         => 'off',
-				'tab_slug'        => 'advanced',
+				'toggle_slug'     => 'background',
 			),
 			'parallax' => array(
 				'label'             => esc_html__( 'Use Parallax Effect', 'et_builder' ),
@@ -1337,6 +1559,7 @@ class ET_Builder_Row extends ET_Builder_Structure_Element {
 					'parallax_method',
 				),
 				'tab_slug'          => 'advanced',
+				'toggle_slug'       => 'parallax',
 			),
 			'parallax_method' => array(
 				'label'             => esc_html__( 'Parallax Method', 'et_builder' ),
@@ -1349,6 +1572,7 @@ class ET_Builder_Row extends ET_Builder_Structure_Element {
 				'default'           => 'on',
 				'depends_show_if'   => 'on',
 				'tab_slug'          => 'advanced',
+				'toggle_slug'       => 'parallax',
 			),
 			'make_equal' => array(
 				'label'             => esc_html__( 'Equalize Column Heights', 'et_builder' ),
@@ -1360,11 +1584,24 @@ class ET_Builder_Row extends ET_Builder_Structure_Element {
 				),
 				'default'           => 'off',
 				'tab_slug'          => 'advanced',
+				'toggle_slug'       => 'width',
 			),
-			'columns' => array(
-				'type'            => 'column_settings',
+			'columns_background' => array(
+				'type'            => 'column_settings_background',
+				'option_category' => 'configuration',
+				'toggle_slug'     => 'background',
+			),
+			'columns_parallax' => array(
+				'type'            => 'column_settings_parallax',
 				'option_category' => 'configuration',
 				'tab_slug'        => 'advanced',
+				'toggle_slug'     => 'parallax',
+			),
+			'columns_padding' => array(
+				'type'            => 'column_settings_padding',
+				'option_category' => 'configuration',
+				'tab_slug'        => 'advanced',
+				'toggle_slug'     => 'margin_padding',
 			),
 			'column_padding_mobile' => array(
 				'label' => esc_html__( 'Keep Column Padding on Mobile', 'et_builder' ),
@@ -1566,6 +1803,7 @@ class ET_Builder_Row extends ET_Builder_Structure_Element {
 				'type'            => 'column_settings_css',
 				'option_category' => 'configuration',
 				'tab_slug'        => 'custom_css',
+				'toggle_slug'     => 'custom_css',
 				'priority'        => '20',
 			),
 			'disabled_on' => array(
@@ -1578,18 +1816,22 @@ class ET_Builder_Row extends ET_Builder_Structure_Element {
 				),
 				'additional_att'  => 'disable_on',
 				'option_category' => 'configuration',
+				'tab_slug'        => 'custom_css',
+				'toggle_slug'     => 'visibility',
 				'description'     => esc_html__( 'This will disable the module on selected devices', 'et_builder' ),
 			),
 			'admin_label' => array(
 				'label'       => esc_html__( 'Admin Label', 'et_builder' ),
 				'type'        => 'text',
 				'description' => esc_html__( 'This will change the label of the row in the builder for easy identification when collapsed.', 'et_builder' ),
+				'toggle_slug' => 'admin_label',
 			),
 			'module_id' => array(
 				'label'           => esc_html__( 'CSS ID', 'et_builder' ),
 				'type'            => 'text',
 				'option_category' => 'configuration',
 				'tab_slug'        => 'custom_css',
+				'toggle_slug'     => 'classes',
 				'option_class'    => 'et_pb_custom_css_regular',
 			),
 			'module_class' => array(
@@ -1597,12 +1839,14 @@ class ET_Builder_Row extends ET_Builder_Structure_Element {
 				'type'            => 'text',
 				'option_category' => 'configuration',
 				'tab_slug'        => 'custom_css',
+				'toggle_slug'     => 'classes',
 				'option_class'    => 'et_pb_custom_css_regular',
 			),
 			'columns_css_fields' => array(
 				'type'            => 'column_settings_css_fields',
 				'option_category' => 'configuration',
 				'tab_slug'        => 'custom_css',
+				'toggle_slug'     => 'classes',
 			),
 			'custom_padding_last_edited' => array(
 				'type'     => 'skip',
@@ -1756,7 +2000,7 @@ class ET_Builder_Row extends ET_Builder_Structure_Element {
 			$global_content = et_pb_load_global_module( $global_module, $function_name );
 
 			if ( '' !== $global_content ) {
-				return do_shortcode( $global_content );
+				return do_shortcode( et_pb_fix_shortcodes( wpautop( $global_content ) ) );
 			}
 		}
 
@@ -2047,6 +2291,59 @@ class ET_Builder_Row_Inner extends ET_Builder_Structure_Element {
 				'custom_margin'     => array(
 					'priority' => 1,
 				),
+				'toggle_slug'       => 'margin_padding',
+			),
+		);
+
+		$this->options_toggles = array(
+			'advanced' => array(
+				'toggles' => array(
+					'parallax'        => array(
+						'title'       => esc_html__( 'Parallax', 'et_builder' ),
+						'sub_toggles' => array(
+							'main'     => '',
+							'column_1' => esc_html__( 'Column 1', 'et_builder' ),
+							'column_2' => esc_html__( 'Column 2', 'et_builder' ),
+							'column_3' => esc_html__( 'Column 3', 'et_builder' ),
+						),
+					),
+					'height'         => array(
+						'title'    => esc_html__( 'Sizing', 'et_builder' ),
+						'priority' => 65,
+					),
+					'margin_padding' => array(
+						'title'       => esc_html__( 'Spacing', 'et_builder' ),
+						'sub_toggles' => array(
+							'main'     => '',
+							'column_1' => esc_html__( 'Column 1', 'et_builder' ),
+							'column_2' => esc_html__( 'Column 2', 'et_builder' ),
+							'column_3' => esc_html__( 'Column 3', 'et_builder' ),
+						),
+						'priority'    => 70,
+					),
+				),
+			),
+			'custom_css' => array(
+				'toggles' => array(
+					'classes' => array(
+						'title'  => esc_html__( 'CSS ID & Classes', 'et_builder' ),
+						'sub_toggles' => array(
+							'main'     => '',
+							'column_1' => esc_html__( 'Column 1', 'et_builder' ),
+							'column_2' => esc_html__( 'Column 2', 'et_builder' ),
+							'column_3' => esc_html__( 'Column 3', 'et_builder' ),
+						),
+					),
+					'custom_css' => array(
+						'title'  => esc_html__( 'Custom CSS', 'et_builder' ),
+						'sub_toggles' => array(
+							'main'     => '',
+							'column_1' => esc_html__( 'Column 1', 'et_builder' ),
+							'column_2' => esc_html__( 'Column 2', 'et_builder' ),
+							'column_3' => esc_html__( 'Column 3', 'et_builder' ),
+						),
+					),
+				),
 			),
 		);
 
@@ -2157,16 +2454,24 @@ class ET_Builder_Row_Inner extends ET_Builder_Structure_Element {
 				'mobile_options'  => true,
 				'option_category' => 'layout',
 				'description'     => esc_html__( 'Adjust padding to specific values, or leave blank to use the default padding.', 'et_builder' ),
+				'tab_slug'        => 'advanced',
+				'toggle_slug'     => 'margin_padding',
 			),
 			'custom_padding_tablet' => array(
-				'type' => 'skip',
+				'type'        => 'skip',
+				'tab_slug'    => 'advanced',
+				'toggle_slug' => 'margin_padding',
 			),
 			'custom_padding_phone' => array(
-				'type' => 'skip',
+				'type'        => 'skip',
+				'tab_slug'    => 'advanced',
+				'toggle_slug' => 'margin_padding',
 			),
 			'padding_mobile' => array(
 				'label' => esc_html__( 'Keep Custom Padding on Mobile', 'et_builder' ),
-				'type'  => 'skip', // Remaining attribute for backward compatibility
+				'type'        => 'skip', // Remaining attribute for backward compatibility
+				'tab_slug'    => 'advanced',
+				'toggle_slug' => 'margin_padding',
 			),
 			'use_custom_gutter' => array(
 				'label'             => esc_html__( 'Use Custom Gutter Width', 'et_builder' ),
@@ -2181,6 +2486,8 @@ class ET_Builder_Row_Inner extends ET_Builder_Structure_Element {
 					'gutter_width',
 				),
 				'description'       => esc_html__( 'Enable this option to define custom gutter width for this row.', 'et_builder' ),
+				'tab_slug'        => 'advanced',
+				'toggle_slug'     => 'height',
 			),
 			'gutter_width' => array(
 				'label'           => esc_html__( 'Gutter Width', 'et_builder' ),
@@ -2195,6 +2502,8 @@ class ET_Builder_Row_Inner extends ET_Builder_Structure_Element {
 				'description'     => esc_html__( 'Adjust the spacing between each column in this row.', 'et_builder' ),
 				'validate_unit'   => false,
 				'fixed_range'     => true,
+				'tab_slug'        => 'advanced',
+				'toggle_slug'     => 'height',
 			),
 			'make_equal' => array(
 				'label'             => esc_html__( 'Equalize Column Heights', 'et_builder' ),
@@ -2206,11 +2515,24 @@ class ET_Builder_Row_Inner extends ET_Builder_Structure_Element {
 				),
 				'default'           => 'off',
 				'tab_slug'          => 'advanced',
+				'toggle_slug'       => 'height',
 			),
-			'columns' => array(
-				'type'            => 'column_settings',
+			'columns_background' => array(
+				'type'            => 'column_settings_background',
+				'option_category' => 'configuration',
+				'toggle_slug'     => 'background',
+			),
+			'columns_parallax' => array(
+				'type'            => 'column_settings_parallax',
 				'option_category' => 'configuration',
 				'tab_slug'        => 'advanced',
+				'toggle_slug'     => 'parallax',
+			),
+			'columns_padding' => array(
+				'type'            => 'column_settings_padding',
+				'option_category' => 'configuration',
+				'tab_slug'        => 'advanced',
+				'toggle_slug'     => 'margin_padding',
 			),
 			'column_padding_mobile' => array(
 				'label' => esc_html__( 'Keep Column Padding on Mobile', 'et_builder' ),
@@ -2364,6 +2686,7 @@ class ET_Builder_Row_Inner extends ET_Builder_Structure_Element {
 				'type'            => 'column_settings_css',
 				'option_category' => 'configuration',
 				'tab_slug'        => 'custom_css',
+				'toggle_slug'     => 'custom_css',
 				'priority'        => '20',
 			),
 			'disabled_on' => array(
@@ -2377,17 +2700,21 @@ class ET_Builder_Row_Inner extends ET_Builder_Structure_Element {
 				'additional_att'  => 'disable_on',
 				'option_category' => 'configuration',
 				'description'     => esc_html__( 'This will disable the module on selected devices', 'et_builder' ),
+				'tab_slug'        => 'custom_css',
+				'toggle_slug'     => 'visibility',
 			),
 			'admin_label' => array(
 				'label'       => esc_html__( 'Admin Label', 'et_builder' ),
 				'type'        => 'text',
 				'description' => esc_html__( 'This will change the label of the row in the builder for easy identification when collapsed.', 'et_builder' ),
+				'toggle_slug' => 'admin_label',
 			),
 			'module_id' => array(
 				'label'           => esc_html__( 'CSS ID', 'et_builder' ),
 				'type'            => 'text',
 				'option_category' => 'configuration',
 				'tab_slug'        => 'custom_css',
+				'toggle_slug'     => 'classes',
 				'option_class'    => 'et_pb_custom_css_regular',
 			),
 			'module_class' => array(
@@ -2395,6 +2722,7 @@ class ET_Builder_Row_Inner extends ET_Builder_Structure_Element {
 				'type'            => 'text',
 				'option_category' => 'configuration',
 				'tab_slug'        => 'custom_css',
+				'toggle_slug'     => 'classes',
 				'option_class'    => 'et_pb_custom_css_regular',
 			),
 			'custom_padding_last_edited' => array(
@@ -2405,6 +2733,7 @@ class ET_Builder_Row_Inner extends ET_Builder_Structure_Element {
 				'type'            => 'column_settings_css_fields',
 				'option_category' => 'configuration',
 				'tab_slug'        => 'custom_css',
+				'toggle_slug'     => 'classes',
 			),
 		);
 
@@ -2485,7 +2814,7 @@ class ET_Builder_Row_Inner extends ET_Builder_Structure_Element {
 			$global_content = et_pb_load_global_module( $global_module, $function_name );
 
 			if ( '' !== $global_content ) {
-				return do_shortcode( $global_content );
+				return do_shortcode( et_pb_fix_shortcodes( wpautop( $global_content ) ) );
 			}
 		}
 

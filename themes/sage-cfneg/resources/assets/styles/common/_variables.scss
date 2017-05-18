@@ -2,6 +2,7 @@
 $medium-gray: #707372;
 $light-gray: #EAEBEB;
 
+$brand-blue: #4298b5;
 $medium-blue: #0093B2;
 $light-blue: #3EB1C8;
 $lighter-blue: #77C5D5;
@@ -16,7 +17,7 @@ $gold: #FCB659;
 $white: #FFFFFF;
 
 $foundation-palette: (
-  primary: #4298b5,
+  primary: $brand-blue,
   secondary: $medium-gray,
   success: $medium-green,
   warning: $gold,
@@ -28,7 +29,11 @@ $fa-font-path: '~font-awesome/fonts';
 
 $global-font-size: 18px;
 
-$body-font-family: 'Open Sans', Helvetica, Arial, sans-serif;
+$font-sans-serif: 'Open Sans', Helvetica, Arial, sans-serif;
+$font-serif: 'Amethysta';
+$font-script: 'Playball';
+
+$body-font-family: $font-sans-serif;
 $body-font-color: $medium-gray;
 
 // Width
