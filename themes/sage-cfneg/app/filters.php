@@ -53,6 +53,15 @@ collect([
 });
 
 /**
+ * Custom search form using Blade
+ */
+add_filter('get_search_form', function(){
+  $form = '';
+  echo template(realpath(config('view.paths')[0] . '/partials/searchform.blade.php'), []);
+  return $form;
+});
+
+/**
  * Render page using Blade
  */
 add_filter('template_include', function ($template) {

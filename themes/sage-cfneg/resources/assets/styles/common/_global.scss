@@ -34,13 +34,15 @@
   }
 }
 
-.absolute-bottom {
-  position: absolute;
-  bottom: 0;
-  z-index: 100;
+body.et_divi_builder #et_builder_outer_content {
+  .text-absolute-bottom.text-absolute-bottom {
+    position: absolute;
+    bottom: 0;
+    z-index: 100;
 
-  h2 {
-    margin: 0 !important;
-    line-height: .7em;
+    h2 {
+      margin: 0 !important;
+      line-height: .7em;
+    }
   }
 }

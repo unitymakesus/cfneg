@@ -2,11 +2,10 @@
   .et_pb_module {
     .button {
       @extend .button;
+      font-weight: bold;
 
       &.green {
         background: $light-green;
-        color: $white;
-        font-weight: bold;
 
         &:hover, &:active, &:focus {
           background: $medium-green;

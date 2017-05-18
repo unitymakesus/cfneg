@@ -6,7 +6,7 @@
 :not(.wp-core-ui) {
   .search-form {
     background: $brand-blue;
-    padding: 15px;
+    padding: 15px 0 15px 15px;
     display: flex;
 
     label {
@@ -23,7 +23,9 @@
     background: $brand-blue;
     border: none;
     color: $white;
-    width: 39px;
+    width: 60px;
     height: 39px;
+    font-size: 1.5em;
+    text-align: center;
   }
 }
