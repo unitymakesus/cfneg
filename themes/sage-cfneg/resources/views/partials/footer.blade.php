@@ -1,3 +1,11 @@
+@if (!is_home() && !is_front_page())
+  <div class="wrap container">
+    <div id="et_builder_outer_content">
+      {!! do_shortcode('[et_pb_section global_module="439"][/et_pb_section]') !!}
+    </div>
+  </div>
+@endif
+
 <footer class="global-footer">
   <div class="flex-row">
     <div class="medium-4 flex-columns">

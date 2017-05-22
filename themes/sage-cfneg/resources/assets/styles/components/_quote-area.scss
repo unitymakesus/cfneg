@@ -1,0 +1,19 @@
+#et_builder_outer_content .quote-area {
+  font-weight: 600;
+
+  .et_pb_row {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+  blockquote {
+    border: none !important;
+    padding: 0 !important;
+    margin: .5em !important;
+
+    p {
+      color: $brand-blue !important;
+      font-size: 1.1em;
+    }
+  }
+}

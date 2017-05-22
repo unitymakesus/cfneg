@@ -195,6 +195,10 @@ $contact-panel-right-offset: 0;
           font-weight: bold;
         }
       }
+
+      a.ctct-button {
+        display: none;
+      }
     }
   }
 }

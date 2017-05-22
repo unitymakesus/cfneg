@@ -6,9 +6,9 @@
           {!! wp_nav_menu(['menu' => 'CTA Buttons', 'container' => false, 'menu_class' => 'cta-buttons']) !!}
           {!! wp_nav_menu(['menu' => 'Social Media', 'container' => false, 'menu_class' => 'social-buttons']) !!}
           <ul>
-            <li><a href="#" data-toggle="search-dropdown" class="search-dropdown-button"><i class="fa fa-search" aria-label="search"></i></a></li>
+            <li><a href="#" data-toggle="search-dropdown" class="search-dropdown-button float-right"><i class="fa fa-search" aria-label="search"></i></a></li>
           </ul>
-          <div class="dropdown-pane" id="search-dropdown" data-dropdown data-auto-focus="true">
+          <div class="dropdown-pane bottom" id="search-dropdown" data-dropdown data-auto-focus="true">
             <?php get_search_form(true); ?>
           </div>
         </div>

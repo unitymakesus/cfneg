@@ -2,8 +2,18 @@
   top: 32px;
 }
 
+.sticky {
+  z-index: 5;
+
+  .et_fb_desktop_mode & {
+    z-index: 0;
+    position: relative !important;
+  }
+}
+
 .tip-top-bar {
   background: $brand-blue;
+  position: relative;
 }
 
 .tip-top-links {
@@ -65,5 +75,6 @@
 }
 
 .top-bar {
+  position: relative;
   border-bottom: 3px solid $light-gray;
 }

@@ -106,8 +106,7 @@
     }
 
     & > a {
-      @extend h6;
-      color: $rose !important;
+      @extend .type-small-rose-serif;
       text-decoration: none;
       cursor: default;
     }

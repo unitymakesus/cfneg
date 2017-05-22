@@ -90,7 +90,7 @@ function cfneg_class_file_autoloader( $class_name ) {
 spl_autoload_register( 'cfneg_class_file_autoloader' );
 
 /**
- * Load custom divi blog module
+ * Divi Plugin Customizations
  *
  */
 add_action( 'wp', function() {
@@ -99,12 +99,17 @@ add_action( 'wp', function() {
     return;
   }
 
- // get_template_part( 'custom-modules/cbm' );
+  // Load custom blog module layout
   $cbm = new CFNEG_ET_Builder_Module_Blog();
   remove_shortcode( 'et_pb_blog' );
   add_shortcode( 'et_pb_blog', array($cbm, '_shortcode_callback') );
 }, 9999 );
 
+// Unenqueue/Dequeue/Deregister divi style
+function divi_dequeue() {
+  wp_dequeue_style('et-builder-modules-style');
+}
+add_action( 'wp_enqueue_scripts', 'divi_dequeue', 999 );
 
 
 /**

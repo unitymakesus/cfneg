@@ -1,40 +1,47 @@
-h1, .h1 {
+/**
+ * Text Style Type Definitions
+ */
+
+.type-large-rose-serif {
   font-family: $font-serif;
   font-size: 50px;
   color: $rose;
 }
 
-h2, .h2 {
+.type-medium-bold-blue {
   font-family: $body-font-family;
-  font-weight: 800;
+  font-weight: 600;
   font-size: 34px;
   color: $brand-blue;
 }
 
-h3, .h3 {
-  font-weight: 800;
+.type-bold-white-on-blue {
+  font-family: $body-font-family;
+  font-weight: 600;
   font-size: 20px;
   color: $white;
   background: $brand-blue;
 }
 
-h4, .h4 {
+.type-small-bold-white-on-blue {
+  font-family: $body-font-family;
   font-weight: 800;
   font-size: 16px;
   color: $white;
   background: $brand-blue;
 }
 
-h5, .h5 {
+.type-bold-blue {
+  font-family: $body-font-family;
   font-weight: 800;
   font-size: 24px;
   color: $brand-blue;
 }
 
-h6, .h6 {
+.type-small-rose-serif {
+  font-family: $font-serif;
   font-weight: 400;
   font-size: 20px;
-  font-family: $font-serif;
   color: $rose;
 }
 
@@ -50,14 +57,77 @@ h6, .h6 {
   font-family: "Playball";
 }
 
-body.home.et_divi_builder #et_builder_outer_content {
-  .et_pb_text {
-    h2 {
-      @extend h1;
+#et_builder_outer_content {
+  .et_pb_section {
+    /**
+     * Section-specific styles
+     */
+
+    // Patterned and light blue background
+    &.pattern, &.background-light-blue {
+      h3 {
+        @extend .type-bold-blue;
+        padding-bottom: 5px;
+
+        & + p + h3 {
+          padding-top: .5em;
+        }
+      }
     }
 
-    h3 {
-      @extend h2;
+    // Fundholder profile
+    &.fundholder-profile {
+      h1 {
+        @extend .type-large-rose-serif;
+        padding-bottom: .5em;
+      }
+
+      h2 {
+        @extend .type-bold-blue;
+      }
+    }
+
+    /**
+     * Module-specific text styles
+     */
+
+    // Generic text modules
+    .et_pb_text {
+      h2 {
+        @extend .type-large-rose-serif;
+      }
+
+      h3 {
+        @extend .type-medium-bold-blue;
+
+        & + h4 {
+          padding-top: .5em;
+        }
+      }
+
+      h4 {
+        @extend .type-bold-blue;
+      }
+
+      // Fundholder sidebar styles
+      &.fundholder-connect {
+        h2 {
+          @extend .type-medium-bold-blue;
+          font-weight: 700;
+        }
+
+        p {
+          font-weight: 700;
+        }
+
+        a {
+          font-weight: 700;
+
+          &:hover, &:active, &:focus {
+            text-decoration: underline;
+          }
+        }
+      }
     }
   }
 }

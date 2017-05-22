@@ -1,27 +1,53 @@
-.et_divi_builder #et_builder_outer_content {
+@mixin watermark-mixin() {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 2%;
+  background: url('../images/column.svg') no-repeat top left;
+  background-size: cover;
+}
+
+#et_builder_outer_content {
   .et_pb_section {
     &.pattern {
       @include pattern;
+      background-color: $white;
+    }
+
+    &.background-light-blue {
+      background-color: rgba($light-blue, .15) !important;
     }
 
     &.watermark {
-      padding: 2%;
+      padding: 25px;
 
-      &::before {
-        $watermark-width: 23%;
-        content: "";
-        width: $watermark-width;
-        position: absolute;
-        left: 3%;
-        top: 0;
-        height: 100%;
-        background: url('../images/column.svg') no-repeat top left;
-        background-size: cover;
+      &.large {
+        &::before {
+          @include watermark-mixin;
+          width: 23%;
+          height: 100%;
+        }
+
+        .et_pb_row {
+          padding-left: 13%;
+
+          &::before {
+            display: none;
+          }
+        }
       }
 
       .et_pb_row {
         width: 80% !important;
-        padding-left: 13%;
+        padding-left: 7%;
+
+        &::before {
+          @include watermark-mixin;
+          width: 12%;
+          left: -5%;
+          top: -25px;
+          bottom: -25px;
+        }
       }
     }
   }

@@ -7,6 +7,7 @@
 @include foundation-everything;
 
 @import "common/a11y";
+@import "common/divi_builder_styles";
 @import "common/global";
 @import "common/typography";
 
@@ -15,8 +16,10 @@
 @import "components/comments";
 @import "components/forms";
 @import "components/menu";
+@import "components/quote-area";
 @import "components/search";
 @import "components/slider";
+@import "components/stay-connected";
 @import "components/social";
 @import "components/wp-classes";
 
