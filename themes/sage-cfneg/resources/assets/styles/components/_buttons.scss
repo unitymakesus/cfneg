@@ -8,12 +8,16 @@
         background: $light-green;
 
         &:hover, &:active, &:focus {
-          background: $medium-green;
+          background: darken($light-green, 10%);
         }
       }
 
       &.rose {
         background-color: $rose;
+
+        &:hover, &:active, &:focus {
+          background: darken($rose, 10%);
+        }
       }
 
       .script {

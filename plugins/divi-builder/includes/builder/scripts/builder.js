@@ -2,7 +2,7 @@ var ET_PageBuilder = ET_PageBuilder || {};
 
 window.wp = window.wp || {};
 
-window.et_builder_version = '3.0.45';
+window.et_builder_version = '3.0.46';
 
 ( function($) {
 	var et_error_modal_shown = window.et_error_modal_shown,
@@ -8134,8 +8134,10 @@ window.et_builder_version = '3.0.45';
 
 				et_pb_file_frame.on( 'select', function() {
 					var attachment = et_pb_file_frame.state().get('selection').first().toJSON();
+					var $upload_field = $this_el.siblings( '.et-pb-upload-field' );
 
-					$this_el.siblings( '.et-pb-upload-field' ).val( attachment.url );
+					$upload_field.val( attachment.url );
+					$upload_field.trigger( 'change' );
 
 					et_pb_generate_preview_image( $this_el );
 				});

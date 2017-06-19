@@ -1,1 +1,0 @@
-#et-top-navigation { visibility: hidden; }

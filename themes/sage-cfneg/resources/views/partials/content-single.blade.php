@@ -1,9 +1,10 @@
 <article @php(post_class())>
   <header>
-    <h1 class="entry-title">{{ get_the_title() }}</h1>
     @include('partials/entry-meta')
+    <h1 class="entry-title">{{ get_the_title() }}</h1>
   </header>
   <div class="entry-content">
+    {!! get_the_post_thumbnail(get_the_id()) !!}
     @php(the_content())
   </div>
   <footer>

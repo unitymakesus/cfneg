@@ -115,6 +115,10 @@
       &.impact-#{$name} {
         .et_pb_blurb_container {
           background: #{$color};
+
+          &:hover, &:focus, &:active {
+            background: darken($color, 10%);
+          }
         }
       }
     }

@@ -15,20 +15,18 @@
   color: $brand-blue;
 }
 
-.type-bold-white-on-blue {
+.type-bold-white {
   font-family: $body-font-family;
-  font-weight: 600;
+  font-weight: 700;
   font-size: 20px;
   color: $white;
-  background: $brand-blue;
 }
 
-.type-small-bold-white-on-blue {
+.type-small-bold-white {
   font-family: $body-font-family;
   font-weight: 800;
   font-size: 16px;
   color: $white;
-  background: $brand-blue;
 }
 
 .type-bold-blue {
@@ -56,6 +54,46 @@
 .script {
   font-family: "Playball";
 }
+
+// Single blog post styles
+.single .entry-content {
+  h2 {
+    @extend .type-medium-bold-blue;
+  }
+
+  h3 {
+    @extend .type-bold-blue;
+  }
+
+  h4 {
+    @extend .type-small-rose-serif;
+  }
+
+  h5 {
+    font-weight: 600;
+    font-size: 24px;
+  }
+
+  h6 {
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  strong {
+    font-weight: 600;
+  }
+
+  ol, ul {
+    margin-left: 2em;
+  }
+
+  a {
+    &:hover, &:focus, &:active {
+      text-decoration: underline;
+    }
+  }
+}
+
 
 #et_builder_outer_content {
   .et_pb_section {
@@ -109,6 +147,12 @@
         @extend .type-bold-blue;
       }
 
+      a {
+        &:hover, &:active, &:focus {
+          text-decoration: underline;
+        }
+      }
+
       // Fundholder sidebar styles
       &.fundholder-connect {
         h2 {
@@ -122,10 +166,6 @@
 
         a {
           font-weight: 700;
-
-          &:hover, &:active, &:focus {
-            text-decoration: underline;
-          }
         }
       }
     }

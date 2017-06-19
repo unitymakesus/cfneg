@@ -2296,6 +2296,19 @@ class ET_Builder_Row_Inner extends ET_Builder_Structure_Element {
 		);
 
 		$this->options_toggles = array(
+			'general' => array(
+				'toggles' => array(
+					'background'     => array(
+						'title'       => esc_html__( 'Background', 'et_builder' ),
+						'sub_toggles' => array(
+							'main'     => '',
+							'column_1' => esc_html__( 'Column 1', 'et_builder' ),
+							'column_2' => esc_html__( 'Column 2', 'et_builder' ),
+							'column_3' => esc_html__( 'Column 3', 'et_builder' ),
+						),
+					),
+				),
+			),
 			'advanced' => array(
 				'toggles' => array(
 					'parallax'        => array(

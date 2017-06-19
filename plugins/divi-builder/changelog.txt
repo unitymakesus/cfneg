@@ -1,4 +1,18 @@
-version 2.0.7 ( updated 5-11-2016 )
+version 2.0.8 ( updated 5-18-2017 )
+- Updated translations with missing translations from the options organization update.
+- Added an option to sort WooCommerce products by date and to change the order to "newest to oldest" for WooCommerce shortcodes that support the filter. 
+- The text overlay border radius setting is now conditional on the text overlay setting being enabled for slider modules. 
+- Fixed a bug that prevented the conditional image alt text setting from being triggered in the image module after having added an image from the WordPress media library interface.
+- Fixed a bug that caused conditional fullwidth slider background settings from appearing in the Divi Builder settings popup.
+- Added back missing column background settings to rows within specialty sections.
+- Fixed a bug that caused the Right Click > Disable Global function to fail for global rows in the Visual Builder.
+	* scripts/builder.js
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/frontend-builder/assets/css/style.css
+	* includes/builder/main-modules.php
+	* includes/builder/main-structure-elements.php
+
+version 2.0.7 ( updated 5-11-2017 )
 - Improved option organization.
 - Added second tier option groups for all Divi Builder settings.
 - Added option search functionality to the Visual Builder.

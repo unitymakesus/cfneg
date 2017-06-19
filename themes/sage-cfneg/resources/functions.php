@@ -90,6 +90,35 @@ function cfneg_class_file_autoloader( $class_name ) {
 spl_autoload_register( 'cfneg_class_file_autoloader' );
 
 /**
+ * Define which templates have a sidebar
+ */
+add_filter('sage/display_sidebar', function ($display) {
+  static $display;
+
+  isset($display) || $display = in_array(true, [
+    // The sidebar will be displayed if any of the following return true
+    is_single(),
+    is_home(),
+    is_archive()
+  ]);
+
+  return $display;
+});
+
+
+/**
+ * Customize excerpts in blog directory pages
+ */
+add_filter( 'excerpt_length', function( $length ) {
+	return 10;
+}, 999 );
+
+add_filter( 'excerpt_more', function( $length ) {
+	return false;
+}, 999 );
+
+
+/**
  * Divi Plugin Customizations
  *
  */

@@ -10,9 +10,11 @@
     {!! get_search_form(false) !!}
   @endif
 
-  @while (have_posts()) @php(the_post())
-    @include ('partials.content-'.(get_post_type() !== 'post' ? get_post_type() : get_post_format()))
-  @endwhile
+  <div class="inner-content align-stretch" data-equalizer>
+    @while (have_posts()) @php(the_post())
+      @include ('partials.content-'.(get_post_type() !== 'post' ? get_post_type() : get_post_format()))
+    @endwhile
+  </div>
 
   {!! get_the_posts_navigation() !!}
 @endsection

@@ -14,7 +14,7 @@ backups/
 blogs.dir/
 cache/
 db.php
-index.php
+/index.php
 upgrade/
 uploads/
 wp-cache-config.php

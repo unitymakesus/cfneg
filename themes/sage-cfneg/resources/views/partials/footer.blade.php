@@ -1,3 +1,28 @@
+@if (is_single())
+  @php
+    $category = get_the_category();
+    $related = new WP_Query([
+      'posts_per_page' => 3,
+      'category' => $category[0]->slug
+    ]);
+  @endphp
+
+  @if ($related->have_posts())
+    <div class="recommended-stories">
+      <div class="row column">
+        <h2 class="section-title">Recommended Stories</h2>
+      </div>
+      <div class="background-light-gray">
+        <div class="row" data-equalizer>
+          @while ($related->have_posts()) @php($related->the_post())
+            @include ('partials.content')
+          @endwhile
+        </div>
+      </div>
+    </div>
+  @endif
+@endif
+
 @if (!is_home() && !is_front_page())
   <div class="wrap container">
     <div id="et_builder_outer_content">

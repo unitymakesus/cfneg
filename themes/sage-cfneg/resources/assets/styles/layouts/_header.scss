@@ -31,6 +31,10 @@
     display: block;
     line-height: 32px;
     color: $white;
+
+    &:hover, &:active, &:focus {
+      color: lighten($light-green, 5%);
+    }
   }
 }
 
@@ -40,17 +44,26 @@
     font-size: 14px;
     font-weight: bold;
     padding: 0 30px;
+    color: $white !important;
   }
 
   li:first-child {
     a {
       background: $light-green;
+
+      &:hover, &:active, &:focus {
+        background: darken($light-green, 10%);
+      }
     }
   }
 
   li:nth-child(2) {
     a {
       background: $rose;
+
+      &:hover, &:active, &:focus {
+        background: darken($rose, 10%);
+      }
     }
   }
 }

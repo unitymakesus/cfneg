@@ -1,3 +1,7 @@
+.et_divi_builder #et_builder_outer_content .et-fb-page-settings-bar {
+  padding-bottom: 50px;
+}
+
 /* These "global" styles need to be seperate so they don't get wrapped in divi-builder file /less/frontend-builder-plugin-style.less */
 #wp-admin-bar-et-use-visual-builder a:before {
   font-family: 'ETmodules' !important;

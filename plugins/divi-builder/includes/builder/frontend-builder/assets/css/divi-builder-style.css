@@ -130,6 +130,7 @@
   padding: 8px 21px;
   position: fixed;
   pointer-events: none;
+  -webkit-transition: opacity 0.3s ease-out;
   transition: opacity 0.3s ease-out;
   top: -999em;
   visibility: hidden;
@@ -813,6 +814,7 @@
   margin: 10px auto;
 }
 .et_divi_builder #et_builder_outer_content .et-fb-add-wrap .et-fb-button {
+  -webkit-transition: padding 0.15s ease-in-out, margin 0.15s ease-in-out;
   transition: padding 0.15s ease-in-out, margin 0.15s ease-in-out;
   padding: 6px;
 }
@@ -1046,6 +1048,7 @@
   right: 0;
   margin-top: -6px;
   color: #2b87da;
+  -webkit-transition: opacity 0.3s ease-in-out;
   transition: opacity 0.3s ease-in-out;
 }
 .et_divi_builder #et_builder_outer_content .et-fb-outline--is-dragged .et-fb-padding-indicator-value {
@@ -1144,6 +1147,7 @@
 .et_divi_builder #et_builder_outer_content .et-fb-row-button-wrap--add .et-fb-button,
 .et_divi_builder #et_builder_outer_content .et-fb-section-button-wrap--add .et-fb-button {
   box-shadow: 5px 5px 15px rgba(43, 135, 218, 0.15);
+  -webkit-transition: padding 0.25s ease-in-out, margin 0.25s ease-in-out;
   transition: padding 0.25s ease-in-out, margin 0.25s ease-in-out;
   padding: 6px;
 }
@@ -1502,6 +1506,7 @@
   max-width: none !important;
 }
 .et_divi_builder #et_builder_outer_content #main-footer {
+  -webkit-transition: background-color 0.4s, color 0.4s, opacity 0.4s ease-in-out, -webkit-transform 0.4s;
   transition: background-color 0.4s, color 0.4s, opacity 0.4s ease-in-out, -webkit-transform 0.4s;
   transition: background-color 0.4s, color 0.4s, transform 0.4s, opacity 0.4s ease-in-out;
   transition: background-color 0.4s, color 0.4s, transform 0.4s, opacity 0.4s ease-in-out, -webkit-transform 0.4s;
@@ -3495,6 +3500,7 @@
   left: 50%;
   -webkit-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
+  -webkit-transition: background .3s ease;
   transition: background 0.3s ease;
 }
 .et_divi_builder #et_builder_outer_content .et-fb-icon--page-settings-main-buttons > .et-fb-icon__child,
@@ -3510,6 +3516,7 @@
 .et_divi_builder #et_builder_outer_content .et-fb-icon--page-settings-main-buttons > .et-fb-icon__child:after,
 .et_divi_builder #et_builder_outer_content .et-fb-icon--page-settings-main-buttons > .et-fb-icon__child:before {
   content: "";
+  -webkit-transition: right .1s ease,left .1s ease;
   transition: right 0.1s ease, left 0.1s ease;
 }
 .et_divi_builder #et_builder_outer_content .et-fb-icon--page-settings-main-buttons > .et-fb-icon__child:before {
@@ -3524,6 +3531,7 @@
 }
 .et_divi_builder #et_builder_outer_content .et-fb-icon--page-settings-main-buttons > .et-fb-icon__child--active {
   background: transparent;
+  -webkit-transition: background .2s ease;
   transition: background 0.2s ease;
 }
 .et_divi_builder #et_builder_outer_content .et-fb-icon--page-settings-main-buttons > .et-fb-icon__child--active,
@@ -3536,6 +3544,7 @@
   width: 20px;
   -webkit-transform-origin: 50% 50%;
   transform-origin: 50% 50%;
+  -webkit-transition: width 0.1s ease 0.1s, -webkit-transform 0.1s cubic-bezier(0.28, 0.55, 0.385, 1.65) 0.2s;
   transition: width 0.1s ease 0.1s, -webkit-transform 0.1s cubic-bezier(0.28, 0.55, 0.385, 1.65) 0.2s;
   transition: width 0.1s ease 0.1s, transform 0.1s cubic-bezier(0.28, 0.55, 0.385, 1.65) 0.2s;
   transition: width 0.1s ease 0.1s, transform 0.1s cubic-bezier(0.28, 0.55, 0.385, 1.65) 0.2s, -webkit-transform 0.1s cubic-bezier(0.28, 0.55, 0.385, 1.65) 0.2s;
@@ -3659,6 +3668,7 @@
   background: rgba(108, 46, 185, 0.1);
   width: 60px;
   height: 100%;
+  -webkit-transition: opacity .2s ease;
   transition: opacity 0.2s ease;
 }
 .et_divi_builder #et_builder_outer_content .et-fb-modal .et-fb-button--resize {
@@ -3682,6 +3692,7 @@
   font-size: .8125rem;
   font-weight: 600;
   color: #4c5866!important;
+  -webkit-transition: height 0.5s ease-in-out, top 0.5s ease-in-out, left 0.5s ease-in-out;
   transition: height 0.5s ease-in-out, top 0.5s ease-in-out, left 0.5s ease-in-out;
 }
 .et_divi_builder #et_builder_outer_content .et-fb-settings-heading {
@@ -3782,6 +3793,7 @@
   padding: 13px 15px;
   display: block;
   box-shadow: none;
+  -webkit-transition: background 0.5s ease-in-out;
   transition: background 0.5s ease-in-out;
   line-height: 1;
 }
@@ -3943,6 +3955,7 @@
   font-size: 16px;
   line-height: 1em;
   opacity: .9;
+  -webkit-transition: opacity .6s;
   transition: opacity .6s;
   font-family: etbuilder;
   content: "o";
@@ -3993,6 +4006,7 @@
   font-size: 16px;
   line-height: 1em;
   opacity: .9;
+  -webkit-transition: opacity .6s;
   transition: opacity .6s;
   font-family: ETmodules;
   content: "\E61F";
@@ -4148,6 +4162,7 @@
   margin: 0;
   padding: 12px;
   box-sizing: border-box;
+  -webkit-transition: background .2s ease;
   transition: background .2s ease;
   color: #4c5866;
   font-family: Open Sans;
@@ -4446,6 +4461,7 @@
   flex-direction: row;
   background: #7e3bd0;
   padding: 0;
+  -webkit-transition: opacity .2s ease;
   transition: opacity 0.2s ease;
 }
 .et_divi_builder #et_builder_outer_content .et-fb-modal__filter-active .et-fb-tabs__list {
@@ -4459,6 +4475,7 @@
 .et_divi_builder #et_builder_outer_content .et-fb-tabs__list__global .et-fb-tabs__item {
   background: #f1f5f9;
   color: #8e969e;
+  -webkit-transition: background 0.2s ease, -webkit-transform 0.2s ease;
   transition: background 0.2s ease, -webkit-transform 0.2s ease;
   transition: transform .2s ease,background .2s ease;
   transition: transform 0.2s ease, background 0.2s ease, -webkit-transform 0.2s ease;
@@ -4483,6 +4500,7 @@
   display: block;
   max-height: 40px;
   padding: 13px 23px;
+  -webkit-transition: background 0.2s ease, opacity 0.15s ease, -webkit-transform 0.2s ease;
   transition: background 0.2s ease, opacity 0.15s ease, -webkit-transform 0.2s ease;
   transition: background .2s ease,transform .2s ease,opacity .15s ease;
   transition: background 0.2s ease, transform 0.2s ease, opacity 0.15s ease, -webkit-transform 0.2s ease;
@@ -4507,6 +4525,7 @@
   box-sizing: border-box;
   overflow-y: auto;
   position: relative;
+  -webkit-transition: padding .2s ease;
   transition: padding 0.2s ease;
 }
 .et_divi_builder #et_builder_outer_content .et-fb-modal__module-settings .et-fb-tabs__panel {
@@ -4558,6 +4577,7 @@
   top: 90px;
   margin-top: -90px;
   z-index: 99;
+  -webkit-transition: top .2s ease;
   transition: top 0.2s ease;
 }
 .et_divi_builder #et_builder_outer_content .et-fb-options-filter input.et-fb-settings-option-input::-webkit-input-placeholder {
@@ -4593,6 +4613,7 @@
 .et_divi_builder #et_builder_outer_content .et-fb-modal__filter-active .et-fb-options-filter input.et-fb-settings-option-input {
   background: transparent;
   color: #fff;
+  -webkit-transition: none;
   transition: none;
 }
 .et_divi_builder #et_builder_outer_content .et-fb-modal__filter-active .et-fb-options-filter input.et-fb-settings-option-input:focus {
@@ -4631,6 +4652,7 @@
   border-radius: 3px;
   padding: 7px 10px;
   box-sizing: border-box;
+  -webkit-transition: background .2s ease;
   transition: background .2s ease;
   color: #4c5866;
   font-family: Open Sans;
@@ -4692,6 +4714,7 @@
   border-radius: 50%;
   margin-left: 7px;
   padding: 1px 0 0;
+  -webkit-transition: fill 0.2s ease, background-color 0.2s ease;
   transition: fill 0.2s ease, background-color 0.2s ease;
   line-height: 1;
   text-align: center;
@@ -4758,6 +4781,7 @@
   position: absolute;
   right: 0;
   top: 22px;
+  -webkit-transition: fill 0.2s ease, -webkit-transform 0.2s ease;
   transition: fill 0.2s ease, -webkit-transform 0.2s ease;
   transition: transform .2s ease,fill .2s ease;
   transition: transform 0.2s ease, fill 0.2s ease, -webkit-transform 0.2s ease;
@@ -4768,9 +4792,13 @@
 }
 .et_divi_builder #et_builder_outer_content .et-fb-form__toggle h3 {
   color: #a2b0c1;
+  font-weight: 400;
+  font-family: Open Sans;
+  text-transform: none;
   font-size: 20px;
   padding-bottom: 20px;
   padding-top: 20px;
+  -webkit-transition: color 0.2s ease, padding-top 0.2s ease;
   transition: color 0.2s ease, padding-top 0.2s ease;
 }
 .et_divi_builder #et_builder_outer_content .et-fb-form__toggle.et-fb-form__toggle-opened {
@@ -4815,6 +4843,7 @@
   margin: 0;
   margin-left: -4px !important;
   margin-top: -6px !important;
+  -webkit-transition: fill 0.2s ease, -webkit-transform 0.2s ease;
   transition: fill 0.2s ease, -webkit-transform 0.2s ease;
   transition: transform .2s ease,fill .2s ease;
   transition: transform 0.2s ease, fill 0.2s ease, -webkit-transform 0.2s ease;
@@ -4870,6 +4899,7 @@
   font-size: .8125rem;
   line-height: normal;
   padding: 7px 10px;
+  -webkit-transition: background .2s ease;
   transition: background 0.2s ease;
 }
 .et_divi_builder #et_builder_outer_content input.et-fb-form-input:focus {
@@ -4925,6 +4955,7 @@
   line-height: normal;
   padding: 7px 10px;
   box-sizing: border-box;
+  -webkit-transition: background .2s ease;
   transition: background 0.2s ease;
 }
 .et_divi_builder #et_builder_outer_content textarea.et-fb-form-textarea:focus {
@@ -5042,8 +5073,11 @@
   box-shadow: none!important;
   margin-left: 15px!important;
   padding: 0 16px!important;
+  -webkit-transition-duration: .2s;
   transition-duration: .2s;
+  -webkit-transition-property: background;
   transition-property: background;
+  -webkit-transition-timing-function: ease;
   transition-timing-function: ease;
   color: #fff!important;
   font-size: 13px;
@@ -5263,6 +5297,7 @@
   box-shadow: none;
   margin: 0;
   padding: 8px 10px;
+  -webkit-transition: border-color 0.2s ease;
   transition: border-color 0.2s ease;
   color: #4c5866;
   font-size: .8125rem;
@@ -5270,11 +5305,13 @@
 }
 .et_divi_builder #et_builder_outer_content textarea.et-fb-settings-option-textarea:focus {
   background: #e0e5ea;
+  -webkit-transition: background ease;
   transition: background ease;
 }
 .et_divi_builder #et_builder_outer_content .et-fb-tabs__panel--css textarea.et-fb-settings-option-textarea {
   color: #29c4a9;
   font-weight: 700;
+  -webkit-transition: background .2s ease,color .2s ease;
   transition: background 0.2s ease, color 0.2s ease;
 }
 .et_divi_builder #et_builder_outer_content .et-fb-tabs__panel--css textarea.et-fb-settings-option-textarea:focus {
@@ -5430,6 +5467,7 @@
   background: #f1f5f9;
   margin: 0;
   padding: 10px;
+  -webkit-transition: background .2s ease,color .2s ease;
   transition: background .2s ease,color .2s ease;
   color: #4c5866;
   font-size: 16px;
@@ -5499,6 +5537,7 @@
   margin-right: 1%;
 }
 .et_divi_builder #et_builder_outer_content .et-fb-select-fontstyle-button:after {
+  -webkit-transition: opacity .2s ease;
   transition: opacity .2s ease;
   color: #4c5866;
   font: normal 20px/1 etbuilder;
@@ -5523,6 +5562,7 @@
 }
 .et_divi_builder #et_builder_outer_content .et-fb-select-fontstyle-button--active {
   background: #2b87da!important;
+  -webkit-transition: color .2s ease;
   transition: color .2s ease;
   color: #fff !important;
 }
@@ -5543,6 +5583,7 @@
 }
 .et_divi_builder #et_builder_outer_content .et-fb-select-fontstyle--reset:after {
   content: "\E61F";
+  -webkit-transition: opacity .2s ease;
   transition: opacity .2s ease;
   color: #4c5866;
   font-family: ETmodules;
@@ -5692,6 +5733,7 @@
 }
 .et_divi_builder #et_builder_outer_content .et-fb .mce-menu .mce-menu-item,
 .et_divi_builder.et-fb .mce-menu .mce-menu-item {
+  -webkit-transition: background .2s ease;
   transition: background 0.2s ease;
 }
 .et_divi_builder #et_builder_outer_content .et-fb .mce-menu .mce-menu-item.mce-selected,
@@ -5781,6 +5823,7 @@
   border-radius: 2px;
   padding: 5px;
   box-sizing: border-box;
+  -webkit-transition: background-color 0.2s ease, color 0.2s ease;
   transition: background-color 0.2s ease, color 0.2s ease;
   color: #a2b0c1;
   vertical-align: top;
@@ -5795,6 +5838,7 @@
   border-radius: 2px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   margin: 0 50% 0 0;
+  -webkit-transition: margin .2s ease;
   transition: margin .2s ease;
   cursor: pointer;
 }
@@ -6165,6 +6209,7 @@
   box-shadow: none!important;
   margin-left: 15px!important;
   padding: 0 20px!important;
+  -webkit-transition: background .2s ease;
   transition: background .2s ease;
   color: #fff!important;
   font-size: .8125rem;
@@ -6385,8 +6430,11 @@
   box-shadow: none;
   margin-left: 14px;
   padding: 0 9px;
+  -webkit-transition-duration: .2s;
   transition-duration: .2s;
+  -webkit-transition-property: background;
   transition-property: background;
+  -webkit-transition-timing-function: ease;
   transition-timing-function: ease;
   color: #fff;
   font-size: 11px;
@@ -6465,6 +6513,7 @@
   color: rgba(255, 255, 255, 0.6);
   font-size: .9375rem;
   line-height: 1.25rem;
+  -webkit-transition: color .2s ease;
   transition: color .2s ease;
   cursor: pointer;
 }
@@ -6481,6 +6530,7 @@
 }
 .et_divi_builder #et_builder_outer_content .et-fb-select__option--active {
   font-weight: 600;
+  -webkit-transition: none;
   transition: none;
 }
 .et_divi_builder #et_builder_outer_content .et-fb-select__option--active,
@@ -6783,6 +6833,7 @@
   margin: 0;
   padding: 0;
   bottom: 0!important;
+  -webkit-transition: height .2s ease,width .2s ease,margin .2s ease;
   transition: height 0.2s ease, width 0.2s ease, margin 0.2s ease;
 }
 .et_divi_builder #et_builder_outer_content .et-fb-skeleton__content .et-fb-add-wrap.et-fb-children--column .et-fb-button:hover,
@@ -7061,6 +7112,7 @@
   text-align: center;
   text-indent: -9999em;
   padding: 2px 0;
+  -webkit-transition: background .2s ease;
   transition: background 0.2s ease;
 }
 .et_divi_builder #et_builder_outer_content .et-fb-columns-layout li.et-fb-selected-item .column-block {
@@ -7475,6 +7527,7 @@
 }
 .et_divi_builder #et_builder_outer_content .et-fb-modal-add-module-container li.et_fb_specialty_layout_item:hover {
   background: #e9edf0;
+  -webkit-transition: background .5s;
   transition: background 0.5s;
 }
 .et_divi_builder #et_builder_outer_content .et-fb-modal-add-module-container li.et_fb_specialty_layout_item:hover .et_pb_specialty_column {
@@ -7855,6 +7908,7 @@
 .et_divi_builder #et_builder_outer_content #et-fb-right-click-controls > ul li .et_fb_right_click_menu_item .et_fb_right_click_inner--hidden {
   position: absolute;
   left: -100%;
+  -webkit-transition: left 0.2s cubic-bezier(0.77, 0, 0.175, 1);
   transition: left 0.2s cubic-bezier(0.77, 0, 0.175, 1);
 }
 .et_divi_builder #et_builder_outer_content #et-fb-right-click-controls > ul li .et_fb_right_click_menu_item .et_fb_right_click_inner--disable_options {
@@ -7867,6 +7921,7 @@
 .et_divi_builder #et_builder_outer_content #et-fb-right-click-controls > ul li .et_fb_right_click_menu_item .et_fb_right_click_inner--disable_options--visible {
   position: relative;
   right: 0;
+  -webkit-transition: right 0.2s cubic-bezier(0.77, 0, 0.175, 1);
   transition: right 0.2s cubic-bezier(0.77, 0, 0.175, 1);
 }
 .et_divi_builder #et_builder_outer_content #et-fb-right-click-controls > ul li .et_fb_right_click_menu_item .et_fb_right_click_inner--disable_option {

@@ -3706,6 +3706,7 @@ class ET_Builder_Module_Slider_Item extends ET_Builder_Module {
 				),
 				'affects'           => array(
 					'text_overlay_color',
+					'text_border_radius',
 				),
 				'tab_slug'        => 'advanced',
 				'toggle_slug'     => 'overlay',
@@ -3850,6 +3851,7 @@ class ET_Builder_Module_Slider_Item extends ET_Builder_Module {
 					'max'  => '100',
 					'step' => '1',
 				),
+				'depends_show_if' => 'on',
 				'tab_slug'        => 'advanced',
 				'toggle_slug'     => 'overlay',
 			),
@@ -4624,6 +4626,7 @@ class ET_Builder_Module_Post_Slider extends ET_Builder_Module {
 				),
 				'affects'           => array(
 					'text_overlay_color',
+					'text_border_radius',
 				),
 				'tab_slug'         => 'advanced',
 				'toggle_slug'      => 'overlay',
@@ -4788,6 +4791,7 @@ class ET_Builder_Module_Post_Slider extends ET_Builder_Module {
 					'max'  => '100',
 					'step' => '1',
 				),
+				'depends_show_if' => 'on',
 				'tab_slug'        => 'advanced',
 				'toggle_slug'     => 'overlay',
 			),
@@ -14461,7 +14465,8 @@ class ET_Builder_Module_Shop extends ET_Builder_Module {
 					'menu_order'  => esc_html__( 'Default Sorting', 'et_builder' ),
 					'popularity' => esc_html__( 'Sort By Popularity', 'et_builder' ),
 					'rating' => esc_html__( 'Sort By Rating', 'et_builder' ),
-					'date' => esc_html__( 'Sort By Date', 'et_builder' ),
+					'date' => esc_html__( 'Sort By Date: Oldest To Newest', 'et_builder' ),
+					'date-desc' => esc_html__( 'Sort By Date: Newest To Oldest', 'et_builder' ),
 					'price' => esc_html__( 'Sort By Price: Low To High', 'et_builder' ),
 					'price-desc' => esc_html__( 'Sort By Price: High To Low', 'et_builder' ),
 				),
@@ -14580,7 +14585,7 @@ class ET_Builder_Module_Shop extends ET_Builder_Module {
 		 * Hence customize WooCommerce' product query via modify_woocommerce_shortcode_products_query method
 		 * @see http://docs.woothemes.com/document/woocommerce-shortcodes/#section-5
 		 */
-		$modify_woocommerce_query = 'best_selling' !== $type && in_array( $orderby, array( 'menu_order', 'price', 'price-desc', 'rating', 'popularity' ) );
+		$modify_woocommerce_query = 'best_selling' !== $type && in_array( $orderby, array( 'menu_order', 'price', 'price-desc', 'date', 'date-desc', 'rating', 'popularity' ) );
 
 		if ( $modify_woocommerce_query ) {
 			add_filter( 'woocommerce_shortcode_products_query', array( $this, 'modify_woocommerce_shortcode_products_query' ), 10, 2 );
@@ -14718,11 +14723,17 @@ class ET_Builder_Module_Shop extends ET_Builder_Module {
 	function modify_woocommerce_shortcode_products_query( $args, $atts ) {
 
 		if ( function_exists( 'WC' ) ) {
-			// By default, all order is ASC except for price-desc
-			$order = 'price-desc' === $this->shortcode_atts['orderby'] ? 'DESC' : 'ASC';
+			// Default to ascending order
+			$orderby = $this->shortcode_atts['orderby'];
+			$order   = 'ASC';
+
+			// Switch to descending order if orderby is 'price-desc' or 'date-desc'
+			if ( in_array( $orderby, array( 'price-desc', 'date-desc' ) ) ) {
+				$order = 'DESC';
+			}
 
 			// Supported orderby arguments (as defined by WC_Query->get_catalog_ordering_args() ): rand | date | price | popularity | rating | title
-			$orderby = in_array( $this->shortcode_atts['orderby'], array( 'price-desc' ) ) ? 'price' : $this->shortcode_atts['orderby'];
+			$orderby = in_array( $orderby, array( 'price-desc', 'date-desc' ) ) ? str_replace( '-desc', '', $orderby ) : $orderby;
 
 			// Get arguments for the given non-native orderby
 			$query_args = WC()->query->get_catalog_ordering_args( $orderby, $order );
@@ -19076,6 +19087,8 @@ class ET_Builder_Module_Fullwidth_Slider extends ET_Builder_Module {
 				),
 				'affects'         => array(
 					'parallax_method',
+					'background_position',
+					'background_size',
 				),
 				'tab_slug'        => 'advanced',
 				'toggle_slug'     => 'parallax',
@@ -21796,6 +21809,7 @@ class ET_Builder_Module_Fullwidth_Post_Slider extends ET_Builder_Module {
 				),
 				'affects'         => array(
 					'text_overlay_color',
+					'text_border_radius',
 				),
 				'tab_slug'        => 'advanced',
 				'toggle_slug'     => 'overlay',
@@ -21950,6 +21964,7 @@ class ET_Builder_Module_Fullwidth_Post_Slider extends ET_Builder_Module {
 					'max'  => '100',
 					'step' => '1',
 				),
+				'depends_show_if' => 'on',
 				'tab_slug'        => 'advanced',
 				'toggle_slug'     => 'overlay',
 			),
