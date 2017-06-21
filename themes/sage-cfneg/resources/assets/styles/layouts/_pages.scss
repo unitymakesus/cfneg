@@ -26,10 +26,18 @@
           @include watermark-mixin;
           width: 23%;
           height: 100%;
+
+          @media only screen and (max-width: 768px) {
+            height:50%;
+          }
         }
 
         .et_pb_row {
           padding-left: 13%;
+
+          @media only screen and (max-width: 768px) {
+                  padding-left: 25%;
+          }
 
           &::before {
             display: none;
@@ -40,6 +48,10 @@
       .et_pb_row {
         width: 80% !important;
         padding-left: 7%;
+
+        @media only screen and (max-width: 768px) {
+          width: 95% !important;             
+        }
 
         &::before {
           @include watermark-mixin;
@@ -83,6 +95,10 @@
             color: $brand-blue;
             display: block;
             padding: 0;
+
+            @media only screen and (max-width: 768px) {
+                    font-size: 20px;
+            }
           }
         }
 

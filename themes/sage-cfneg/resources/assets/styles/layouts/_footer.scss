@@ -5,6 +5,10 @@
 
   p {
     line-height: 1.5em;
+
+    @media only screen and (max-width: 768px) {
+      font-size: 17px;
+    }
   }
 
   a {
@@ -34,6 +38,10 @@
 
   .search-form {
     margin-bottom: 17px;
+
+    @media only screen and (max-width: 768px) {
+      margin-bottom: 30px;
+    }
   }
 
   .flex-row {
@@ -70,6 +78,10 @@
 
     &:first-child {
       margin-bottom: 17px;
+
+      @media only screen and (max-width: 768px) {
+        margin-bottom: 31px;              
+      }
 
       a {
         background: $medium-green;

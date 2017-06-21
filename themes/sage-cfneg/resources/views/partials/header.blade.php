@@ -1,6 +1,6 @@
 <div data-sticky-container>
   <header class="sticky" data-sticky data-stick-to="top" data-margin-top="0" data-top-anchor="1" style="width: 100%;">
-    <div class="tip-top-bar show-for-large">
+    <div class="tip-top-bar show-for-medium-up">
       <div class="row">
         <div class="tip-top-links text-right">
           {!! wp_nav_menu(['menu' => 'CTA Buttons', 'container' => false, 'menu_class' => 'cta-buttons']) !!}
@@ -15,7 +15,7 @@
       </div>
     </div>
 
-    <div class="top-bar show-for-large">
+    <div class="top-bar show-for-medium-up" data-topbar>
       <div class="row">
         <div class="top-bar-left">
           <a class="brand" href="{{ home_url('/') }}">
@@ -34,12 +34,20 @@
           </a>
         </div>
 
-        <div class="top-bar-right">
+
+ <!-- Mobile and tablet nav-->
+
+        <div class="title-bar" data-responsive-toggle="main-nav" data-hide-for="large">
+          <button class="menu-icon" type="button" data-toggle="main-nav"></button>
+        </div>
+
+<!-- Desktop Navigation -->
+        <div class="top-bar-right" id="main-nav">
           @if (has_nav_menu('primary_navigation'))
             {!! wp_nav_menu([
               'theme_location' => 'primary_navigation',
               'container' => 'nav',
-              'menu_class' => 'dropdown menu main-menu',
+              'menu_class' => 'dropdown vertical medium-horizontal menu main-menu',
               'items_wrap' => '<ul id="%1$s" class="%2$s" data-dropdown-menu>%3$s</ul>',
               'link_before' => '<span>',
               'link_after' => '</span>'

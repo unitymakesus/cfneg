@@ -47,7 +47,15 @@ body.et_divi_builder #et_builder_outer_content {
     bottom: 0;
     z-index: 100;
 
-    h2, p {
+    h2 {
+      margin: 0 !important;
+      line-height: .7em;
+
+      @media only screen and (max-width: 768px) {
+        text-align: center;            
+      }
+    }
+    p {
       margin: 0 !important;
       line-height: .7em;
     }
