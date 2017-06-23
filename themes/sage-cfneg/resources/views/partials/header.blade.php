@@ -34,21 +34,17 @@
           </a>
         </div>
 
-
- <!-- Mobile and tablet nav-->
-
         <div class="title-bar" data-responsive-toggle="main-nav" data-hide-for="large">
           <button class="menu-icon" type="button" data-toggle="main-nav"></button>
         </div>
 
-<!-- Desktop Navigation -->
         <div class="top-bar-right" id="main-nav">
           @if (has_nav_menu('primary_navigation'))
             {!! wp_nav_menu([
               'theme_location' => 'primary_navigation',
               'container' => 'nav',
-              'menu_class' => 'dropdown vertical medium-horizontal menu main-menu',
-              'items_wrap' => '<ul id="%1$s" class="%2$s" data-dropdown-menu>%3$s</ul>',
+              'menu_class' => 'vertical medium-horizontal menu main-menu',
+              'items_wrap' => '<ul id="%1$s" class="%2$s" data-responsive-menu="accordion medium-dropdown">%3$s</ul>',
               'link_before' => '<span>',
               'link_after' => '</span>'
             ]) !!}
