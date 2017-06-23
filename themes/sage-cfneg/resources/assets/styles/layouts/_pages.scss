@@ -27,7 +27,7 @@
           width: 23%;
           height: 100%;
 
-          @media only screen and (max-width: 768px) {
+          @include breakpoint(medium only) {
             height:50%;
           }
         }
@@ -35,7 +35,7 @@
         .et_pb_row {
           padding-left: 13%;
 
-          @media only screen and (max-width: 768px) {
+          @include breakpoint(medium only) {
                   padding-left: 25%;
           }
 
@@ -49,8 +49,8 @@
         width: 80% !important;
         padding-left: 7%;
 
-        @media only screen and (max-width: 768px) {
-          width: 95% !important;             
+        @include breakpoint(medium only) {
+          width: 95% !important;
         }
 
         &::before {
@@ -96,7 +96,7 @@
             display: block;
             padding: 0;
 
-            @media only screen and (max-width: 768px) {
+            @include breakpoint(medium only) {
                     font-size: 20px;
             }
           }

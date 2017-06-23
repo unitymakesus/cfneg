@@ -104,4 +104,14 @@
       }
     }
   }
+
+  @include breakpoint(medium) {
+    li.opens-inner {
+      ul.sub-menu {
+        top: 100% !important;
+        right: 0 !important;
+        left: auto !important;
+      }
+    }
+  }
 }

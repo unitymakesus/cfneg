@@ -314,3 +314,11 @@
     @include blog-tiles;
   }
 }
+
+
+//About page styling
+@include breakpoint(medium only) {
+  .et_divi_builder #et_builder_outer_content .et_pb_row .et_pb_column .et_pb_module:last-child{
+    padding: 0px 30px;
+  }
+}
