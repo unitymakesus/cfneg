@@ -5,8 +5,8 @@
     padding: 0;
     display: inline-block;
     position: relative;
-    overflow: hidden;
-
+    // overflow: hidden;
+ 
     $i: 1;
     @each $color in $brand-blue, $rose, $medium-gray, $medium-green, $gold, $lighter-blue, $light-green {
       &:nth-child(#{$i}) {

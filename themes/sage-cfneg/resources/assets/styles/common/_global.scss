@@ -51,13 +51,18 @@ body.et_divi_builder #et_builder_outer_content {
       margin: 0 !important;
       line-height: .7em;
 
-      @media only screen and (max-width: 768px) {
-        text-align: center;            
+      @include breakpoint(medium only) {
+        text-align: center;
       }
     }
     p {
       margin: 0 !important;
       line-height: .7em;
+
+      @include breakpoint(medium only) {
+        text-align: center;
+        line-height: 1em;
+      }
     }
   }
 }
