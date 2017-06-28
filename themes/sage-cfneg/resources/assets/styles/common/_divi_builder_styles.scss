@@ -2,6 +2,10 @@
   padding-bottom: 50px;
 }
 
+.et_divi_builder #et_builder_outer_content .et_fb_preview_active .et_fb_responsive_preview_overlay, .et_fb_preview_active .et_fb_responsive_preview_overlay {
+  display: none;
+}
+
 /* These "global" styles need to be seperate so they don't get wrapped in divi-builder file /less/frontend-builder-plugin-style.less */
 #wp-admin-bar-et-use-visual-builder a:before {
   font-family: 'ETmodules' !important;
