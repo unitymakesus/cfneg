@@ -7,6 +7,10 @@
       &.green {
         background: $light-green;
 
+        @include breakpoint (medium only) {
+          margin-bottom: 0px;
+        }
+
         &:hover, &:active, &:focus {
           background: darken($light-green, 10%);
         }
@@ -15,8 +19,8 @@
       &.rose {
         background-color: $rose;
 
-        @media only screen and (max-width: 768px) {
-          width: 100%;              
+        @include breakpoint (medium only) {
+          width: 100%;
         }
 
         &:hover, &:active, &:focus {
@@ -48,6 +52,11 @@
       width: 100%;
       padding: 1em;
       text-transform: uppercase !important;
+
+      @include breakpoint (medium only) {
+        width: 107%;
+      }
+
     }
   }
 }

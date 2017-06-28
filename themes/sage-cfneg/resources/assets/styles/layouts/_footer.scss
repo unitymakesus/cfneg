@@ -6,7 +6,7 @@
   p {
     line-height: 1.5em;
 
-    @media only screen and (max-width: 768px) {
+    @include breakpoint(medium only) {
       font-size: 17px;
     }
   }
@@ -39,7 +39,7 @@
   .search-form {
     margin-bottom: 17px;
 
-    @media only screen and (max-width: 768px) {
+    @include breakpoint(medium only) {
       margin-bottom: 30px;
     }
   }
@@ -79,8 +79,8 @@
     &:first-child {
       margin-bottom: 17px;
 
-      @media only screen and (max-width: 768px) {
-        margin-bottom: 31px;              
+      @include breakpoint(medium only) {
+        margin-bottom: 31px;
       }
 
       a {
@@ -107,6 +107,10 @@
   ul {
     list-style: none;
     margin: 0;
+  }
+
+  @include breakpoint(medium only) {
+    column-gap: 40px;
   }
 
   .menu-item-has-children {

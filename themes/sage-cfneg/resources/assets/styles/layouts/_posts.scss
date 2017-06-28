@@ -93,6 +93,10 @@
         padding: 0 40px 0 0 !important;
         margin: 0 10px;
 
+        @include breakpoint (medium only) {
+          margin: 0px;
+        }
+
         h2 {
           margin-top: 10px;
 
@@ -318,7 +322,26 @@
 
 //About page styling
 @include breakpoint(medium only) {
-  .et_divi_builder #et_builder_outer_content .et_pb_row .et_pb_column .et_pb_module:last-child{
-    padding: 0px 30px;
+  .et_divi_builder #et_builder_outer_content ol.cfneg-calendar-feed {
+    margin-left: 95px;
   }
+
+  .et_divi_builder #et_builder_outer_content .et_pb_blog_grid.et_pb_blog_grid .et_pb_post.et_pb_post .entry-title{
+    font-size: 25px;
+  }
+
+  .et_divi_builder #et_builder_outer_content .et_pb_blog_grid.et_pb_blog_grid.blog-feed .et_pb_post.et_pb_post {
+    font-size: 16px;
+  }
+
+  .et_divi_builder #et_builder_outer_content .et_pb_section_6.et_pb_section {
+    padding-left: 25px !important;
+    padding-top: 10px !important;
+
+  }
+
+    .et_divi_builder #et_builder_outer_content .et_pb_module p {
+      padding: 0 15px;
+    }
+
 }

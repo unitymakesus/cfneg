@@ -8,7 +8,8 @@
   color: $rose;
 
   @media only screen and (max-width: 768px) {
-    text-align: center;              
+    text-align: center;
+    padding-top: 15px;       
   }
 }
 
