@@ -17,35 +17,23 @@ use Ctct\Exceptions\CtctException;
 class ConstantContact_Lists {
 
 	/**
-	 * Parent plugin class
+	 * Parent plugin class.
 	 *
+	 * @since 1.0.0
 	 * @var object
-	 * @since 0.0.1
 	 */
 	protected $plugin = null;
 
 	/**
-	 * Constructor
+	 * Constructor.
 	 *
 	 * @since 1.0.0
+	 *
+	 * @param object $plugin Plugin base class.
 	 */
 	public function __construct( $plugin ) {
 		$this->plugin = $plugin;
 		$this->hooks();
-	}
-
-	/**
-	 * Returns the running object.
-	 *
-	 * @since 1.0.0
-	 * @return ConstantContact_Lists
-	 */
-	public static function get_instance() {
-		if ( is_null( self::$instance ) ) {
-			self::$instance = new ConstantContact_Lists();
-			self::$instance->hooks();
-		}
-		return self::$instance;
 	}
 
 	/**
@@ -82,32 +70,39 @@ class ConstantContact_Lists {
 	}
 
 	/**
-	 * CMB2 metabox for list data
+	 * CMB2 metabox for list data.
 	 *
 	 * @since 1.0.0
-	 * @return void
 	 */
 	public function add_lists_metabox() {
 
 		$cmb = new_cmb2_box( array(
-			'id' => 'ctct_list_metabox',
-			'title' => __( 'List Information', 'constant-contact-forms' ),
-			'object_types'  => array( 'ctct_lists' ),
-			'context'	   => 'normal',
-			'priority' => 'high',
-			'show_names'	=> true,
+			'id'           => 'ctct_list_metabox',
+			'title'        => __( 'List Information', 'constant-contact-forms' ),
+			'object_types' => array( 'ctct_lists' ),
+			'context'      => 'normal',
+			'priority'     => 'high',
+			'show_names'   => true,
 		) );
 
 		$cmb->add_field( array(
-			'name' 	=> '',
-			'desc' 	=> '',
-			'id'   	=> '_ctct_list_meta',
-			'type'	=> 'constant_contact_list_information',
+			'name' => '',
+			'desc' => '',
+			'id'   => '_ctct_list_meta',
+			'type' => 'constant_contact_list_information',
 		) );
 	}
 
 	/**
-	 * Display our list information metabox
+	 * Display our list information metabox.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param mixed  $field             Something.
+	 * @param string $escaped_value     Something.
+	 * @param int    $object_id         Current object ID.
+	 * @param string $object_type       Current object type.
+	 * @param string $field_type_object Field type objec.
 	 */
 	public function list_info_metabox( $field, $escaped_value, $object_id, $object_type, $field_type_object ) {
 
@@ -168,6 +163,8 @@ class ConstantContact_Lists {
 	/**
 	 * Gets our no list info data.
 	 *
+	 * @since 1.0.0
+	 *
 	 * @return string
 	 */
 	public function get_list_info_no_data() {
@@ -188,7 +185,7 @@ class ConstantContact_Lists {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return void
+	 * @param bool $force Whether or not to force syncing.
 	 */
 	public function sync_lists( $force = false ) {
 
@@ -216,7 +213,7 @@ class ConstantContact_Lists {
 		 *
 		 * @since 1.0.0
 		 *
-		 * @param int $value Amount o time to wait between syncs. Default 15 minutes.
+		 * @param int $value Amount of time to wait between syncs. Default 15 minutes.
 		 */
 		$sync_rate_limit_time = apply_filters( 'constant_contact_list_sync_rate_limit', 15 * MINUTE_IN_SECONDS );
 
@@ -365,8 +362,8 @@ class ConstantContact_Lists {
 					// Update with our list id.
 					update_post_meta( $post, '_ctct_list_id', $list_id );
 				}
-			}
-		}
+			} // End foreach().
+		} // End if().
 
 		// Loop through each of the lists we didn't touch with the update/insert
 		// and double check them, then delete.
@@ -399,9 +396,10 @@ class ConstantContact_Lists {
 	}
 
 	/**
-	 * Wrapper function to handle saving and updating our lists
+	 * Wrapper function to handle saving and updating our lists.
 	 *
 	 * @since 1.0.0
+	 *
 	 * @param int $post_id wp post id.
 	 * @return bool Whether or not it worked.
 	 */
@@ -485,11 +483,12 @@ class ConstantContact_Lists {
 	}
 
 	/**
-	 * Saves list cpt and sends add list request to CTCT
+	 * Saves list cpt and sends add list request to CTCT.
 	 *
 	 * @since 1.0.0
-	 * @param  object $ctct_list WP Post object
-	 * @return void
+	 *
+	 * @param object $ctct_list WP Post object.
+	 * @return bool
 	 */
 	public function _add_list( $ctct_list ) {
 
@@ -539,17 +538,19 @@ class ConstantContact_Lists {
 			if ( is_object( $list ) && isset( $list->id ) ) {
 				return true;
 			}
-		}
+		} // End if().
 
 		return false;
 	}
 
 	/**
-	 * Set a unique list name for a post based on id / title
+	 * Set a unique list name for a post based on id / title.
 	 *
-	 * @since   1.0.0
-	 * @param   int  $id     post ID
-	 * @param   string  $title  post title
+	 * @since 1.0.0
+	 *
+	 * @param int    $id    Post ID.
+	 * @param string $title Post title.
+	 * @return string
 	 */
 	public function set_unique_list_name( $id, $title = '' ) {
 
@@ -605,12 +606,13 @@ class ConstantContact_Lists {
 
 	/**
 	 * CC doesn't allow duplicate lists by title, so we want to fix a 2nd list
-	 * that gets attempted to created
+	 * that gets attempted to created.
 	 *
-	 * @since   1.0.0
-	 * @param   string  $title  title of list
-	 * @param   array   $lists lists to search in
-	 * @return  bool          if exists
+	 * @since 1.0.0
+	 *
+	 * @param string $title Title of list.
+	 * @param array  $lists Lists to search in.
+	 * @return bool If exists.
 	 */
 	public function check_if_list_exists_by_title( $title, $lists = array() ) {
 
@@ -637,37 +639,38 @@ class ConstantContact_Lists {
 	 * Hooked into transition_post_status, we want to verify our deletion of a
 	 * list when we remove it, as well as re-adding any restored lists.
 	 *
-	 * @since   1.0.0
-	 * @param   string  $new_status  transitioned to status
-	 * @param   string  $old_status  transitioned from status
-	 * @param   objewct  $post        post object
-	 * @return  void
+	 * @since 1.0.0
+	 *
+	 * @param string  $new_status  Transitioned to status.
+	 * @param string  $old_status  Transitioned from status.
+	 * @param object $post        Post object.
+	 * @return bool
 	 */
 	public function post_status_transition( $new_status, $old_status, $post ) {
 
 		// Make sure we have a post passed in
 		if ( ! $post ) {
-			return;
+			return false;
 		}
 
 		// If we don't have a post type, bail.
 		if ( ! isset( $post->post_type ) ) {
-			return;
+			return false;
 		}
 
 		// If we don't have an ID, bail
 		if ( ! $post->ID ) {
-			return;
+			return false;
 		}
 
 		// If we're not on the list post type
 		if ( 'ctct_lists' !== $post->post_type ) {
-			return;
+			return false;
 		}
 
 		// Only fire if we got a change in status
 		if ( $new_status === $old_status ) {
-			return;
+			return false;
 		}
 
 		// If we're moving something out of the trash, re-run our add list functionality.
@@ -675,14 +678,17 @@ class ConstantContact_Lists {
 			return $this->_add_list( $post );
 		}
 
+		return true;
 	}
 
 	/**
-	 * Update list data cpt and send update request to CTCT
+	 * Update list data cpt and send update request to CTCT.
 	 *
 	 * @since 1.0.0
-	 * @param  integer $post_id current post id.
-	 * @return void
+	 *
+	 * @param WP_Post $ctct_list List post object.
+	 * @param integer $list_id Current list id.
+	 * @return bool
 	 */
 	public function _update_list( $ctct_list, $list_id ) {
 
@@ -723,8 +729,9 @@ class ConstantContact_Lists {
 	/**
 	 * Delete list from CTCT and database.
 	 *
-	 * @since  1.0.0
-	 * @param  integer $post_id list id.
+	 * @since 1.0.0
+	 *
+	 * @param integer $post_id List id.
 	 * @return boolean
 	 */
 	public function delete_list( $post_id ) {
@@ -769,7 +776,9 @@ class ConstantContact_Lists {
 	 * Returns array of the list data from CTCT
 	 *
 	 * @since 1.0.0
-	 * @return array contact list data from CTCT
+	 *
+	 * @param bool $skip_cache Whether or not to skip cache.
+	 * @return array Contact list data from CTCT.
 	 */
 	public function get_lists( $skip_cache = false ) {
 
@@ -794,18 +803,19 @@ class ConstantContact_Lists {
 	}
 
 	/**
-	 * Hooked into admin_notices, show our duplicate list message if we have one
+	 * Hooked into admin_notices, show our duplicate list message if we have one.
 	 *
+	 * @since 1.0.0
 	 */
 	public function show_duplicate_list_message() {
 
-		// Make sure we're on the correct page
+		// Make sure we're on the correct page.
 		global $pagenow, $post;
 		if ( $pagenow || ( ! in_array( $pagenow, array( 'post.php' ), true ) ) ) {
 			return;
 		}
 
-		// Make sure we have all the data we need
+		// Make sure we have all the data we need.
 		if (
 			isset( $post->ID ) &&
 			$post->ID &&
@@ -816,6 +826,7 @@ class ConstantContact_Lists {
 		) {
 
 			// Add our output ( I know, gross inline CSS )
+			// @todo Remove inline CSS.
 			?>
 			<div class="notice notice-error">
 				<p><?php esc_attr_e( 'You already have a list with that name.', 'constant-contact-forms' ); ?></p>
@@ -835,31 +846,32 @@ class ConstantContact_Lists {
 	}
 
 	/**
-	 * Adds a 'Sync Lists with Constant Contact' button to the lists CPT page
+	 * Adds a 'Sync Lists with Constant Contact' button to the lists CPT page.
 	 *
-	 * @since   1.0.0
-	 * @param   array  $views  current views
+	 * @since 1.0.0
+	 *
+	 * @param array $views Current views.
+	 * @return array
 	 */
 	public function add_force_sync_button( $views ) {
 
-		// Build up our nonced url
+		// Build up our nonced url.
 		$link = wp_nonce_url( add_query_arg( array( 'ctct_list_sync' => 'true' ) ), 'ctct_reysncing', 'ctct_resyncing' );
 
-		// Add a view to our list
+		// Add a view to our list.
 		$views['sync'] = '<strong><a href="' . $link . '">' . __( 'Sync Lists with Constant Contact', 'constant-contact-forms' ) . '</a></strong>';
 
-		// Send em back
 		return $views;
 	}
 
 	/**
-	 * Watch for our request to re-sync lists, and do it
+	 * Watch for our request to re-sync lists, and do it.
 	 *
-	 * @since   1.0.0
+	 * @since 1.0.0
 	 */
 	public function check_for_list_sync_request() {
 
-		// Only run if we have our request, and we are capable of it
+		// Only run if we have our request, and we are capable of it.
 		if (
 			isset( $_GET['ctct_resyncing'] ) && // Input var okay.
 			sanitize_text_field( wp_unslash( $_GET['ctct_resyncing'] ) ) && // Input var okay.
@@ -879,21 +891,22 @@ class ConstantContact_Lists {
 	}
 
 	/**
-	 * Remove quick edit from our lists post type
+	 * Remove quick edit from our lists post type.
 	 *
-	 * @since   1.0.0
-	 * @param   array  $actions  current actions
-	 * @return  array            modified actions
+	 * @since 1.0.0
+	 *
+	 * @param array $actions Current actions.
+	 * @return array Modified actions.
 	 */
 	public function remove_quick_edit_from_lists( $actions ) {
 
-		// Get our global post object
+		// Get our global post object.
 		global $post;
 
-		// Make sure we're on our lists post type
+		// Make sure we're on our lists post type.
 		if ( $post && isset( $post->post_type ) && $post->post_type && 'ctct_lists' === $post->post_type ) {
 
-			// Unset our quick edit actions, which is named SO WELL
+			// Unset our quick edit actions, which is named SO WELL.
 			unset( $actions['inline hide-if-no-js'] );
 		}
 

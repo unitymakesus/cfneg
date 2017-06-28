@@ -16,8 +16,8 @@ class ConstantContact_Admin_Pages {
 	/**
 	 * Parent plugin class.
 	 *
+	 * @since 1.0.0
 	 * @var object
-	 * @since 0.0.1
 	 */
 	protected $plugin = null;
 
@@ -36,7 +36,6 @@ class ConstantContact_Admin_Pages {
 	 * Initiate our hooks.
 	 *
 	 * @since 1.0.0
-	 * @return void
 	 */
 	public function hooks() {
 
@@ -45,7 +44,7 @@ class ConstantContact_Admin_Pages {
 	}
 
 	/**
-	 * Global admin style enqueue stuff
+	 * Global admin style enqueue stuff.
 	 *
 	 * @since 1.0.0
 	 */
@@ -55,14 +54,14 @@ class ConstantContact_Admin_Pages {
 			'constant-contact-forms',
 			constant_contact()->url() . 'assets/css/admin-forms.css',
 			array(),
-			constant_contact()->version
+			Constant_Contact::VERSION
 		);
 
 		wp_enqueue_style(
 			'constant_contact_admin_pages',
 			constant_contact()->url() . 'assets/css/admin-pages.css',
 			array(),
-			constant_contact()->version
+			Constant_Contact::VERSION
 		);
 
 		wp_enqueue_script( 'ctct_form' );
@@ -82,16 +81,16 @@ class ConstantContact_Admin_Pages {
 		 *
 		 * @since 1.0.0
 		 *
-		 * @param array $value Array of arrays with title/content values
+		 * @param array $value Array of arrays with title/content values.
 		 */
 		return apply_filters( 'constant_contact_help_texts', array(
 			array(
-				'title' => __( 'This is a sample help header', 'constant-contact-forms' ),
-				'content' => __( 'This is some sample help text.', 'constant-contact-forms' ),
+				'title'   => esc_html__( 'This is a sample help header', 'constant-contact-forms' ),
+				'content' => esc_html__( 'This is some sample help text.', 'constant-contact-forms' ),
 			),
 			array(
-				'title' => __( 'This is another sample header', 'constant-contact-forms' ),
-				'content' => __( 'This is also some sample help text.', 'constant-contact-forms' ),
+				'title'   => esc_html__( 'This is another sample header', 'constant-contact-forms' ),
+				'content' => esc_html__( 'This is also some sample help text.', 'constant-contact-forms' ),
 			),
 		) );
 	}
@@ -99,7 +98,8 @@ class ConstantContact_Admin_Pages {
 	/**
 	 * Get faq text for help page.
 	 *
-	 * @since  1.0.0
+	 * @since 1.0.0
+	 *
 	 * @return array Array of all the text.
 	 */
 	public function get_faq_texts() {
@@ -113,23 +113,22 @@ class ConstantContact_Admin_Pages {
 		 */
 		return apply_filters( 'constant_contact_faq_texts', array(
 			array(
-				'title' => __( 'Is this a sample question?', 'constant-contact-forms' ),
-				'content' => __( 'This is a sample answer', 'constant-contact-forms' ),
+				'title'   => esc_html__( 'Is this a sample question?', 'constant-contact-forms' ),
+				'content' => esc_html__( 'This is a sample answer', 'constant-contact-forms' ),
 			),
 			array(
-				'title' => __( 'This is also a sample question', 'constant-contact-forms' ),
-				'content' => __( 'This is another sample answer', 'constant-contact-forms' ),
+				'title'   => esc_html__( 'This is also a sample question', 'constant-contact-forms' ),
+				'content' => esc_html__( 'This is another sample answer', 'constant-contact-forms' ),
 			),
 		) );
 	}
 
 	/**
-	 * Display our help page
+	 * Display our help page.
 	 *
-	 * @since  1.0.0
+	 * @since 1.0.0
 	 */
 	public function help_page() {
-
 		?>
 		<h1>
 			<?php esc_attr_e( 'Help / FAQ', 'constant-contact-forms' ); ?>
@@ -218,9 +217,7 @@ class ConstantContact_Admin_Pages {
 
 		$proof = $auth_link = $new_link = '';
 
-		// @codingStandardsIgnoreStart
 		if ( ! constant_contact()->api->is_connected() ) {
-		// @codingStandardsIgnoreEnd
 
 			// Get our middleware link.
 			$proof     = constant_contact()->authserver->set_verification_option();
@@ -230,9 +227,7 @@ class ConstantContact_Admin_Pages {
 			$new_link  = add_query_arg( array( 'rmc' => 'wp_about_try' ), $new_link );
 			$auth_link = add_query_arg( array( 'rmc' => 'wp_about_connect' ), $auth_link );
 
-		// @codingStandardsIgnoreStart
 		}
-		// @codingStandardsIgnoreEnd
 
 		?>
 		<div class="wrap about-wrap constant-contact-about">
@@ -318,7 +313,8 @@ class ConstantContact_Admin_Pages {
 				</p>
 				<?php
 				// Include our license link if we have it.
-				if ( $license_link = $this->plugin->admin->get_admin_link( __( 'GPLv3 license', 'constant-contact-forms' ), 'license' ) ) { ?>
+				$license_link = $this->plugin->admin->get_admin_link( __( 'GPLv3 license', 'constant-contact-forms' ), 'license' );
+				if ( $license_link ) { ?>
 					<p class="c-text">
 						<?php
 						echo wp_kses_post( sprintf( __( 'This software is released under a modified %s.', 'constant-contact-forms' ), $license_link ) );
@@ -365,7 +361,7 @@ class ConstantContact_Admin_Pages {
 	/**
 	 * Display our license page.
 	 *
-	 * @since  1.0.1
+	 * @since 1.0.1
 	 */
 	public function license_page() {
 		$license_text = $this->plugin->get_license_text();
@@ -383,4 +379,3 @@ class ConstantContact_Admin_Pages {
 		<?php
 	}
 }
-

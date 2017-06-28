@@ -48,26 +48,29 @@ class ConstantContact_Admin {
 	/**
 	 * Parent plugin class.
 	 *
-	 * @var   class
-	 * @since 0.0.1
+	 * @since 1.0.0
+	 * @var object
 	 */
 	protected $plugin = null;
 
 	/**
 	 * The parent menu page slug.
 	 *
-	 * @var   string
-	 * @since 1.0.1
+	 * @since 1.0.01
+	 * @var string
 	 */
 	protected $parent_menu_slug = 'edit.php?post_type=ctct_forms';
 
 	/**
-	 * Constructor
+	 * Constructor.
 	 *
 	 * @since 1.0.0
+	 *
+	 * @param Constant_Contact $plugin Primary class file.
+	 * @param string $basename Primary class basename.
 	 */
 	public function __construct( $plugin, $basename ) {
-		$this->plugin = $plugin;
+		$this->plugin   = $plugin;
 		$this->basename = $basename;
 		$this->hooks();
 	}
@@ -84,13 +87,16 @@ class ConstantContact_Admin {
 		add_filter( 'manage_ctct_forms_posts_columns', array( $this, 'set_custom_columns' ) );
 		add_action( 'manage_ctct_forms_posts_custom_column' , array( $this, 'custom_columns' ), 10, 2 );
 
+		add_filter( 'manage_ctct_lists_posts_columns', array( $this, 'set_custom_lists_columns' ) );
+		add_action( 'manage_ctct_lists_posts_custom_column', array( $this, 'custom_lists_columns' ), 10, 2 );
+
 		add_filter( 'plugin_action_links_' . $this->basename, array( $this, 'add_social_links' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'scripts' ) );
 	}
 
 
 	/**
-	 * Register our setting to WP.
+	 * Register our setting to WordPress.
 	 *
 	 * @since 1.0.0
 	 */
@@ -228,7 +234,7 @@ class ConstantContact_Admin {
 	}
 
 	/**
-	 * Add shortcode columns to each cpt.
+	 * Add columns to Forms post type.
 	 *
 	 * @internal
 	 *
@@ -239,8 +245,9 @@ class ConstantContact_Admin {
 	 */
 	public function set_custom_columns( $columns ) {
 
-		$columns['description'] = __( 'Description', 'constant-contact-forms' );
-		$columns['shortcodes']  = __( 'Shortcode', 'constant-contact-forms' );
+		$columns['description'] = esc_html__( 'Description', 'constant-contact-forms' );
+		$columns['shortcodes']  = esc_html__( 'Shortcode', 'constant-contact-forms' );
+		$columns['ctct_list']   = esc_html__( 'Associated List', 'constant-contact-forms' );
 
 		return $columns;
 	}
@@ -251,6 +258,7 @@ class ConstantContact_Admin {
 	 * @internal
 	 *
 	 * @since 1.0.0
+	 *
 	 * @param string  $column  Column title.
 	 * @param integer $post_id Post id of post item.
 	 */
@@ -264,6 +272,8 @@ class ConstantContact_Admin {
 			return;
 		}
 
+		$table_list_id = get_post_meta( $post_id, '_ctct_list', true );
+
 		switch ( $column ) {
 			case 'shortcodes':
 				echo esc_attr( '[ctct form="' . $post_id . '"]' );
@@ -271,6 +281,65 @@ class ConstantContact_Admin {
 			case 'description':
 				echo wp_kses_post( wpautop( get_post_meta( $post_id, '_ctct_description', true ) ) );
 			break;
+			case 'ctct_list':
+				$list = $this->get_associated_list_by_id( $table_list_id );
+				if ( ! empty( $list ) ) {
+					printf(
+						'<a href="%s">%s</a>',
+						get_edit_post_link( $list->ID ),
+						get_the_title( $list->ID )
+					);
+				} else {
+					echo esc_html( 'No associated form', 'constant-contact-forms' );
+				}
+			break;
+		}
+	}
+
+	/**
+	 * Add our contact count column for ctct_lists.
+	 *
+	 * @internal
+	 * @since 1.3.0
+	 *
+	 * @param $columns
+	 * @return mixed
+	 */
+	public function set_custom_lists_columns( $columns ) {
+		$columns['ctct_total'] = esc_html__( 'Contact Count', 'constant-contact-forms' );
+
+		// No need to display the date of a sync'd list post.
+		unset( $columns['date'] );
+
+		return $columns;
+	}
+
+	/**
+	 * Content of custom post columns.
+	 *
+	 * @internal
+	 * @since 1.3.0
+	 *
+	 * @param string  $column  Column title.
+	 * @param integer $post_id Post id of post item.
+	 */
+	public function custom_lists_columns( $column, $post_id ) {
+
+		// Force our $post_id to an int.
+		$post_id = absint( $post_id );
+
+		// If its a 0 bail out.
+		if ( ! $post_id ) {
+			return;
+		}
+
+		$table_list_id = get_post_meta( $post_id, '_ctct_list_id', true );
+
+		switch ( $column ) {
+			case 'ctct_total':
+				$list_info = constant_contact()->api->get_list( esc_attr( $table_list_id ) );
+				echo ( isset( $list_info->contact_count ) ) ? $list_info->contact_count : esc_html__( 'None available', 'constant-contact-forms' );
+				break;
 		}
 	}
 
@@ -361,7 +430,7 @@ class ConstantContact_Admin {
 			'ctct_form',
 			constant_contact()->url() . 'assets/js/ctct-plugin-admin' . $suffix . '.js',
 			array(),
-			constant_contact()->version,
+			Constant_Contact::VERSION,
 			true
 		);
 
@@ -391,7 +460,7 @@ class ConstantContact_Admin {
 			)
 		);
 
-		if ( constant_contact_maybe_display_optin_notification() || ( isset( $_GET['page'] ) && 'ctct_options_settings' == $_GET['page'] ) ) {
+		if ( constant_contact_maybe_display_optin_notification() || ( isset( $_GET['page'] ) && 'ctct_options_settings' === $_GET['page'] ) ) {
 			wp_enqueue_script( 'ctct_form' );
 		}
 
@@ -426,6 +495,26 @@ class ConstantContact_Admin {
 			wp_enqueue_script( 'ctct_form' );
 		}
 	}
+
+	/**
+	 * Fetch Constant Contact List post type ID by Constant Contact List ID.
+	 *
+	 * @since 1.3.0
+	 *
+	 * @param string $list_id Constant Contact list ID value
+	 * @return mixed
+	 */
+	public function get_associated_list_by_id( $list_id ) {
+		global $wpdb;
+		$sql = "SELECT p.ID FROM $wpdb->posts as p INNER JOIN $wpdb->postmeta as pm on p.ID = pm.post_id WHERE pm.meta_key = '_ctct_list_id' AND pm.meta_value = '%s'";
+		$rs = $wpdb->get_results(
+			$wpdb->prepare( $sql, $list_id )
+		);
+		if ( ! empty( $rs ) ) {
+			return $rs[0];
+		}
+		return array();
+	}
 }
 
 /**
@@ -437,5 +526,5 @@ class ConstantContact_Admin {
  * @return mixed Option value.
  */
 function constantcontact_get_option( $key = '' ) {
-	return cmb2_get_option( constantcontact()->admin->key, $key );
+	return cmb2_get_option( constant_contact()->admin->key, $key );
 }

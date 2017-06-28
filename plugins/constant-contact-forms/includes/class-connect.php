@@ -16,60 +16,65 @@ use Defuse\Crypto\Crypto;
 
 /**
  * Powers our admin connect page, as well as misc functionality around connecting to Constant Contact.
+ *
+ * @since 1.0.0
  */
 class ConstantContact_Connect {
 
 	/**
 	 * Option key, and option page slug.
 	 *
-	 * @var string
 	 * @since 1.0.0
+	 * @var string
 	 */
 	private $key = 'ctct_options_connect';
 
 	/**
-	 * CtctOAuth2 object.
-	 *
-	 * @var object
-	 * @since 1.0.0
-	 */
-	private $oauth = '';
-
-	/**
 	 * Api Error message.
 	 *
-	 * @var string
 	 * @since 1.0.0
+	 * @var string
 	 */
 	public $error_message = '';
 
 	/**
 	 * Current page redirect Url.
 	 *
+	 * @since 1.0.0
 	 * @var string
-	 * @since  1.0.0
 	 */
 	private $redirect_url = '';
 
 	/**
 	 * Parent plugin class.
 	 *
+	 * @since 1.0.0
 	 * @var object
-	 * @since 0.0.1
 	 */
 	protected $plugin = null;
 
 	/**
 	 * Whether or not to encrypt.
 	 *
+	 * @since 1.0.0
 	 * @var bool
 	 */
 	public $should_encrypt = false;
 
 	/**
-	 * Constructor
+	 * Options page.
 	 *
 	 * @since 1.0.0
+	 * @var string
+	 */
+	public $options_page = '';
+
+	/**
+	 * Constructor.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param object $plugin Parent class.
 	 */
 	public function __construct( $plugin ) {
 		$this->plugin = $plugin;
@@ -93,12 +98,12 @@ class ConstantContact_Connect {
 	 * Watches for our specific $_GET paramaters and if we get a connect request,
 	 * pass it to our auth server class to process.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 */
 	public function maybe_connect() {
 
 		// If we have this get, we may be getting an connect attempt, so lets
-		// verify it and potentially process it
+		// verify it and potentially process it.
 		if ( isset( $_GET['cc_connect_attempt'] ) && is_user_logged_in() ) { // Input var okay.
 
 			// Call our access token processing.
@@ -125,16 +130,12 @@ class ConstantContact_Connect {
 	 */
 	public function add_options_page() {
 
+		$connect_title = esc_html__( 'Disconnect', 'constant-contact-forms' );
+		$connect_link  = 'edit.php?post_type=ctct_forms';
+
 		if ( ! constant_contact()->api->is_connected() ) {
 			// Set our default title of the connect link.
-			$connect_title = __( 'Connect Now', 'constant-contact-forms' );
-			$connect_link = 'edit.php?post_type=ctct_forms';
-
-		} else {
-
-			// If we've already been connected, then we can set it to be a disconnect button.
-			$connect_title = __( 'Disconnect', 'constant-contact-forms' );
-			$connect_link = 'edit.php?post_type=ctct_forms';
+			$connect_title = esc_html__( 'Connect Now', 'constant-contact-forms' );
 		}
 
 		// Set up our page.
@@ -152,6 +153,7 @@ class ConstantContact_Connect {
 	 * Admin page markup. Mostly handled by CMB2.
 	 *
 	 * @since 1.0.0
+	 *
 	 * @return mixed page markup or false if not admin.
 	 */
 	public function admin_page_display() {
@@ -160,7 +162,7 @@ class ConstantContact_Connect {
 			'constant_contact_admin_global_no_connection',
 			constant_contact()->url() . 'assets/css/admin-global-no-connection.css',
 			array(),
-			constant_contact()->version
+			Constant_Contact::VERSION
 		);
 
 		wp_enqueue_style( 'constant_contact_admin_global_no_connection' );
@@ -206,7 +208,9 @@ class ConstantContact_Connect {
 					</div>
 					<div class="ctct-connected-opt-in">
 						<h3><?php esc_html_e( 'Please help to improve this plugin.', 'constant-contact-forms' ); ?></h3>
-						<p><?php printf( esc_html__( 'Allow Constant Contact to use Google Analytics&trade; to track your usage across the Constant Contact Forms plugin. You can opt-out within the Settings page. See our %s.', 'constant-contact-forms' ), '<a href="https://www.constantcontact.com/legal/privacy-statement">' . __( 'Privacy Statement', 'constant-contact-forms' ) . '</a>' ); ?></p>
+						<p><?php
+							// translators: placeholder will hold link to Constant Contact privacy statement.
+							printf( esc_html__( 'Allow Constant Contact to use Google Analytics&trade; to track your usage across the Constant Contact Forms plugin. You can opt-out within the Settings page. See our %s.', 'constant-contact-forms' ), '<a href="https://www.constantcontact.com/legal/privacy-statement">' . __( 'Privacy Statement', 'constant-contact-forms' ) . '</a>' ); ?></p>
 						<div id="ctct-connect-ga-optin" class="ctct-connect-ga-optin">
 							<a class="button button-blue ctct-connect" data-allow="on"><?php esc_html_e( 'Allow', 'constant-contact-forms' ); ?></a>
 							<a class="button no-bg" data-allow="off"><?php esc_html_e( 'Dismiss', 'constant-contact-forms' ); ?></a>
@@ -268,7 +272,9 @@ class ConstantContact_Connect {
 						<input name="sub" type="hidden" value="3">
 						<input name="method" type="hidden" value="JMML_SUB3_wp_plugin">
 
-						<p><small><?php printf( __( 'By submitting this form, you agree to receive periodic product announcements and account notifications from Constant Contact. Cancel these communications at any time by clicking the unsubscribe link in the footer of the actual email. Constant Contact, Inc, 1601 Trapelo Road, Waltham, MA 02451, %s', 'constant-contact-forms' ), '<a href="https://www.constantcontact.com">www.constantcontact.com</a>' ); ?></small>
+						<p><small><?php
+								// translators: placeholder will hold ConstantContact.com link.
+								printf( __( 'By submitting this form, you agree to receive periodic product announcements and account notifications from Constant Contact. Cancel these communications at any time by clicking the unsubscribe link in the footer of the actual email. Constant Contact, Inc, 1601 Trapelo Road, Waltham, MA 02451, %s', 'constant-contact-forms' ), '<a href="https://www.constantcontact.com">www.constantcontact.com</a>' ); ?></small>
 						</p>
 					</div>
 					<input class="button" id="subbutton" type="submit" value="<?php esc_attr_e( 'Sign Up', 'constant-contact-forms' ); ?>">
@@ -281,29 +287,31 @@ class ConstantContact_Connect {
 			<?php endif; ?>
 		</div>
 		<?php
+		return true;
 	}
 
 	/**
 	 * Disconnect from API.
 	 *
 	 * @since 1.0.0
+	 *
 	 * @return boolean
 	 */
 	public function maybe_disconnect() {
 
 		// Make sure we ahve our nonce key.
 		if ( ! isset( $_POST['ctct-admin-disconnect'] ) ) {
-			return;
+			return false;
 		}
 
 		// Make sure we want to disconnect.
 		if ( ! isset( $_POST['ctct-disconnect'] ) ) {
-			return;
+			return false;
 		}
 
 		// Only run if logged in user can manage site options.
 		if ( ! is_admin() || ! current_user_can( 'manage_options' ) ) {
-			return;
+			return false;
 		}
 
 		if ( wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['ctct-admin-disconnect'] ) ), 'ctct-admin-disconnect' ) ) {
@@ -318,8 +326,8 @@ class ConstantContact_Connect {
 				unset( $saved_options['_ctct_disable_email_notifications'] );
 				update_option( 'ctct_options_settings', $saved_options );
 			}
-
 		}
+		return true;
 	}
 
 	/**
@@ -378,8 +386,8 @@ class ConstantContact_Connect {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param string  $check_key  Key to save to.
-	 * @param string  $data       Data to save.
+	 * @param string  $check_key Key to save to.
+	 * @param string  $data      Data to save.
 	 * @param boolean $autoload  Autoload it.
 	 * @return string
 	 */
@@ -416,7 +424,7 @@ class ConstantContact_Connect {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return string token
+	 * @return string Token.
 	 */
 	public function get_api_token() {
 
@@ -448,6 +456,7 @@ class ConstantContact_Connect {
 	 * Get our encrypt key.
 	 *
 	 * @since 1.0.0
+	 *
 	 * @return string Key to use for encrypt.
 	 */
 	public function get_encrpyt_key() {
@@ -472,7 +481,7 @@ class ConstantContact_Connect {
 	 * @since 1.0.0
 	 *
 	 * @param boolean $first_try If first try or not.
-	 * @return object Key
+	 * @return string|object Key.
 	 */
 	public function generate_and_save_key( $first_try = true ) {
 
@@ -533,7 +542,7 @@ class ConstantContact_Connect {
 
 		try {
 			$return = false;
-			Constant_Contact::get_instance()->load_libs( true );
+			Constant_Contact::get_instance()->load_libs();
 
 			// If we have the Runtime test class.
 			if ( class_exists( 'Defuse\Crypto\RuntimeTests' ) ) {

@@ -2,8 +2,8 @@
 Contributors:      constantcontact
 Tags: capture, contacts, constant contact, constant contact form, constant contact newsletter, constant contact official, contact forms, email, form, forms, marketing, mobile, newsletter, opt-in, plugin, signup, subscribe, subscription, widget
 Requires at least: 4.0.0
-Tested up to:      4.7.2
-Stable tag:        1.2.5
+Tested up to:      4.8.0
+Stable tag:        1.3.0
 License:           GPLv2
 License URI:       http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -26,12 +26,38 @@ BONUS: If you have a Constant Contact account, all new email addresses that you 
 **Constant Contact Forms** requires a PHP version of 5.4 or higher. You will not be able to use if on a lower version. Talk to your system administrator or hosting company if you are not sure what version you are on.
 
 == Screenshots ==
-1. Adding a New form
+1. Adding a New form when connected to Constant Contact account.
 2. Viewing All Forms
 3. Lists Page
-4. Basic Form
+4. Settings page
+5. Basic Form
 
 == Changelog ==
+
+= 1.3.0 =
+* Added: Per-form AJAX submission support.
+* Added: Display associated Constant Contact list in form listing.
+* Added: Display Constant Contact list count in Constant Contact List listing.
+* Added: HTML classes on form field wrappers for required fields.
+* Added: Plenty of WordPress filters around available email fields.
+* Added: UI field to customize text used to show successful submission.
+* Added: UI field to specify URL to redirect user to, after successful submission.
+* Added: Actions and filters after processing a form entry.
+* Added: Filter email used in get_email method, which determines where to send submission notifications to.
+* Added: Force a cursor pointer for submit buttons on frontend.
+* Added: Debugging information around WP_CRON on settings page when "ctct-debug-server-check" GET parameter present.
+* Added: Easily create a new form via the "New" menu area in the admin bar.
+* Added: maxlength attribute to custom field inputs to match Constant Contact API restrictions.
+* Fixed: mismatched textdomain that affected internationalization.
+* Fixed: Resolved issue with field builder when Constant Contact Forms is network activated.
+* Fixed: Prevent potential fatal errors for constant_contact function call.
+* Fixed: Append determined classes for the checkbox field.
+* Fixed: Increased the width for some settings text fields for better readability of content stored.
+* Fixed: Possible API failures if custom field listed first.
+* Updated: Output honeypot field regardless of reCAPTCHA status. Previously we did only reCAPTCHA if keys available. Else was honeypot.
+* Updated: Improved text sent to ConstantContact.com around custom fields. Should better reflect which field each line is related to. See Frequently Asked Questions regarding some limits to this feature and how to enable.
+* Updated: Improved return messages for submission failures.
+* Updated: Upgraded to the latest version of CMB2.
 
 = 1.2.5 =
 * Fixed: Customized labels no longer reset to default when adding new fields.
@@ -105,3 +131,23 @@ BONUS: If you have a Constant Contact account, all new email addresses that you 
 
 = 1.0.0 =
 * Initial Release
+
+== Frequently Asked Questions ==
+
+#### Constant Contact Forms Options
+http://knowledgebase.constantcontact.com/articles/KnowledgeBase/18260-WordPress-Constant-Contact-Forms-Options
+
+#### Frequently Asked Questions
+https://knowledgebase.constantcontact.com/articles/KnowledgeBase/18491-WordPress-Frequently-Asked-Questions
+
+#### Constant Contact List Addition Issues
+https://knowledgebase.constantcontact.com/articles/KnowledgeBase/18539-WordPress-Constant-Contact-List-Addition-Issues
+
+#### cURL error 60: SSL certificate problem
+https://knowledgebase.constantcontact.com/articles/KnowledgeBase/18159-WordPress-Error-60
+
+#### Add Google reCAPTCHA to Constant Contact Forms
+http://knowledgebase.constantcontact.com/articles/KnowledgeBase/17880
+
+#### How do I include which custom fields labels are which custom field values in my Constant Contact Account?
+You can add this to your active theme or custom plugin: `add_filter( 'constant_contact_include_custom_field_label', '__return_true' );`. Note: custom fields have a max length of 50 characters. Including the labels will subtract from the 50 character total available.

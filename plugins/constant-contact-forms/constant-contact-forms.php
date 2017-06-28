@@ -12,7 +12,7 @@
  * Plugin Name: Constant Contact Forms for WordPress
  * Plugin URI:  https://www.constantcontact.com
  * Description: Be a better marketer. All it takes is Constant Contact email marketing.
- * Version:     1.2.5
+ * Version:     1.3.0
  * Author:      Constant Contact
  * Author URI:  https://www.constantcontact.com
  * License:     GPLv3
@@ -44,11 +44,11 @@
  */
 
 /**
- * Autoloads files with classes when needed
+ * Autoloads files with classes when needed.
  *
- * @since  1.0.0
- * @param  string $class_name Name of the class being requested.
- * @return void
+ * @since 1.0.0
+ *
+ * @param string $class_name Name of the class being requested.
  */
 function constant_contact_autoload_classes( $class_name ) {
 	if ( 0 !== strpos( $class_name, 'ConstantContact_' ) ) {
@@ -65,86 +65,78 @@ function constant_contact_autoload_classes( $class_name ) {
 spl_autoload_register( 'constant_contact_autoload_classes' );
 
 /**
- * Main initiation class
+ * Main initiation class.
  *
- * @since  1.0.0
+ * @since 1.0.0
  */
 class Constant_Contact {
 
 	/**
-	 * Current version
+	 * Current version.
 	 *
-	 * @var  string
-	 * @since  1.0.0
+	 * @since 1.0.0
+	 * @var string
 	 */
-	const VERSION = '1.2.5';
+	const VERSION = '1.3.0';
 
 	/**
-	 * URL of plugin directory
+	 * URL of plugin directory.
 	 *
+	 * @since 1.0.0
 	 * @var string
-	 * @since  1.0.0
 	 */
 	protected $url = '';
 
 	/**
-	 * Path of plugin directory
+	 * Path of plugin directory.
 	 *
+	 * @since 1.0.0
 	 * @var string
-	 * @since  1.0.0
 	 */
 	protected $path = '';
 
 	/**
-	 * Plugin basename
+	 * Plugin basename.
 	 *
+	 * @since 1.0.0
 	 * @var string
-	 * @since  1.0.0
 	 */
 	protected $basename = '';
 
 	/**
-	 * Plugin name
+	 * Plugin name.
 	 *
+	 * @since 1.0.0
 	 * @var string
-	 * @since  1.0.0
 	 */
 	public $plugin_name = '';
 
 	/**
-	 * Text domain
+	 * Menu Icon.
 	 *
+	 * @since 1.0.0
 	 * @var string
-	 * @since  1.0.0
-	 */
-	public $text_domain = 'constant-contact-forms';
-
-	/**
-	 * Menu Icon
-	 *
-	 * @var string
-	 * @since  1.0.0
 	 */
 	public $menu_icon = 'dashicons-megaphone';
 
 	/**
 	 * Does site support encrpytions?
 	 *
-	 * @var boolean
 	 * @since 1.0.1
+	 * @var boolean
 	 */
 	public $is_encryption_ready = false;
 
 	/**
-	 * Singleton instance of plugin
+	 * Singleton instance of plugin.
 	 *
-	 * @var WDS_Product_Plugin_Framework
-	 * @since  1.0.0
+	 * @since 1.0.0
+	 * @var Constant_Contact
 	 */
 	protected static $single_instance = null;
 
 	/**
-	 * All our class instances
+	 * All our class instances.
 	 *
 	 * @since 1.0.1
 	 */
@@ -167,19 +159,24 @@ class Constant_Contact {
 	private $notification_content;
 	private $authserver;
 	private $updates;
+	private $optin;
+	private $customizations;
+	private $shortcode;
+	private $shortcode_admin;
 
 	/**
 	 * License file.
 	 *
-	 * @var   string
 	 * @since 1.0.1
+	 * @var string
 	 */
 	const LICENSE_FILE = 'license.txt';
 
 	/**
 	 * Creates or returns an instance of this class.
 	 *
-	 * @since  1.0.0
+	 * @since 1.0.0
+	 *
 	 * @return Constant_Contact A single instance of this class.
 	 */
 	public static function get_instance() {
@@ -191,9 +188,9 @@ class Constant_Contact {
 	}
 
 	/**
-	 * Sets up our plugin
+	 * Sets up our plugin.
 	 *
-	 * @since  1.0.0
+	 * @since 1.0.0
 	 */
 	protected function __construct() {
 
@@ -213,11 +210,7 @@ class Constant_Contact {
 		// Load our plugin and our libraries.
 		$this->plugin_classes();
 		$this->load_libs();
-
-		// If we're in the admin, also load up the admin classes.
-		if ( is_admin() ) {
-			$this->admin_plugin_classes();
-		}
+		$this->admin_plugin_classes();
 
 		// Include our helper functions function for end-users.
 		Constant_Contact::include_file( 'helper-functions', false );
@@ -235,8 +228,7 @@ class Constant_Contact {
 	/**
 	 * Attach other plugin classes to the base plugin class.
 	 *
-	 * @since  1.0.0
-	 * @return void
+	 * @since 1.0.0
 	 */
 	public function plugin_classes() {
 		$this->api                  = new ConstantContact_API( $this );
@@ -257,13 +249,13 @@ class Constant_Contact {
 		$this->authserver           = new ConstantContact_Middleware( $this );
 		$this->updates              = new ConstantContact_Updates( $this );
 		$this->optin                = new ConstantContact_Optin( $this );
+		$this->customizations       = new ConstantContact_User_Customizations( $this );
 	}
 
 	/**
-	 * Attach other plugin classes to the base plugin class, but only in the admin
+	 * Attach other plugin classes to the base plugin class, but only in the admin.
 	 *
-	 * @since  1.0.0
-	 * @return void
+	 * @since 1.0.0
 	 */
 	public function admin_plugin_classes() {
 		$this->admin       = new ConstantContact_Admin( $this, $this->basename );
@@ -271,10 +263,9 @@ class Constant_Contact {
 	}
 
 	/**
-	 * Add hooks and filters
+	 * Add hooks and filters.
 	 *
-	 * @since  1.0.0
-	 * @return void
+	 * @since 1.0.0
 	 */
 	public function hooks() {
 
@@ -304,18 +295,16 @@ class Constant_Contact {
 	}
 
 	/**
-	 * Activate the plugin
+	 * Activate the plugin.
 	 *
-	 * @since  1.0.0
-	 * @return void
+	 * @since 1.0.0
 	 */
 	function _activate() { }
 
 	/**
-	 * Deactivate the plugin
+	 * Deactivate the plugin.
 	 *
-	 * @since  1.0.0
-	 * @return void
+	 * @since 1.0.0
 	 */
 	function _deactivate() {
 
@@ -335,29 +324,26 @@ class Constant_Contact {
 	 *
 	 * @since 1.2.0
 	 *
-	 * @return mixed
+	 * @return bool
 	 */
 	public function meets_php_requirements() {
 		return ( version_compare( PHP_VERSION, '5.4.0', '>=' ) );
 	}
 
 	/**
-	 * Init hooks
+	 * Init hooks.
 	 *
-	 * @since  1.0.0
-	 * @return void
+	 * @since 1.0.0
 	 */
 	public function init() {
-
 		// Load our textdomain.
-		load_plugin_textdomain( $this->text_domain, false, dirname( $this->basename ) . '/languages/' );
+		load_plugin_textdomain( 'constant-contact-forms', false, dirname( $this->basename ) . '/languages/' );
 	}
 
 	/**
-	 * Load Vendor libraries
+	 * Load Vendor libraries.
 	 *
-	 * @since  1.0.0
-	 * @return void
+	 * @since 1.0.0
 	 */
 	public function load_libs() {
 
@@ -391,7 +377,6 @@ class Constant_Contact {
 
 		// Loop through our vendor libraries and load them.
 		foreach ( $libs as $lib ) {
-
 			// Require_once our file.
 			require_once( $this->dir( "vendor/{$lib}" ) );
 		}
@@ -411,7 +396,7 @@ class Constant_Contact {
 				return;
 			}
 			// Set up our base WDS_Shortcodes class.
-			$this->shortcode       = new ConstantContact_Shortcode();
+			$this->shortcode = new ConstantContact_Shortcode();
 
 			// Set our custom shortcode with correct version and data.
 			$this->shortcode_admin = new ConstantContact_Shortcode_Admin(
@@ -420,27 +405,29 @@ class Constant_Contact {
 				$this->shortcode->atts_defaults
 			);
 
-			// Launch it.
 			$this->shortcode_admin->hooks();
 		}
 
 	}
 
+	/**
+	 * Load and register our Constant Contact widget.
+	 *
+	 * @since 1.1.0
+	 */
 	public function widgets() {
 		require_once constant_contact()->path . 'includes/widgets/contact-form-select.php';
 		register_widget( 'ConstantContactWidget' );
 	}
 
 	/**
-	 * Save our dismissed first form notification
+	 * Save our dismissed first form notification.
 	 *
-	 * @since   1.0.0
-	 * @return  void
+	 * @since 1.0.0
 	 */
 	public function ajax_save_clear_first_form() {
 
-		if ( isset( $_POST['action'] ) && 'ctct_dismiss_first_modal' === $_POST['action'] ) { // Input var okay.
-
+		if ( isset( $_POST['action'] ) && 'ctct_dismiss_first_modal' === $_POST['action'] ) {
 			// Save our dismiss for the first form modal.
 			update_option( 'ctct_first_form_modal_dismissed', time() );
 		}
@@ -450,9 +437,11 @@ class Constant_Contact {
 	/**
 	 * Magic getter for our object.
 	 *
-	 * @since  1.0.0
-	 * @param string $field Field to get.
+	 * @since 1.0.0
+	 *
 	 * @throws Exception Throws an exception if the field is invalid.
+	 *
+	 * @param string $field Field to get.
 	 * @return mixed
 	 */
 	public function __get( $field ) {
@@ -482,6 +471,8 @@ class Constant_Contact {
 			case 'notification_content':
 			case 'authserver':
 			case 'updates':
+			case 'shortcode':
+			case 'shortcode_admin':
 				return $this->$field;
 			default:
 				throw new Exception( 'Invalid ' . __CLASS__ . ' property: ' . $field );
@@ -489,12 +480,13 @@ class Constant_Contact {
 	}
 
 	/**
-	 * Include a file from the classes directory
+	 * Include a file from the classes directory.
 	 *
-	 * @since  1.0.0
-	 * @param  string $filename Name of the file to be included.
-	 * @param  bool   $include_class Whether or ot to include the class.
-	 * @return bool   Result of include call.
+	 * @since 1.0.0
+	 *
+	 * @param string $filename      Name of the file to be included.
+	 * @param bool   $include_class Whether or ot to include the class.
+	 * @return bool Result of include call.
 	 */
 	public static function include_file( $filename, $include_class = true ) {
 
@@ -518,9 +510,10 @@ class Constant_Contact {
 	/**
 	 * This plugin's directory.
 	 *
-	 * @since  1.0.0
-	 * @param  string $path (optional) appended path.
-	 * @return string Directory and path
+	 * @since 1.0.0
+	 *
+	 * @param string $path Appended path. Optional.
+	 * @return string Directory and path.
 	 */
 	public static function dir( $path = '' ) {
 		static $dir;
@@ -529,11 +522,12 @@ class Constant_Contact {
 	}
 
 	/**
-	 * This plugin's url
+	 * This plugin's url.
 	 *
-	 * @since  1.0.0
-	 * @param  string $path (optional) appended path.
-	 * @return string   URL and path
+	 * @since 1.0.0
+	 *
+	 * @param string $path Appended path. Optional.
+	 * @return string URL and path
 	 */
 	public static function url( $path = '' ) {
 		static $url;
@@ -544,7 +538,8 @@ class Constant_Contact {
 	/**
 	 * Retrieve license as text.
 	 *
-	 * @since  1.0.0
+	 * @since 1.0.0
+	 *
 	 * @return string License text.
 	 */
 	public function get_license_text() {
@@ -588,26 +583,55 @@ class Constant_Contact {
 		return false;
 	}
 
+	/**
+	 * Add some custom body classes for our needs.
+	 *
+	 * @since 1.2.0
+	 *
+	 * @param array $classes Existing body classes.
+	 * @return array Amended body classes.
+	 */
 	public function body_classes( $classes = array() ) {
 		$theme = wp_get_theme()->template;
-		$classes[] = "ctct-{$theme}"; //Prefixing for user knowledge of source
+		$classes[] = "ctct-{$theme}"; // Prefixing for user knowledge of source.
 
 		return $classes;
 	}
 
+	/**
+	 * Determine if we are in a Constant Contact area.
+	 *
+	 * @since 1.2.0
+	 *
+	 * @return bool
+	 */
 	public function is_constant_contact() {
 		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
 			return false;
 		}
+
 		if ( ! is_admin() || empty( $_GET ) ) {
 			return false;
 		}
 
+		$ctct_types = array( 'ctct_forms', 'ctct_lists' );
 		if (
 			isset( $_GET['post_type'] ) &&
 			in_array(
 				$_GET['post_type'],
-				array( 'ctct_forms', 'ctct_lists' )
+				$ctct_types,
+				true
+			)
+		) {
+			return true;
+		}
+
+		if (
+			isset( $_GET['post'] ) &&
+			in_array(
+				get_post_type( $_GET['post'] ),
+				$ctct_types,
+				true
 			)
 		) {
 			return true;
@@ -623,9 +647,10 @@ register_deactivation_hook( __FILE__ , array( constant_contact(), '_deactivate' 
 
 /**
  * Grab the Constant_Contact object and return it.
- * Wrapper for Constant_Contact::get_instance()
+ * Wrapper for Constant_Contact::get_instance().
  *
- * @since  1.0.0
+ * @since 1.0.0
+ *
  * @return Constant_Contact Singleton instance of plugin class.
  */
 function constant_contact() {

@@ -1,6 +1,6 @@
 <?php
 /**
- * Mail
+ * Constant Contact Mail
  *
  * @package ConstantContact
  * @subpackage Mail
@@ -14,17 +14,19 @@
 class ConstantContact_Mail {
 
 	/**
-	 * Parent plugin class
+	 * Parent plugin class.
 	 *
-	 * @var   class
-	 * @since 0.0.1
+	 * @since 1.0.0
+	 * @var object
 	 */
 	protected $plugin = null;
 
 	/**
-	 * Constructor
+	 * Constructor.
 	 *
-	 * @since  1.0.0
+	 * @since 1.0.0
+	 *
+	 * @param object $plugin Parent plugin class.
 	 */
 	public function __construct( $plugin ) {
 		$this->plugin = $plugin;
@@ -34,25 +36,26 @@ class ConstantContact_Mail {
 	/**
 	 * Fire hoosk for actions.
 	 *
-	 * @since 1.0.2
+	 * @since 1.0.0
 	 */
 	protected function hooks() {
 		add_action( 'ctct_schedule_form_opt_in', array( $this, 'opt_in_user' ) );
 	}
 
 	/**
-	 * Process our form values
+	 * Process our form values.
 	 *
 	 * @since 1.0.0
-	 * @param array $values submitted form values
 	 *
+	 * @param array $values        Submitted form values.
+	 * @param bool  $add_to_opt_in Whether or not to add to opt in.
 	 * @return bool
 	 */
 	public function submit_form_values( $values = array(), $add_to_opt_in = false ) {
 
 		// Sanity check.
 		if ( ! is_array( $values ) ) {
-			return;
+			return false;
 		}
 
 		// Clean our values.
@@ -75,6 +78,11 @@ class ConstantContact_Mail {
 			}
 		}
 
+		// Preserve form ID for mail() method. Lost in pretty_values() pass.
+		$submission_details                    = array();
+		$submission_details['form_id']         = $values['ctct-id']['value'];
+		$submission_details['submitted_email'] = $this->get_user_email_from_submission( $values );
+
 		// Pretty our values.
 		$values = constant_contact()->process_form->pretty_values( $values );
 
@@ -90,15 +98,16 @@ class ConstantContact_Mail {
 		}
 
 		// Send the mail.
-		return $this->mail( $this->get_email(), $email_values );
+		return $this->mail( $this->get_email(), $email_values, $submission_details );
 	}
 
 	/**
-	 * Opts in a user, if requested
+	 * Opts in a user, if requested.
 	 *
-	 * @since  1.0.0
-	 * @param  array $values submitted values
-	 * @return object         response from API
+	 * @since 1.0.0
+	 *
+	 * @param array $values Submitted values.
+	 * @return object Response from API.
 	 */
 	public function opt_in_user( $values ) {
 
@@ -133,16 +142,17 @@ class ConstantContact_Mail {
 			$args['list'] = sanitize_text_field( $values['ctct-opt-in']['value'] );
 
 			// Send that to our API.
-			return constantcontact_api()->add_contact( $args );
+			return constantcontact_api()->add_contact( $args, $values['ctct-id']['value'] );
 		}
 	}
 
 	/**
-	 * Formats values for email
+	 * Formats values for email.
 	 *
-	 * @since  1.0.0
-	 * @param  array $values values to format
-	 * @return string         html content for email
+	 * @since 1.0.0
+	 *
+	 * @param array $pretty_vals Values to format.
+	 * @return string HTML content for email.
 	 */
 	public function format_values_for_email( $pretty_vals ) {
 
@@ -167,15 +177,24 @@ class ConstantContact_Mail {
 	}
 
 	/**
-	 * Get the email address to send to
+	 * Get the email address to send to.
 	 *
-	 * @since  1.0.0
-	 * @return string email address to send to
+	 * @since 1.0.0
+	 *
+	 * @return string Email address to send to.
 	 */
 	public function get_email() {
 
-		// Eventually we'll make this configurable.
-		return get_option( 'admin_email' );
+		$email = get_option( 'admin_email' );
+
+		/**
+		 * Filters the email to send Constant Contact Forms admin emails to.
+		 *
+		 * @since 1.3.0
+		 *
+		 * @param string $email Email address to send to. Default admin_email option.
+		 */
+		return apply_filters( 'constant_contact_destination_email', $email );
 	}
 
 	/**
@@ -183,11 +202,12 @@ class ConstantContact_Mail {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param string $destination_email Intended mail address.
-	 * @param array  $content           Data from clean values.
+	 * @param string $destination_email  Intended mail address.
+	 * @param string $content            Data from clean values.
+	 * @param array  $submission_details Details for submission to process.
 	 * @return bool Whether or not sent.
 	 */
-	public function mail( $destination_email, $content ) {
+	public function mail( $destination_email, $content, $submission_details ) {
 
 		// Define a mail key for the cache.
 		static $last_sent = false;
@@ -204,7 +224,8 @@ class ConstantContact_Mail {
 		if ( $last_sent === $mail_key ) {
 			$this->maybe_log_mail_status(
 				vsprintf(
-					__( 'Duplicate send mail for: %s and: %s' ),
+					/* translators: this is only used when some debugging is enabled */
+					__( 'Duplicate send mail for: %1$s and: %2$s', 'constant-contact-forms' ),
 					array(
 						$destination_email,
 						$mail_key,
@@ -229,13 +250,52 @@ class ConstantContact_Mail {
 
 		$content_after = __( "Don't forget: Email marketing is a great way to stay connected and engage with visitors after they've left your site. When you connect to a Constant Contact account, all new subscribers are automatically synced so you can keep the interaction going through emails and more. Sign up for a Free Trial on the Connect page in the Plugin console view.", 'constant-contact-forms' );
 
-		$content = $content_before . $content . $content_after;
+		/**
+		 * Filters the final constructed email content to be sent to an admin.
+		 *
+		 * @since 1.3.0
+		 *
+		 * @param string $value   Constructed email content.
+		 * @param string $form_id Current form ID being processed.
+		 */
+		$content = apply_filters( 'constant_contact_email_content', $content_before . $content . $content_after, $submission_details['form_id'] );
+
+		/**
+		 * Fires before the queuing of the email to be sent.
+		 *
+		 * @since 1.3.0
+		 *
+		 * @param string $value             Current form ID being processed.
+		 * @param string $value             Submitted email address.
+		 * @param string $destination_email Current destination for the email.
+		 * @param string $content           Constructed email content.
+		 */
+		do_action( 'constant_contact_before_email_send', $submission_details['form_id'], $submission_details['submitted_email'], $destination_email, $content );
 
 		$mail_status = wp_mail(
 			$destination_email,
-			__( 'Great News: You just captured a new visitor submission', 'constant-contact-forms' ),
+			/**
+			 * Filters the email subject to be sent to an admin.
+			 *
+			 * @since 1.3.0
+			 *
+			 * @param string $value Constructed email subject.
+			 */
+			apply_filters( 'constant_contact_email_subject', __( 'Great News: You just captured a new visitor submission', 'constant-contact-forms' ) ),
 			$content
 		);
+
+		/**
+		 * Fires after the queuing of the email to be sent.
+		 *
+		 * @since 1.3.0
+		 *
+		 * @param string $value             Current form ID being processed.
+		 * @param string $value             Submitted email address.
+		 * @param string $destination_email Current destination for the email.
+		 * @param string $content           Constructed email content.
+		 */
+		do_action( 'constant_contact_after_email_send', $submission_details['form_id'], $submission_details['submitted_email'], $destination_email, $content );
 
 		$this->maybe_log_mail_status( $mail_status, $destination_email, $content );
 
@@ -251,22 +311,22 @@ class ConstantContact_Mail {
 	}
 
 	/**
-	 * Helper method to return 'text/html' string for actions
+	 * Helper method to return 'text/html' string for actions.
 	 *
-	 * @since  1.0.0
+	 * @since 1.0.0
 	 */
 	public function set_email_type() {
 		return 'text/html';
 	}
 
 	/**
-	 * If our mail debugging is set, then log mail statuses to the error log
+	 * If our mail debugging is set, then log mail statuses to the error log.
 	 *
-	 * @since   1.0.0
-	 * @param   string  $status      status from wp_mail.
-	 * @param   string  $dest_email  destination email.
-	 * @param   string  $content     content of email.
-	 * @return  void
+	 * @since 1.0.0
+	 *
+	 * @param string $status     Status from wp_mail.
+	 * @param string $dest_email Destination email.
+	 * @param string $content    Content of email.
 	 */
 	public function maybe_log_mail_status( $status, $dest_email, $content ) {
 
@@ -279,5 +339,22 @@ class ConstantContact_Mail {
 			error_log( print_r( $content, true ) );
 		}
 
+	}
+
+	/**
+	 * Retrieve submitted email address from form values.
+	 *
+	 * @since 1.3.0
+	 *
+	 * @param array $values Values submitted to form.
+	 * @return mixed
+	 */
+	public function get_user_email_from_submission( $values = array() ) {
+		foreach ( $values as $key => $value ) {
+			if ( false === strpos( $key, 'email___' ) ) {
+				continue;
+			}
+			return $value['value'];
+		}
 	}
 }

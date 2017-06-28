@@ -10,36 +10,40 @@
 
 /**
  * Helper class for dealing with our form builder field functionality.
+ *
+ * @since 1.0.0
  */
 class ConstantContact_Builder_Fields {
 
 	/**
-	 * Parent plugin class
+	 * Parent plugin class.
 	 *
-	 * @var   class
-	 * @since 0.0.1
+	 * @since 1.0.0
+	 * @var object
 	 */
 	protected $plugin = null;
 
 	/**
-	 * Prefix for our meta fields / boxes.
+	 * Prefix for our meta fields/boxes.
 	 *
 	 * @var string
 	 */
 	public $prefix = '_ctct_';
 
 	/**
-	 * Constructor
+	 * Constructor.
 	 *
 	 * @since 1.0.0
+	 *
+	 * @param object $plugin Parent class object.
 	 */
 	public function __construct( $plugin ) {
 		$this->plugin = $plugin;
-		$this->hooks();
+		$this->init();
 	}
 
 	/**
-	 * Initiate our hooks
+	 * Initiate our hooks.
 	 *
 	 * @since 1.0.0
 	 */
@@ -48,7 +52,7 @@ class ConstantContact_Builder_Fields {
 	}
 
 	/**
-	 * Initiate our hooks
+	 * Initiate our hooks.
 	 *
 	 * @since 1.0.0
 	 */
@@ -80,15 +84,14 @@ class ConstantContact_Builder_Fields {
 	}
 
 	/**
-	 * Form description CMB2 metabox
+	 * Form description CMB2 metabox.
 	 *
-	 * @since  1.0.0
-	 * @return void
+	 * @since 1.0.0
 	 */
 	public function description_metabox() {
 
 		/**
-		 * Initiate the $description_metabox
+		 * Initiate the $description_metabox.
 		 */
 		$description_metabox = new_cmb2_box( array(
 			'id'           => 'ctct_0_description_metabox',
@@ -112,10 +115,9 @@ class ConstantContact_Builder_Fields {
 	}
 
 	/**
-	 * Form options CMB2 metabox
+	 * Form options CMB2 metabox.
 	 *
-	 * @since  1.0.0
-	 * @return void
+	 * @since 1.0.0
 	 */
 	public function opt_ins_metabox() {
 
@@ -129,9 +131,28 @@ class ConstantContact_Builder_Fields {
 		) );
 
 		$options_metabox->add_field( array(
-				'name'    => __( 'Button text', 'constant-contact-forms' ),
-				'id'      => $this->prefix . 'button_text',
-				'type'    => 'text_medium',
+			'name' => __( 'Button text', 'constant-contact-forms' ),
+			'id'   => $this->prefix . 'button_text',
+			'type' => 'text_medium',
+		) );
+
+		$options_metabox->add_field( array(
+			'name'        => __( 'Submit via AJAX', 'constant-contact-forms' ),
+			'id'          => $this->prefix . 'do_ajax',
+			'type'        => 'checkbox',
+			'description' => __( 'Enables form submissions without triggering a page refresh. Overrides and prevents "Redirect to" value usage.', 'constant-contact-forms' ),
+		) );
+
+		$options_metabox->add_field( array(
+			'name' => __( 'Custom form submission success text', 'constant-contact-forms' ),
+			'id'   => $this->prefix . 'form_submission_success',
+			'type' => 'text_medium',
+		) );
+
+		$options_metabox->add_field( array(
+			'name' => __( 'Redirect to', 'constant-contact-forms' ),
+			'id'   => $this->prefix . 'redirect_uri',
+			'type' => 'text_medium',
 		) );
 
 		if ( constant_contact()->api->is_connected() ) {
@@ -144,11 +165,11 @@ class ConstantContact_Builder_Fields {
 	}
 
 	/**
-	 * Helper method to show our connected optin fields
+	 * Helper method to show our connected optin fields.
 	 *
-	 * @since   1.0.0
-	 * @param   object  $options_metabox  CMB2 options metabox object
-	 * @return  void
+	 * @since 1.0.0
+	 *
+	 * @param object $options_metabox CMB2 options metabox object.
 	 */
 	public function show_optin_connected_fields( $options_metabox ) {
 
@@ -177,11 +198,11 @@ class ConstantContact_Builder_Fields {
 	}
 
 	/**
-	 * Helper method to show our non connected optin fields
+	 * Helper method to show our non connected optin fields.
 	 *
-	 * @since   1.0.0
-	 * @param   object  $options_metabox  CMB2 options metabox object
-	 * @return  void
+	 * @since 1.0.0
+	 *
+	 * @param object $options_metabox CMB2 options metabox object.
 	 */
 	public function show_optin_not_connected_fields( $options_metabox ) {
 
@@ -200,11 +221,11 @@ class ConstantContact_Builder_Fields {
 	}
 
 	/**
-	 * Helper method to show our show/hide checkbox field
+	 * Helper method to show our show/hide checkbox field.
 	 *
-	 * @since   1.0.0
-	 * @param   object  $options_metabox  CMB2 options metabox object
-	 * @return  void
+	 * @since 1.0.0
+	 *
+	 * @param object $options_metabox CMB2 options metabox object.
 	 */
 	public function show_enable_show_checkbox_field( $options_metabox ) {
 
@@ -222,35 +243,36 @@ class ConstantContact_Builder_Fields {
 	}
 
 	/**
-	 * Helper method to show our affirmation textarea field
+	 * Helper method to show our affirmation textarea field.
 	 *
 	 * @since 1.0.0
+	 *
 	 * @param object $options_metabox CMB2 options metabox object.
 	 */
 	public function show_affirmation_field( $options_metabox ) {
 
 		// Get our site name, and if we don't have it, then use a placeholder.
 		$business_name = get_bloginfo( 'name' );
-		$business_name ? $business_name : __( 'Your Business Name', 'constant-contact-forms' );
+		$business_name ? ( $business_name ) : __( 'Your Business Name', 'constant-contact-forms' );
 
 		$options_metabox->add_field( array(
 			'name'        => __( 'Opt-in Affirmation', 'constant-contact-forms' ),
 			'id'          => $this->prefix . 'opt_in_instructions',
 			'type'        => 'textarea_small',
+			// translators: placeholder has a business name from Constant Contact.
 			'default'     => sprintf( __( 'Example: Yes, I would like to receive emails from %s. (You can unsubscribe anytime)', 'constant-contact-forms' ), $business_name ),
 		) );
 	}
 
 	/**
-	 * Fields builder CMB2 metabox
+	 * Fields builder CMB2 metabox.
 	 *
 	 * @since 1.0.0
-	 * @return void
 	 */
 	public function fields_metabox() {
 
 		/**
-		 * Initiate the $fields_metabox
+		 * Initiate the $fields_metabox.
 		 */
 		$fields_metabox = new_cmb2_box( array(
 			'id'           => 'ctct_2_fields_metabox',
@@ -267,7 +289,6 @@ class ConstantContact_Builder_Fields {
 			/**
 			 * No birthdays or anniversarys in CC API V2, keeping this for later.
 			 * "You can also collect birthday and anniversary dates to use with Constant Contact autoresponders! "
-			 * @todo
 			 * @since 1.0.2
 			 */
 			'description' => __( 'Create a field for each piece of information you want to collect. Good basics include email address, first name, and last name.', 'constant-contact-forms' ),
@@ -292,6 +313,7 @@ class ConstantContact_Builder_Fields {
 		 * The default placeholder text to use for fields without a placeholder.
 		 *
 		 * @since 1.2.0
+		 *
 		 * @param string $default_placeholder The placeholder text.
 		 */
 		$default_placeholder = apply_filters( 'constant_contact_default_placeholder', __( 'A brief description of this field (optional)', 'constant-contact-forms' ) );
@@ -340,7 +362,6 @@ class ConstantContact_Builder_Fields {
 			 *     'option' => __( 'Anniversary', 'constant-contact-forms' ),
 			 *     'placeholder' => 'M/D/Y',
 			 *     ),
-			 * @todo
 			 * @since 1.0.2
 			 */
 			'custom' => array(
@@ -437,7 +458,7 @@ class ConstantContact_Builder_Fields {
 		) );
 
 		$generated->add_field( array(
-			'name'       => 'Shortcode to use',
+			'name'       => __( 'Shortcode to use', 'constant-contact-forms' ),
 			'id'         => $this->prefix . 'generated_shortcode',
 			'type'       => 'text_medium',
 			'desc'       => __( 'Shortcode to embed - <em><small>You can copy and paste this in a post to display your form.</small></em>', 'constant-contact-forms' ),
@@ -446,6 +467,5 @@ class ConstantContact_Builder_Fields {
 				'readonly' => 'readonly',
 			),
 		) );
-
 	}
 }

@@ -13,14 +13,17 @@ if ( class_exists( 'WDS_Shortcodes', false ) && ! class_exists( 'ConstantContact
 	/**
 	 * Extends WDS_Shortcode_Admin to add our shortcode into a pretty shortcode picker in the editor.
 	 *
-	 * Sets up shortcode button
+	 * Sets up shortcode button.
+	 *
+	 * @since 1.0.0
 	 */
 	class ConstantContact_Shortcode_Admin extends WDS_Shortcode_Admin {
 
 		/**
-		 * Hooks
+		 * Hooks.
 		 *
 		 * @since 1.0.0
+		 *
 		 * @return void
 		 */
 		public function hooks() {
@@ -31,9 +34,10 @@ if ( class_exists( 'WDS_Shortcodes', false ) && ! class_exists( 'ConstantContact
 		}
 
 		/**
-		 * Array of button data
+		 * Array of button data.
 		 *
 		 * @since 1.0.0
+		 *
 		 * @return array
 		 */
 		public function js_button_data() {
@@ -57,9 +61,10 @@ if ( class_exists( 'WDS_Shortcodes', false ) && ! class_exists( 'ConstantContact
 		}
 
 		/**
-		 * Adds fields to the button modal using CMB2
+		 * Adds fields to the button modal using CMB2.
 		 *
 		 * @since 1.0.0
+		 *
 		 * @param array $fields CMB2 fields data.
 		 * @param array $button_data Shotcode button data.
 		 * @return array $fields
@@ -77,8 +82,9 @@ if ( class_exists( 'WDS_Shortcodes', false ) && ! class_exists( 'ConstantContact
 
 			if ( empty( $forms ) ) {
 				$args['before'] = sprintf(
+					// translators: placeholder will store url for forms list page.
 					__( '<p>No forms available. Visit your <a href="%s">forms list</a> to create one.</p>', 'constant-contact-forms' ),
-						admin_url( 'edit.php?post_type=ctct_forms' )
+						esc_url( admin_url( 'edit.php?post_type=ctct_forms' ) )
 				);
 			}
 
@@ -91,6 +97,7 @@ if ( class_exists( 'WDS_Shortcodes', false ) && ! class_exists( 'ConstantContact
 		 * Filters the data sent to the editor.
 		 *
 		 * @since 1.0.0
+		 *
 		 * @param array $fields CMB2 fields data.
 		 * @param array $shortcode_button Shortcode buttond data.
 		 * @return array
@@ -110,13 +117,14 @@ if ( class_exists( 'WDS_Shortcodes', false ) && ! class_exists( 'ConstantContact
 		}
 
 		/**
-		 * Delete transient of saved form
+		 * Delete transient of saved form.
 		 *
-		 * @since  1.0.0
+		 * @since 1.0.0
+		 *
 		 * @return void
 		 */
 		public function clear_saved_form_list_transient() {
 			delete_transient( 'constant_contact_shortcode_form_list' );
 		}
 	}
-}
+} // End if().
