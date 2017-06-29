@@ -21220,6 +21220,8 @@ body.et_divi_builder #et_builder_outer_content .text-absolute-bottom.text-absolu
   body.et_divi_builder #et_builder_outer_content .text-absolute-bottom.text-absolute-bottom p {
     text-align: center;
     line-height: 1em;
+    font-size: 36px;
+    padding-bottom: 20px;
   }
 }
 
