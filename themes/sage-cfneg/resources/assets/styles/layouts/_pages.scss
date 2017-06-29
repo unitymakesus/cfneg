@@ -27,9 +27,10 @@
           width: 26%;
           height: 100%;
 
-          // @include breakpoint(medium only) {
-          //   height:50%;
-          //}
+          @include breakpoint(small only) {
+            height:45%;
+            width: 25%;
+          }
         }
 
         .et_pb_row {
@@ -38,6 +39,10 @@
           @include breakpoint(medium only) {
                   padding-left: 25%;
                   padding-top: 0;
+          }
+
+          @include breakpoint(small only) {
+            padding-left: 25%;
           }
 
           &::before {
@@ -52,6 +57,11 @@
 
         @include breakpoint(medium only) {
           width: 95% !important;
+        }
+
+        @include breakpoint(small only) {
+          width: 100% !important;
+          font-size: 16px !important;
         }
 
         &::before {
@@ -148,7 +158,8 @@
   }
 }
 
-
-#main-tagline p {
-  color: red;
+@include breakpoint (small only) {
+  .et_divi_builder #et_builder_outer_content .et_pb_module p {
+    font-size: 16px !important;
+  }
 }

@@ -379,3 +379,13 @@
     }
 
 }
+
+@include breakpoint(small only) {
+  .et_divi_builder #et_builder_outer_content .et_pb_blog_grid.et_pb_blog_grid .et_pb_post.et_pb_post .entry-title{
+    font-size: 24px;
+  }
+
+  .et_divi_builder #et_builder_outer_content .et_pb_blog_grid.et_pb_blog_grid.blog-feed .et_pb_post.et_pb_post {
+    font-size: 16px;
+  }
+}
