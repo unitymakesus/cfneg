@@ -8,36 +8,40 @@
 
 /**
  * Main class for dealing with our form builder functionality.
+ *
+ * @since 1.0.0
  */
 class ConstantContact_Builder {
 
 	/**
-	 * Parent plugin class
+	 * Parent plugin class.
 	 *
-	 * @var   class
-	 * @since 0.0.1
+	 * @since 1.0.0
+	 * @var object
 	 */
 	protected $plugin = null;
 
 	/**
-	 * Prefix for our meta fields / boxes
-	 * @var  string
+	 * Prefix for our meta fields/boxes.
+	 *
+	 * @var string
 	 */
 	public $prefix = '_ctct_';
 
 	/**
-	 * Constructor
+	 * Constructor.
 	 *
-	 * @since  1.0.0
-	 * @return void
+	 * @since 1.0.0
+	 *
+	 * @param object $plugin Parent plugin class.
 	 */
 	public function __construct( $plugin ) {
 		$this->plugin = $plugin;
-		$this->hooks();
+		$this->init();
 	}
 
 	/**
-	 * Initiate our hooks
+	 * Initiate our hooks.
 	 *
 	 * @since 1.0.0
 	 */
@@ -46,7 +50,7 @@ class ConstantContact_Builder {
 	}
 
 	/**
-	 * Initiate our hooks
+	 * Initiate our hooks.
 	 *
 	 * @since 1.0.0
 	 */
@@ -72,15 +76,17 @@ class ConstantContact_Builder {
 	}
 
 	/**
-	 * Get lists for dropdown option
+	 * Get lists for dropdown option.
 	 *
-	 * @since  1.0.0
+	 * @since 1.0.0
+	 *
 	 * @return array array of lists
 	 */
 	public function get_lists() {
 
 		// Grab our lists
 		$lists = constant_contact()->lists->get_lists();
+		$get_lists = array();
 
 		// Data verification
 		if ( $lists && is_array( $lists ) ) {
@@ -104,9 +110,9 @@ class ConstantContact_Builder {
 	}
 
 	/**
-	 * Custom CMB2 meta box css
+	 * Custom CMB2 meta box css.
 	 *
-	 * @since  1.0.0
+	 * @since 1.0.0
 	 */
 	public function add_form_css() {
 
@@ -115,21 +121,21 @@ class ConstantContact_Builder {
 	}
 
 	/**
-	 * Hook into CMB2 save meta to check if email field has been added
+	 * Hook into CMB2 save meta to check if email field has been added.
 	 *
-	 * @since  1.0.0
-	 * @param  string $field_id CMB2 Field id.
-	 * @param  object $updated
-	 * @param  string $action
-	 * @param  object $cmbobj   CMB2 field object
-	 * @return void
+	 * @since 1.0.0
+	 *
+	 * @param string $field_id CMB2 Field id.
+	 * @param object $updated
+	 * @param string $action
+	 * @param object $cmbobj   CMB2 field object
 	 */
 	public function override_save( $field_id, $updated, $action, $cmbobj ) {
 
-		// Hey $post nice to see you
+		// Hey $post nice to see you.
 		global $post;
 
-		// Do all our existence checks
+		// Do all our existence checks.
 		if (
 			isset( $post->ID ) &&
 			$post->ID &&
@@ -142,24 +148,24 @@ class ConstantContact_Builder {
 			is_array( $cmbobj->data_to_save['custom_fields_group'] )
 		) {
 
-			// Save post meta with a random key that we can verify later
+			// Save post meta with a random key that we can verify later.
 			update_post_meta( $post->ID, '_ctct_verify_key', wp_generate_password( 25, false ) );
 
 			// We want to set our meta to false, as we'll want to loop through
 			// and see if we should set it to true, but we want it to be false most
-			// of the time
+			// of the time.
 			update_post_meta( $post->ID, '_ctct_has_email_field', 'false' );
 
-			// Loop through all of our custom fields group fields
+			// Loop through all of our custom fields group fields.
 			foreach ( $cmbobj->data_to_save['custom_fields_group'] as $data ) {
 
 				// If we have a an email field set in our map select:
 				if ( ( isset( $data['_ctct_map_select'] ) && 'email' === $data['_ctct_map_select'] ) || ! isset( $data['_ctct_map_select'] ) ) {
 
-					// update our post meta to mark that we have email
+					// Update our post meta to mark that we have email.
 					update_post_meta( $post->ID, '_ctct_has_email_field', 'true' );
 
-					// bail out, more than one email fields are fine, but we know we have at least one
+					// Bail out, more than one email fields are fine, but we know we have at least one.
 					break;
 				}
 			}
@@ -167,16 +173,15 @@ class ConstantContact_Builder {
 	}
 
 	/**
-	 * Set admin notice if no email field
+	 * Set admin notice if no email field.
 	 *
-	 * @since  1.0.0
-	 * @return void
+	 * @since 1.0.0
 	 */
 	public function admin_notice() {
 
 		global $post;
 
-		// data verification
+		// Data verification.
 		if (
 			$post &&
 			isset( $post->ID ) &&
@@ -186,10 +191,10 @@ class ConstantContact_Builder {
 			'auto-draft' !== $post->post_status
 		) {
 
-			// Check to see if we have an email set on our field
+			// Check to see if we have an email set on our field.
 			$has_email = get_post_meta( $post->ID, '_ctct_has_email_field', true );
 
-			// If we don't have an email, then display our admin notice to the user
+			// If we don't have an email, then display our admin notice to the user.
 			if ( ! $has_email || 'false' === $has_email ) {
 				echo '<div id="ctct-no-email-error" class="notice notice-error ctct-no-email-error"><p>';
 				esc_attr_e( 'Please add an email field to continue.', 'constant-contact-forms' );
@@ -198,7 +203,7 @@ class ConstantContact_Builder {
 
 			$custom_fields = get_post_meta( $post->ID, 'custom_fields_group', true );
 			$custom_textareas_count = (int) 0;
-			if ( ! empty( $custom_fields ) && is_array( $custom_fields) ) {
+			if ( ! empty( $custom_fields ) && is_array( $custom_fields ) ) {
 				foreach ( $custom_fields as $field ) {
 					if ( 'custom_text_area' === $field['_ctct_map_select'] ) {
 						$custom_textareas_count++;
@@ -214,36 +219,36 @@ class ConstantContact_Builder {
 				}
 			}
 
-			// Check for our query arg
-			if ( isset( $_GET['ctct_not_connected'] ) && sanitize_text_field( wp_unslash( $_GET['ctct_not_connected'] ) ) ) { //Input var okay.
+			// Check for our query arg.
+			if ( isset( $_GET['ctct_not_connected'] ) && sanitize_text_field( wp_unslash( $_GET['ctct_not_connected'] ) ) ) { // Input var okay.
 
-				// Double check that we're not connected
+				// Double check that we're not connected.
 				if ( ! constant_contact()->api->is_connected() ) {
 
-					// See if we dismissed the modal, if not, show it
+					// See if we dismissed the modal, if not, show it.
 					if ( ! get_option( 'ctct_first_form_modal_dismissed', false ) ) {
 
-						// Show our modal
+						// Show our modal.
 						$this->output_not_connected_modal( $post->ID );
 					}
 				}
 			}
-		}
+		} // End if().
 	}
 
 	/**
-	 * On post save, see if we should trigger the not connected modal
+	 * On post save, see if we should trigger the not connected modal.
 	 *
-	 * @since   1.0.0
-	 * @param   int  $post_id  post id
-	 * @param   object  $post     post object
-	 * @return  void
+	 * @since 1.0.0
+	 *
+	 * @param int    $post_id Post id.
+	 * @param object $post    Post object.
 	 */
 	public function save_post( $post_id, $post ) {
 
 		// Sanity checks to make sure it only applies to
 		// what we want to deal with, which is saving a form
-		// and not connected to constant contact
+		// and not connected to constant contact.
 		if (
 			$post &&
 			$post_id &&
@@ -252,40 +257,45 @@ class ConstantContact_Builder {
 			! wp_is_post_revision( $post ) &&
 			! constant_contact()->api->is_connected()
 		) {
-			// Inject in a query arg that we can read later
+			// Inject in a query arg that we can read later.
 			add_filter( 'redirect_post_location', array( $this, 'add_not_conn_query_arg' ), 99 );
 		}
 	}
 
 	/**
-	 * Return our query arg, and reomve our filter that we added before
+	 * Return our query arg, and reomve our filter that we added before.
 	 *
-	 * @since   1.0.0
+	 * @since 1.0.0
+	 *
+	 * @param string $location URL to add query args to.
+	 * @return string
 	 */
 	public function add_not_conn_query_arg( $location ) {
 
-		// Remove our filter that we added before
+		// Remove our filter that we added before.
 		remove_filter( 'redirect_post_location', array( $this, 'add_notice_query_var' ), 99 );
 
-		// Inject in our query arg
+		// Inject in our query arg.
 		return add_query_arg( array( 'ctct_not_connected' => 'true' ), $location );
 	}
 
 	/**
-	 * Gets our form title for our connect modal window
+	 * Gets our form title for our connect modal window.
 	 *
-	 * @since   1.0.0
-	 * @return  string  markup with form title
+	 * @since 1.0.0
+	 *
+	 * @return string Markup with form title.
 	 */
 	public function get_form_name_markup_for_modal() {
 
-		// Get the post object
+		// Get the post object.
 		global $post;
 
-		// If we have a post title set, use that for our modal
+		// If we have a post title set, use that for our modal.
 		if ( isset( $post->post_title ) ) {
 			return esc_attr( $post->post_title );
 		}
+		return '';
 	}
 
 	/**
@@ -294,14 +304,14 @@ class ConstantContact_Builder {
 	 * @since 1.0.0
 	 * @since 1.2.0 Added post_id parameter.
 	 *
-	 * @return void
+	 * @param int $post_id Post ID.
 	 */
 	public function output_not_connected_modal( $post_id = 0 ) {
 
 		// Output markup of non connected modal here. ?>
 		<div class="ctct-modal ctct-modal-open">
 
-			<?php // modal header ?>
+			<?php // Modal header. ?>
 			<div class="ctct-modal-dialog" role="document">
 				<div class="ctct-modal-content">
 					<div class="ctct-modal-header">
@@ -310,6 +320,7 @@ class ConstantContact_Builder {
 						<p>
 							<?php
 							printf(
+								// translators: placeholder will hold an example shortcode for a newly created form.
 								esc_html__( 'Paste shortcode %s into a post or page editor.', 'constant-contact-forms' ),
 								'<span class="displayed-shortcode">' . constant_contact_display_shortcode( $post_id ) . '</span>'
 							); ?>
@@ -329,7 +340,7 @@ class ConstantContact_Builder {
 							<p>
 								<?php esc_attr_e( 'Import everything into Constant Contact so I can see what email marketing can do for me.', 'constant-contact-forms' ); ?>
 							</p>
-							<a href="<?php echo esc_url_raw( add_query_arg( array( 'rmc' => 'wp_fmodal_try' ), constant_contact()->api->get_signup_link() ) ); ?>" target="_blank" class="button button-orange" title="Try Us Free">Try Us Free</a><br/>
+							<a href="<?php echo esc_url_raw( add_query_arg( array( 'rmc' => 'wp_fmodal_try' ), constant_contact()->api->get_signup_link() ) ); ?>" target="_blank" class="button button-orange" title="<?php esc_attr_e( 'Try Us Free', 'constant-contact-forms' ); ?>"><?php esc_html_e( 'Try Us Free', 'constant-contact-forms' ); ?></a><br/>
 							<img
 								class="flare"
 								src="<?php echo esc_url_raw( $this->plugin->url . 'assets/images/cc-modal-logo.png' ); ?>"
@@ -346,7 +357,7 @@ class ConstantContact_Builder {
 							<p>
 								<?php esc_attr_e( 'Automatically add collected information to contacts in my Constant Contact account.', 'constant-contact-forms' ); ?>
 							</p>
-							<a href="<?php echo esc_url_raw( add_query_arg( array( 'rmc' => 'wp_fmodal_connect' ), constant_contact()->api->get_connect_link() ) ); ?>" target="_blank" class="button button-blue" title="Connect Plugin">
+							<a href="<?php echo esc_url_raw( add_query_arg( array( 'rmc' => 'wp_fmodal_connect' ), constant_contact()->api->get_connect_link() ) ); ?>" target="_blank" class="button button-blue" title="<?php esc_attr_e( 'Connect Plugin', 'constant-contact-forms' ); ?>">
 								<?php esc_attr_e( 'Connect Plugin', 'constant-contact-forms' ); ?>
 							</a><br/>
 							<p class="small"><small><?php esc_attr_e( 'By connecting, you authorize this

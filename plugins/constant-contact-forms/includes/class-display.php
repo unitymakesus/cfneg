@@ -14,15 +14,15 @@
 class ConstantContact_Display {
 
 	/**
-	 * Parent plugin class
+	 * Parent plugin class.
 	 *
+	 * @since 1.0.0
 	 * @var object
-	 * @since 0.0.1
 	 */
 	protected $plugin = null;
 
 	/**
-	 * Constructor
+	 * Constructor.
 	 *
 	 * @since 1.0.0
 	 *
@@ -33,11 +33,11 @@ class ConstantContact_Display {
 	}
 
 	/**
-	 * Scripts
+	 * Scripts.
 	 *
 	 * @since 1.0.0
-	 * @param bool  $enqueue Set true to enqueue the scripts after registering.
-	 * @since next
+	 *
+	 * @param bool $enqueue Set true to enqueue the scripts after registering.
 	 */
 	public function scripts( $enqueue = false ) {
 
@@ -48,7 +48,7 @@ class ConstantContact_Display {
 			'ctct_frontend_forms',
 			constant_contact()->url() . 'assets/js/ctct-plugin-frontend' . $suffix . '.js',
 			array(),
-			constant_contact()->version,
+			Constant_Contact::VERSION,
 			true
 		);
 
@@ -60,15 +60,16 @@ class ConstantContact_Display {
 	/**
 	 * Register and (maybe) enqueue styles.
 	 *
-	 * @since next
-	 * @param bool  $enqueue Set true to enqueue the scripts after registering.
+	 * @since 1.0.0
+	 *
+	 * @param bool $enqueue Set true to enqueue the scripts after registering.
 	 */
 	public function styles( $enqueue = false ) {
 		wp_register_style(
 			'ctct_form_styles',
 			constant_contact()->url() . 'assets/css/style.css',
 			array(),
-			constant_contact()->version
+			Constant_Contact::VERSION
 		);
 
 		if ( $enqueue ) {
@@ -77,11 +78,14 @@ class ConstantContact_Display {
 	}
 
 	/**
-	 * Main wrapper for getting our form display
+	 * Main wrapper for getting our form display.
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return string Form markup
+	 * @param array  $form_data   Array of form data.
+	 * @param string $form_id     Form ID.
+	 * @param bool   $skip_styles Whether or not to skip style additions.
+	 * @return string Form markup.
 	 */
 	public function form( $form_data, $form_id = '', $skip_styles = false ) {
 
@@ -138,7 +142,6 @@ class ConstantContact_Display {
 		}
 
 		// Force uniqueness of an id for the form.
-		// @todo figure out another way to do this maybe?
 		$rf_id = 'ctct-form-' . mt_rand();
 
 		/**
@@ -149,10 +152,12 @@ class ConstantContact_Display {
 		 * @param string $value   Value to put in the form action attribute. Default empty string.
 		 * @param int    $form_id ID of the Constant Contact form being rendered.
 		 */
-		$form_action = apply_filters( 'constant_contact_front_form_action', '', $form_id );
+		$form_action    = apply_filters( 'constant_contact_front_form_action', '', $form_id );
+		$should_do_ajax = get_post_meta( $form_id, '_ctct_do_ajax', true );
+		$do_ajax        = ( 'on' === $should_do_ajax ) ? $should_do_ajax : 'off';
 
 		// Build out our form.
-		$return .= '<form class="ctct-form" id=' . $rf_id . ' action="' . esc_attr( $form_action ) . '" method="post">';
+		$return .= '<form class="ctct-form" id=' . $rf_id . ' data-doajax="' . esc_attr( $do_ajax ) . '" action="' . esc_attr( $form_action ) . '" method="post">';
 
 		// If we have errors, display them.
 		$return .= $form_err_display;
@@ -162,10 +167,10 @@ class ConstantContact_Display {
 
 		if ( $this->plugin->settings->has_recaptcha() ) {
 			$return .= $this->build_recaptcha();
-		} else {
-			// Output a field that should not be populated, and will be visually hidden with inline CSS.
-			$return .= $this->build_honeypot_field();
 		}
+
+		// Output a field that should not be populated, and will be visually hidden with inline CSS.
+		$return .= $this->build_honeypot_field();
 
 		// Add our hidden verification fields.
 		$return .= $this->add_verify_fields( $form_data );
@@ -193,7 +198,7 @@ class ConstantContact_Display {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return string url of current page
+	 * @return string URL of current page.
 	 */
 	public function get_current_page() {
 
@@ -256,14 +261,18 @@ class ConstantContact_Display {
 
 			return $return;
 		}
+
+		return false;
 	}
 
 	/**
-	 * Build form fields for shortcode
+	 * Build form fields for shortcode.
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param  array $form_data formulated cmb2 data for form.
+	 * @param array $form_data  Formulated cmb2 data for form.
+	 * @param array $old_values Original values.
+	 * @param array $req_errors Errors.
 	 * @return string
 	 */
 	public function build_form_fields( $form_data, $old_values, $req_errors ) {
@@ -347,14 +356,16 @@ class ConstantContact_Display {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param array $field field data.
-	 * @return string        html markup
+	 * @param array $field      Field data.
+	 * @param array $old_values Original values.
+	 * @param array $req_errors Errors.
+	 * @return string HTML markup
 	 */
 	public function field( $field, $old_values = array(), $req_errors = array() ) {
 
 		// If we don't have a name or a mapping, it will be hard to do things.
 		if ( ! isset( $field['name'] ) || ! isset( $field['map_to'] ) ) {
-			return;
+			return '';
 		}
 
 		$field = wp_parse_args( $field, array(
@@ -447,7 +458,7 @@ class ConstantContact_Display {
 			case 'anniversery':
 			case 'birthday':
 				// Need this to be month / day / year.
-				return $this->dates( $name, $map, $value, $desc, $req, false, $field_error );
+				return $this->dates( $name, $map, $value, $desc, $req, $field_error );
 				break;
 			default:
 				return $this->input( 'text', $name, $map, $value, $desc, $req, false, $field_error );
@@ -456,12 +467,15 @@ class ConstantContact_Display {
 	}
 
 	/**
-	 * Gets submitted values
+	 * Gets submitted values.
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param array $field field data.
-	 * @return string        submitted value
+	 * @param string|array $value          Field value.
+	 * @param string       $map            Map value.
+	 * @param array        $field          Array of fields
+	 * @param array        $submitted_vals Array of submitted values.
+	 * @return string Submitted value.
 	 */
 	public function get_submitted_value( $value = '', $map = '', $field = array(), $submitted_vals = array() ) {
 
@@ -515,27 +529,22 @@ class ConstantContact_Display {
 							$return[ esc_attr( $addr_key[0] ) ] = $post_key;
 						}
 					}
-
+				} elseif ( $post['key'] === $map && isset( $_POST[ esc_attr( $map ) ] ) ) {
 					// Otherwise make sure we have a value.
 					//
 					// We also flag PHPCS to ignore this line, as we get
 					// a nonce verification error, but we process the nonce
-					// quite a bit earlier than this
-					//
-					// @codingStandardsIgnoreLine
-				} elseif ( $post['key'] === $map && isset( $_POST[ esc_attr( $map ) ] ) ) { // Input var okay.
+					// quite a bit earlier than this.
 
 					// Clean and return.
 					//
 					// We also flag PHPCS to ignore this line, as we get
 					// a nonce verification error, but we process the nonce
 					// quite a bit earlier than this
-					//
-					// @codingStandardsIgnoreLine
-					return sanitize_text_field( wp_unslash( $_POST[ esc_attr( $map ) ] ) ); // Input var okay.
-				}
-			}
-		}
+					return sanitize_text_field( wp_unslash( $_POST[ esc_attr( $map ) ] ) );
+				} // End if().
+			} // End if().
+		} // End foreach().
 
 		return $return;
 	}
@@ -545,7 +554,7 @@ class ConstantContact_Display {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param string $type    Success / error / etc for class.
+	 * @param string $type    Success/error/etc for class.
 	 * @param string $message Message to display to user.
 	 * @return string HTML markup.
 	 */
@@ -612,8 +621,16 @@ class ConstantContact_Display {
 			$req_label = apply_filters( 'constant_contact_required_label', '<abbr title="required">*</abbr>' );
 		}
 
+		$classes = array(
+			'ctct-form-field',
+			'ctct-form-field-' . $type,
+		);
+		if ( $req ) {
+			$classes[] = 'ctct-form-field-required';
+		}
+
 		// Start building our return markup.
-		$markup = '<p class="ctct-form-field ctct-form-field-' . $type . '">';
+		$markup = '<p class="' . implode( ' ', $classes ) . '">';
 
 		// Allow skipping label, also don't show for submit buttons.
 		if ( $use_label && ( 'submit' !== $type ) && ( 'hidden' !== $type ) ) {
@@ -701,12 +718,24 @@ class ConstantContact_Display {
 		 * @since  1.2.0
 		 * @param  array  $classes Array of classes to apply to the field.
 		 * @param  string $type    The field type being rendered.
-		 * @return arrray
+		 * @return array
 		 */
 		$classes = apply_filters( 'constant_contact_input_classes', $classes, $type );
 
+		/**
+		 * Filters whether or not to remove characters from potential maxlength attribute value.
+		 *
+		 * @since 1.3.0
+		 *
+		 * @param bool $value Whether or not to truncate. Default false.
+		 */
+		$truncate_max_length = apply_filters( 'constant_contact_include_custom_field_label', false );
+		$max_length = '';
+		if ( false !== strpos( $id, 'custom___' ) ) {
+			$max_length = ( $truncate_max_length ) ? $this->get_max_length_attr( $name ) : $this->get_max_length_attr();
+		}
 		// Set our field as as seprate var, because we allow for only returning that.
-		$field = '<input ' . $req_text . ' type="' . $type . '" name="' . $f_id . '" id="' . $f_id . '" value="' . $value . '" placeholder="' . $label . '" ';
+		$field = '<input ' . $req_text . ' type="' . $type . '" name="' . $f_id . '" id="' . $f_id . '" value="' . $value . '" ' . $max_length . ' placeholder="' . $label . '" ';
 
 		// If we have an error.
 		if ( $field_error ) {
@@ -768,14 +797,14 @@ class ConstantContact_Display {
 		 * @since 1.2.0
 		 * @todo  Can we abstract this to use $this->input?
 		 *
-		 * @param  array  $classes Array of classes to apply to the field.
-		 * @param  string $type    The field type being rendered.
-		 * @return arrray
+		 * @param array  $classes Array of classes to apply to the field.
+		 * @param string $type    The field type being rendered.
+		 * @return array
 		 */
 		$classes = apply_filters( 'constant_contact_input_classes', $classes, $type );
 
 		$markup = $this->field_top( $type, $name, $f_id, $label, false, false );
-		$markup .= '<input type="' . $type . '" name="' . $f_id . '" id="' . $f_id . '" value="' . $value . '" />';
+		$markup .= '<input type="' . $type . '" name="' . $f_id . '" id="' . $f_id . '" value="' . $value . '" class="' . implode( ' ', $classes ) . '" />';
 		$markup .= $this->field_bottom( $name, ' ' . $label );
 
 		return $markup;
@@ -825,7 +854,7 @@ class ConstantContact_Display {
 
 		// Make sure we have our optin data.
 		if ( ! isset( $form_data['optin'] ) ) {
-			return;
+			return '';
 		}
 
 		// Set up our defaults.
@@ -839,6 +868,8 @@ class ConstantContact_Display {
 		if ( isset( $optin['list'] ) && $optin['list'] ) {
 			return $this->optin_display( $optin );
 		}
+
+		return '';
 	}
 
 	/**
@@ -878,7 +909,7 @@ class ConstantContact_Display {
 	}
 
 	/**
-	 * Helper method to get optin markup
+	 * Helper method to get optin markup.
 	 *
 	 * @since 1.0.0
 	 *
@@ -900,7 +931,7 @@ class ConstantContact_Display {
 	}
 
 	/**
-	 * Builds a fancy address field group
+	 * Builds a fancy address field group.
 	 *
 	 * @since 1.0.0
 	 *
@@ -929,28 +960,29 @@ class ConstantContact_Display {
 		$v_zip    = isset( $value['zip_address'] ) ? $value['zip'] : '';
 
 		$req = $req ? ' required ' : '';
+		$req_class = $req ? ' ctct-form-field-required ' : '';
 
 		// Build our field.
 		$return  = '<p class="ctct-address"><fieldset>';
 		$return .= ' <legend>' . esc_attr( $name ) . '</legend>';
-		$return .= ' <div class="ctct-form-field ctct-field-full address-line-1">';
+		$return .= ' <div class="ctct-form-field ctct-field-full address-line-1' . $req_class . '">';
 		$return .= '  <label for="street_' . esc_attr( $f_id ) . '">' . esc_attr( $street ) . '</label>';
 		$return .= '  <input ' . $req . 'type="text" class="ctct-text ctct-address-street" name="street_' . esc_attr( $f_id ) . '" id="street_' . esc_attr( $f_id ) . '" value="' . esc_attr( $v_street ) . '">';
 		$return .= ' </div>';
 		// Address Line 2 is not required, note the missing $req inclusion.
-		$return .= ' <div class="ctct-form-field ctct-field-full address-line-2" id="input_2_1_2_container">';
+		$return .= ' <div class="ctct-form-field ctct-field-full address-line-2' . $req_class . '" id="input_2_1_2_container">';
 		$return .= '  <label for="line_2_' . esc_attr( $f_id ) . '">' . esc_attr( $line_2 ) . '</label>';
 		$return .= '  <input type="text" class="ctct-text ctct-address-line-2" name="line_2_' . esc_attr( $f_id ) . '" id="line_2_' . esc_attr( $f_id ) . '" value="' . esc_attr( $v_line_2 ) . '">';
 		$return .= ' </div>';
-		$return .= ' <div class="ctct-form-field ctct-field-third address-city" id="input_2_1_3_container">';
+		$return .= ' <div class="ctct-form-field ctct-field-third address-city' . $req_class . '" id="input_2_1_3_container">';
 		$return .= '  <label for="city_' . esc_attr( $f_id ) . '">' . esc_attr( $city ) . '</label>';
 		$return .= '  <input ' . $req . 'type="text" class="ctct-text ctct-address-city" name="city_' . esc_attr( $f_id ) . '" id="city_' . esc_attr( $f_id ) . '" value="' . esc_attr( $v_city ) . '">';
 		$return .= ' </div>';
-		$return .= ' <div class="ctct-form-field ctct-field-third address-state" id="input_2_1_4_container">';
+		$return .= ' <div class="ctct-form-field ctct-field-third address-state' . $req_class . '" id="input_2_1_4_container">';
 		$return .= '  <label for="state_' . esc_attr( $f_id ) . '">' . esc_attr( $state ) . '</label>';
 		$return .= '  <input ' . $req . 'type="text" class="ctct-text ctct-address-state" name="state_' . esc_attr( $f_id ) . '" id="state_' . esc_attr( $f_id ) . '" value="' . esc_attr( $v_state ) . '">';
 		$return .= ' </div>';
-		$return .= ' <div class="ctct-form-field ctct-field-third address-zip" id="input_2_1_5_container">';
+		$return .= ' <div class="ctct-form-field ctct-field-third address-zip' . $req_class . '" id="input_2_1_5_container">';
 		$return .= '  <label for="zip_' . esc_attr( $f_id ) . '">' . esc_attr( $zip ) . '</label>';
 		$return .= '  <input ' . $req . 'type="text" class="ctct-text ctct-address-zip" name="zip_' . esc_attr( $f_id ) . '" id="zip_' . esc_attr( $f_id ) . '" value="' . esc_attr( $v_zip ) . '">';
 		$return .= ' </div>';
@@ -960,7 +992,7 @@ class ConstantContact_Display {
 	}
 
 	/**
-	 * Gets and return a 3-part date selector
+	 * Gets and return a 3-part date selector.
 	 *
 	 * @since 1.0.0
 	 *
@@ -985,16 +1017,18 @@ class ConstantContact_Display {
 		$v_day   = isset( $value['day'] ) ? $value['day'] : '';
 		$v_year  = isset( $value['year'] ) ? $value['year'] : '';
 
+		$req_class = $req ? ' ctct-form-field-required ' : '';
+
 		// Build our field.
 		$return  = '<p class="ctct-date"><fieldset>';
 		$return .= ' <legend>' . esc_attr( $name ) . '</legend>';
-		$return .= ' <div class="ctct-form-field ctct-field-inline month">';
+		$return .= ' <div class="ctct-form-field ctct-field-inline month' . $req_class . '">';
 		$return .= $this->get_date_dropdown( $month, $f_id, 'month', $v_month, $req );
 		$return .= ' </div>';
-		$return .= ' <div class="ctct-form-field ctct-field-inline day">';
+		$return .= ' <div class="ctct-form-field ctct-field-inline day' . $req_class . '">';
 		$return .= $this->get_date_dropdown( $day, $f_id, 'day', $v_day, $req );
 		$return .= ' </div>';
-		$return .= ' <div class="ctct-form-field ctct-field-inline year">';
+		$return .= ' <div class="ctct-form-field ctct-field-inline year' . $req_class . '">';
 		$return .= $this->get_date_dropdown( $year, $f_id, 'year', $v_year, $req );
 		$return .= ' </div>';
 
@@ -1004,7 +1038,7 @@ class ConstantContact_Display {
 	}
 
 	/**
-	 * Gets actual dropdowns for date selector
+	 * Gets actual dropdowns for date selector.
 	 *
 	 * @since 1.0.0
 	 *
@@ -1071,9 +1105,10 @@ class ConstantContact_Display {
 	 * @since 1.0.0
 	 *
 	 * @param string $type Day, month, or year.
-	 * @return array Array of data
+	 * @return array Array of data.
 	 */
 	public function get_date_values( $type ) {
+		$return = array();
 
 		// Based on $type, we'll send back an array of either days, months, or years.
 		switch ( $type ) {
@@ -1098,18 +1133,18 @@ class ConstantContact_Display {
 				 * @param array $value Array of months from calendar.
 				 */
 				$return = apply_filters( 'constant_contact_dates_month', array(
-					'january'   => __( 'January', 'contantcontact' ),
-					'february'  => __( 'February', 'contantcontact' ),
-					'march'     => __( 'March', 'contantcontact' ),
-					'april'     => __( 'April', 'contantcontact' ),
-					'may'       => __( 'May', 'contantcontact' ),
-					'june'      => __( 'June', 'contantcontact' ),
-					'july '     => __( 'July ', 'contantcontact' ),
-					'august'    => __( 'August', 'contantcontact' ),
-					'september' => __( 'September', 'contantcontact' ),
-					'october'   => __( 'October', 'contantcontact' ),
-					'november'  => __( 'November', 'contantcontact' ),
-					'december'  => __( 'December', 'contantcontact' ),
+					'january'   => __( 'January', 'constant-contact-forms' ),
+					'february'  => __( 'February', 'constant-contact-forms' ),
+					'march'     => __( 'March', 'constant-contact-forms' ),
+					'april'     => __( 'April', 'constant-contact-forms' ),
+					'may'       => __( 'May', 'constant-contact-forms' ),
+					'june'      => __( 'June', 'constant-contact-forms' ),
+					'july '     => __( 'July ', 'constant-contact-forms' ),
+					'august'    => __( 'August', 'constant-contact-forms' ),
+					'september' => __( 'September', 'constant-contact-forms' ),
+					'october'   => __( 'October', 'constant-contact-forms' ),
+					'november'  => __( 'November', 'constant-contact-forms' ),
+					'december'  => __( 'December', 'constant-contact-forms' ),
 				) );
 				break;
 			case 'year':
@@ -1123,7 +1158,7 @@ class ConstantContact_Display {
 				 */
 				$return = apply_filters( 'constant_contact_dates_year', $this->get_years() );
 				break;
-		}
+		} // End switch().
 
 		return $return;
 	}
@@ -1132,9 +1167,11 @@ class ConstantContact_Display {
 	 * Helper method to get all years.
 	 *
 	 * @since 1.0.0
-	 * @return array years from 1910-current year
+	 *
+	 * @return array Years from 1910-current year.
 	 */
 	public function get_years() {
+		$years = array();
 
 		// Get all of our years.
 		$year_range = range( 1910,  date( 'Y' ) );
@@ -1150,12 +1187,14 @@ class ConstantContact_Display {
 	}
 
 	/**
-	 * Gets array of 1-31
+	 * Gets array of 1-31.
 	 *
 	 * @since 1.0.0
-	 * @return array array of days
+	 *
+	 * @return array Array of days.
 	 */
 	public function get_days() {
+		$days = array();
 
 		// Get all of our day.
 		$day_range = range( 1, 31 );
@@ -1169,7 +1208,9 @@ class ConstantContact_Display {
 	}
 
 	/**
-	 * Displays text area field
+	 * Displays text area field.
+	 *
+	 * @since 1.0.0
 	 *
 	 * @param string  $name        Name of field.
 	 * @param string  $map         ID of field.
@@ -1183,6 +1224,7 @@ class ConstantContact_Display {
 	public function textarea( $name = '', $map = '', $value = '', $desc = '', $req = false, $field_error = '', $extra_attrs = '' ) {
 		// Set our required text.
 		$req_text = $req ? 'required' : '';
+		$req_class = $req ? ' ctct-form-field-required ' : '';
 
 		// If required, get our label.
 		$req_label = '';
@@ -1198,7 +1240,7 @@ class ConstantContact_Display {
 			$req_label = apply_filters( 'constant_contact_required_label', '<abbr title="required">*</abbr>' );
 		}
 
-		$return  = '<p><label for="' . esc_attr( $map ) . '">' . esc_attr( $name ) . ' ' . $req_label . '</label>';
+		$return  = '<p class="' . $req_class . '"><label for="' . esc_attr( $map ) . '">' . esc_attr( $name ) . ' ' . $req_label . '</label>';
 		$return .= '<textarea class="ctct-textarea" ' . $req_text . ' name="' . esc_attr( $map ) . '" placeholder="' . esc_attr( $desc ) . '" ' . $extra_attrs . '>' . esc_html( $value ) . '</textarea>';
 
 		if ( $field_error ) {
@@ -1221,19 +1263,19 @@ class ConstantContact_Display {
 		$opts = isset( $form_data['options'] ) ? $form_data['options'] : false;
 
 		if ( ! $opts ) {
-			return;
+			return '';
 		}
 
 		$optin = isset( $opts['optin'] ) ? $opts['optin'] : false;
 
 		if ( ! $optin ) {
-			return false;
+			return '';
 		}
 
 		$list = isset( $optin['list'] ) ? $optin['list'] : false;
 
 		if ( ! $list ) {
-			return false;
+			return '';
 		}
 
 		return $this->get_disclose_text();
@@ -1263,10 +1305,23 @@ class ConstantContact_Display {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return string text
+	 * @return string
 	 */
 	public function get_inner_disclose_text() {
+		// translators: placeholder will hold company info for site owner.
 		return sprintf( __( 'By submitting this form, you are granting: %s, permission to email you. You may unsubscribe via the link found at the bottom of every email. (See our Email Privacy Policy (http://constantcontact.com/legal/privacy-statement) for details.) Emails are serviced by Constant Contact.', 'constant-contact-forms' ), $this->plugin->api->get_disclosure_info() );
+	}
+
+	public function get_max_length_attr( $optional_label = '' ) {
+		$length       = 50;
+		$label_length = 0;
+		if ( ! empty( $optional_label ) ) {
+			$label_length = mb_strlen( $optional_label );
+		}
+		if ( absint( $label_length ) > 0 ) {
+			$length = $length - $label_length;
+		}
+		return 'maxlength="' . $length . '"';
 	}
 }
 

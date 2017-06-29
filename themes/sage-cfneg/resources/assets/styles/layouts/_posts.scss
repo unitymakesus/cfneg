@@ -67,14 +67,14 @@
       &:last-child {
         margin-right: -10px;
       }
+    }
 
-      &:only-child {
-        .et_pb_image_container {
-          float: left;
-          width: calc(50% - 10px);
-          padding-bottom: calc(50% - 10px);
-          margin: 0 20px 0 0;
-        }
+    &:not(.blog-feed) .et_pb_post:only-child {
+      .et_pb_image_container {
+        float: left;
+        width: calc(50% - 10px);
+        padding-bottom: calc(50% - 10px);
+        margin: 0 20px 0 0;
       }
     }
 
@@ -92,6 +92,7 @@
         color: $white;
         padding: 0 40px 0 0 !important;
         margin: 0 10px;
+        margin-bottom: 0 !important;
 
         @include breakpoint (medium only) {
           margin: 0px;
@@ -137,6 +138,39 @@
         }
 
         &:nth-child(even) {
+          padding: 0 0 0 40px !important;
+
+          .et_pb_image_container.et_pb_image_container {
+            float: right;
+            margin: 0 0 0 40px !important;
+          }
+        }
+      }
+    }
+
+    // Fix layout in Divi Visual Builder
+    &.ui-sortable {
+      & > .column {
+        width: 100% !important;
+        min-width: 100%;
+        margin: 0;
+      }
+
+      &.blog-feed {
+        $i: 1;
+        @each $color in $brand-blue, $gold, $light-green {
+          & > .column:nth-child(#{$i}) .et_pb_post {
+            background: $color;
+
+            h2::before {
+              content: '#{$i}';
+            }
+          }
+
+          $i: $i + 1;
+        }
+
+        & > .column:nth-child(even) .et_pb_post {
           padding: 0 0 0 40px !important;
 
           .et_pb_image_container.et_pb_image_container {

@@ -9386,6 +9386,11 @@ a.thumbnail image {
   padding-bottom: 50px;
 }
 
+.et_divi_builder #et_builder_outer_content .et_fb_preview_active .et_fb_responsive_preview_overlay,
+.et_fb_preview_active .et_fb_responsive_preview_overlay {
+  display: none;
+}
+
 /* These "global" styles need to be seperate so they don't get wrapped in divi-builder file /less/frontend-builder-plugin-style.less */
 
 #wp-admin-bar-et-use-visual-builder a:before {
@@ -22792,7 +22797,7 @@ body.et_divi_builder #et_builder_outer_content .text-absolute-bottom.text-absolu
   margin-right: -10px;
 }
 
-.et_divi_builder #et_builder_outer_content .et_pb_blog_grid.et_pb_blog_grid .et_pb_post.et_pb_post:only-child .et_pb_image_container {
+.et_divi_builder #et_builder_outer_content .et_pb_blog_grid.et_pb_blog_grid:not(.blog-feed) .et_pb_post:only-child .et_pb_image_container {
   float: left;
   width: calc(50% - 10px);
   padding-bottom: calc(50% - 10px);
@@ -22814,6 +22819,7 @@ body.et_divi_builder #et_builder_outer_content .text-absolute-bottom.text-absolu
   color: #FFFFFF;
   padding: 0 40px 0 0 !important;
   margin: 0 10px;
+  margin-bottom: 0 !important;
 }
 
 @media screen and (min-width: 40em) and (max-width: 63.9375em) {
@@ -22879,6 +22885,54 @@ body.et_divi_builder #et_builder_outer_content .text-absolute-bottom.text-absolu
 }
 
 .et_divi_builder #et_builder_outer_content .et_pb_blog_grid.et_pb_blog_grid.blog-feed .et_pb_post.et_pb_post:nth-child(even) .et_pb_image_container.et_pb_image_container {
+  float: right;
+  margin: 0 0 0 40px !important;
+}
+
+.et_divi_builder #et_builder_outer_content .et_pb_blog_grid.et_pb_blog_grid.ui-sortable > .column,
+.et_divi_builder #et_builder_outer_content .et_pb_blog_grid.et_pb_blog_grid.ui-sortable > .columns {
+  width: 100% !important;
+  min-width: 100%;
+  margin: 0;
+}
+
+.et_divi_builder #et_builder_outer_content .et_pb_blog_grid.et_pb_blog_grid.ui-sortable.blog-feed > .column:nth-child(1) .et_pb_post,
+.et_divi_builder #et_builder_outer_content .et_pb_blog_grid.et_pb_blog_grid.ui-sortable.blog-feed > .columns:nth-child(1) .et_pb_post {
+  background: #4298b5;
+}
+
+.et_divi_builder #et_builder_outer_content .et_pb_blog_grid.et_pb_blog_grid.ui-sortable.blog-feed > .column:nth-child(1) .et_pb_post h2::before,
+.et_divi_builder #et_builder_outer_content .et_pb_blog_grid.et_pb_blog_grid.ui-sortable.blog-feed > .columns:nth-child(1) .et_pb_post h2::before {
+  content: "1";
+}
+
+.et_divi_builder #et_builder_outer_content .et_pb_blog_grid.et_pb_blog_grid.ui-sortable.blog-feed > .column:nth-child(2) .et_pb_post,
+.et_divi_builder #et_builder_outer_content .et_pb_blog_grid.et_pb_blog_grid.ui-sortable.blog-feed > .columns:nth-child(2) .et_pb_post {
+  background: #FCB659;
+}
+
+.et_divi_builder #et_builder_outer_content .et_pb_blog_grid.et_pb_blog_grid.ui-sortable.blog-feed > .column:nth-child(2) .et_pb_post h2::before,
+.et_divi_builder #et_builder_outer_content .et_pb_blog_grid.et_pb_blog_grid.ui-sortable.blog-feed > .columns:nth-child(2) .et_pb_post h2::before {
+  content: "2";
+}
+
+.et_divi_builder #et_builder_outer_content .et_pb_blog_grid.et_pb_blog_grid.ui-sortable.blog-feed > .column:nth-child(3) .et_pb_post,
+.et_divi_builder #et_builder_outer_content .et_pb_blog_grid.et_pb_blog_grid.ui-sortable.blog-feed > .columns:nth-child(3) .et_pb_post {
+  background: #6BCABA;
+}
+
+.et_divi_builder #et_builder_outer_content .et_pb_blog_grid.et_pb_blog_grid.ui-sortable.blog-feed > .column:nth-child(3) .et_pb_post h2::before,
+.et_divi_builder #et_builder_outer_content .et_pb_blog_grid.et_pb_blog_grid.ui-sortable.blog-feed > .columns:nth-child(3) .et_pb_post h2::before {
+  content: "3";
+}
+
+.et_divi_builder #et_builder_outer_content .et_pb_blog_grid.et_pb_blog_grid.ui-sortable.blog-feed > .column:nth-child(even) .et_pb_post,
+.et_divi_builder #et_builder_outer_content .et_pb_blog_grid.et_pb_blog_grid.ui-sortable.blog-feed > .columns:nth-child(even) .et_pb_post {
+  padding: 0 0 0 40px !important;
+}
+
+.et_divi_builder #et_builder_outer_content .et_pb_blog_grid.et_pb_blog_grid.ui-sortable.blog-feed > .column:nth-child(even) .et_pb_post .et_pb_image_container.et_pb_image_container,
+.et_divi_builder #et_builder_outer_content .et_pb_blog_grid.et_pb_blog_grid.ui-sortable.blog-feed > .columns:nth-child(even) .et_pb_post .et_pb_image_container.et_pb_image_container {
   float: right;
   margin: 0 0 0 40px !important;
 }

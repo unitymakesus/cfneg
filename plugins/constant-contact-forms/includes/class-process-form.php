@@ -10,21 +10,25 @@
 
 /**
  * Powers our form processing, validation, and value cleanup.
+ *
+ * @since 1.0.0
  */
 class ConstantContact_Process_Form {
 
 	/**
-	 * Parent plugin class
+	 * Parent plugin class.
 	 *
+	 * @since 1.0.0
 	 * @var object
-	 * @since 0.0.1
 	 */
 	protected $plugin = null;
 
 	/**
-	 * Constructor
+	 * Constructor.
 	 *
-	 * @since  1.0.0
+	 * @since 1.0.0
+	 *
+	 * @param object $plugin Parent plugin class.
 	 */
 	public function __construct( $plugin ) {
 		$this->plugin = $plugin;
@@ -32,10 +36,9 @@ class ConstantContact_Process_Form {
 	}
 
 	/**
-	 * Do the hooks!
+	 * Do the hooks.
 	 *
-	 * @since  1.0.0
-	 * @return void
+	 * @since 1.0.0
 	 */
 	public function hooks() {
 		add_action( 'wp_ajax_ctct_process_form', array( $this, 'process_form_ajax_wrapper' ) );
@@ -43,13 +46,13 @@ class ConstantContact_Process_Form {
 	}
 
 	/**
-	 * A wrpper to process our form via AJAX
+	 * A wrapper to process our form via AJAX.
 	 *
-	 * @since  1.0.0
+	 * @since 1.0.0
 	 */
 	public function process_form_ajax_wrapper() {
 
-		// See if we're passed in data
+		// See if we're passed in data.
 		//
 		// We set to ignore this from PHPCS, as our nonce is handled elsewhere
 		// @codingStandardsIgnoreLine
@@ -98,18 +101,66 @@ class ConstantContact_Process_Form {
 				unset( $response['values'] );
 			}
 
+			// Default to no status.
+			$status = false;
+
+			$default_error = __( 'There was an error sending your form.', 'constant-contact-forms' );
+
+			// If we got a status back, check that in our list of returns.
+			if ( isset( $response['status'] ) && $response['status'] ) {
+				$status = $response['status'];
+			}
+
+			// Switch based on our status code.
+			switch ( $status ) {
+
+				case 'success':
+					$message = __( 'Your information has been submitted.', 'constant-contact-forms' );
+					break;
+
+				// Generic error.
+				case 'error':
+					$message = $default_error;
+					break;
+
+				// Named error from our process.
+				case 'named_error':
+					$message = isset( $processed['error'] ) ? $processed['error'] : $default_error;
+					break;
+
+				// Required field errors.
+				case 'req_error':
+					return array(
+						'status'  => 'error',
+						'message' => __( 'We had trouble processing your submission. Please review your entries and try again.', 'constant-contact-forms' ),
+						'errors'  => isset( $processed['errors'] ) ? $processed['errors'] : '',
+						'values'  => isset( $processed['values'] ) ? $processed['values'] : '',
+					);
+
+				// All else fails, then we'll just use the default.
+				default:
+					$message = $default_error;
+					break;
+			}
+
 			// Send back our response.
-			wp_send_json( $response );
+			wp_send_json( array(
+				'status'  => $status,
+				'message' => $message,
+			) );
 
 			// Die out of the ajax request.
 			wp_die();
-		}
+		} // End if().
 	}
 
 	/**
-	 * Process submitted form data
+	 * Process submitted form data.
 	 *
 	 * @since 1.0.0
+	 *
+	 * @param array $data    Form data.
+	 * @param bool  $is_ajax Whether or not processing via AJAX.
 	 * @return array
 	 */
 	public function process_form( $data = array(), $is_ajax = false ) {
@@ -130,17 +181,26 @@ class ConstantContact_Process_Form {
 
 		// If we don't have our submitted form id, just bail out.
 		if ( ! isset( $data['ctct-id'] ) ) {
-			return;
+			return array(
+				'status' => 'named_error',
+				'error'  => __( 'No Constant Contact Forms form ID provided', 'constant-contact-forms' ),
+			);
 		}
 
 		// If we don't have our submitted form verify, just bail out.
 		if ( ! isset( $data['ctct-verify'] ) ) {
-			return;
+			return array(
+				'status' => 'named_error',
+				'error'  => __( 'No form verify value provided', 'constant-contact-forms' ),
+			);
 		}
 
 		// Honeypot. Should be empty to proceed.
-		if ( ! empty ( $data['ctct_usage_field' ] ) ) {
-			return;
+		if ( ! empty( $data['ctct_usage_field'] ) ) {
+			return array(
+				'status' => 'named_error',
+				'error'  => __( 'We do no think you are human', 'constant-contact-forms' ),
+			);
 		}
 
 		if ( isset( $data['g-recaptcha-response'] ) ) {
@@ -150,7 +210,11 @@ class ConstantContact_Process_Form {
 			$resp = $recaptcha->verify( $data['g-recaptcha-response'], $_SERVER['REMOTE_ADDR'] );
 
 			if ( ! $resp->isSuccess() ) {
-				return;
+				// @todo Utilize the error message(s) that come back from Google, if any.
+				return array(
+					'status' => 'named_error',
+					'error'  => __( 'Failed reCAPTCHA check', 'constant-contact-forms' ),
+				);
 			}
 		}
 
@@ -234,49 +298,37 @@ class ConstantContact_Process_Form {
 			);
 		}
 
-		// If we're not processing the opt-in stuff, we can just return our data here.
 		if ( ! isset( $data['ctct-opt-in'] ) ) {
+			constant_contact()->mail->submit_form_values( $return['values'] );
+		} else {
 
-			if ( ! $is_ajax ) {
-
-				// At this point we can process all of our submitted values.
-				constant_contact()->mail->submit_form_values( $return['values'] );
+			// No need to check for opt in status because we would have returned early by now if false.
+			$maybe_bypass = ctct_get_settings_option( '_ctct_bypass_cron', '' );
+			if ( constant_contact()->api->is_connected() && 'on' === $maybe_bypass ) {
+				constant_contact()->mail->submit_form_values( $return['values'] ); // Emails but doesn't schedule cron.
+				constant_contact()->mail->opt_in_user( $this->clean_values( $return['values'] ) );
+			} else {
+				constant_contact()->mail->submit_form_values( $return['values'], true );
 			}
-
-			$return['status'] = 'success';
-			return $return;
-		}
-
-		if ( ! $is_ajax ) {
-
-			// At this point we can process all of our submitted values.
-			constant_contact()->mail->submit_form_values( $return['values'], true );
-		}
-
-		// No need to check for opt in status because we would have returned early by now if false.
-		$maybe_bypass = ctct_get_settings_option( '_ctct_bypass_cron', '' );
-		if ( constant_contact()->api->is_connected() && 'on' === $maybe_bypass ) {
-			constant_contact()->mail->opt_in_user( $this->clean_values( $return['values'] ) );
 		}
 
 		$return['status'] = 'success';
 		return $return;
 	}
 
-
-
 	/**
-	 * Pretty our values up
+	 * Pretty our values up.
 	 *
-	 * @since  1.0.0
-	 * @param array $values values.
-	 * @return array         values but better
+	 * @since 1.0.0
+	 *
+	 * @param array $values Original values.
+	 * @return array Values, but better.
 	 */
 	public function pretty_values( $values = array() ) {
 
 		// Sanity check.
 		if ( ! is_array( $values ) ) {
-			return '';
+			return array();
 		}
 
 		// Loop through once to get our form ID.
@@ -300,7 +352,7 @@ class ConstantContact_Process_Form {
 
 		// If we didn't get a form ID, bail out.
 		if ( ! $form_id ) {
-			return '';
+			return array();
 		}
 
 		// Get our original fields.
@@ -308,7 +360,7 @@ class ConstantContact_Process_Form {
 
 		// If its not an array, bail out.
 		if ( ! is_array( $orig_fields ) ) {
-			return;
+			return array();
 		}
 
 		// This is what we'll use.
@@ -354,17 +406,18 @@ class ConstantContact_Process_Form {
 	}
 
 	/**
-	 * Gets our original field from a form id
+	 * Gets our original field from a form id.
 	 *
 	 * @since 1.0.0
-	 * @param int $form_id form id.
-	 * @return array          array of form data
+	 *
+	 * @param int $form_id Form id.
+	 * @return array Array of form data.
 	 */
 	public function get_original_fields( $form_id ) {
 
 		// Sanity check.
 		if ( ! $form_id ) {
-			return false;
+			return array();
 		}
 
 		// Get our fields post meta.
@@ -372,7 +425,7 @@ class ConstantContact_Process_Form {
 
 		// Sanity check again.
 		if ( ! is_array( $fields ) ) {
-			return false;
+			return array();
 		}
 
 		// Start our return array.
@@ -429,17 +482,19 @@ class ConstantContact_Process_Form {
 					$return[ $field['_ctct_map_select'] . '___' . md5( serialize( $field_key ) ) ] = $field_key;
 					break;
 			}
-		}
+		} // End foreach().
 
 		return $return;
 	}
 
 	/**
-	 * Get field requirement errors
+	 * Get field requirement errors.
 	 *
-	 * @since  1.0.0
-	 * @param array $values values.
-	 * @return array         return error code stuff
+	 * @since 1.0.0
+	 *
+	 * @param array $values Values.
+	 * @param bool  $is_ajax Whether or not processing via AJAX.
+	 * @return array Return error code stuff.
 	 */
 	public function get_field_errors( $values, $is_ajax = false ) {
 
@@ -492,7 +547,7 @@ class ConstantContact_Process_Form {
 					);
 				}
 			}
-		}
+		} // End foreach().
 
 		return $err_returns;
 	}
@@ -500,11 +555,12 @@ class ConstantContact_Process_Form {
 
 
 	/**
-	 * Clean our values from form submission
+	 * Clean our values from form submission.
 	 *
-	 * @since  1.0.0
-	 * @param  array $values values to clean.
-	 * @return array         cleaned values
+	 * @since 1.0.0
+	 *
+	 * @param array $values Values to clean.
+	 * @return array Cleaned values.
 	 */
 	public function clean_values( $values ) {
 
@@ -545,10 +601,18 @@ class ConstantContact_Process_Form {
 	 * Form submit success/error messages.
 	 *
 	 * @since 1.0.0
+	 *
+	 * @param array      $form_data Form data to process.
+	 * @param string|int $form_id   Form ID being processed.
 	 * @return array
 	 */
-	public function process_wrapper( $form_data = array(), $form_id = '' ) {
+	public function process_wrapper( $form_data = array(), $form_id = 0 ) {
 
+		if ( empty( $_POST['ctct-id'] ) ) {
+			return false;
+		}
+
+		// @todo Utilize $form_data.
 		if ( isset( $_POST['ctct-id'] ) && $form_id != absint( $_POST['ctct-id'] ) ) {
 			return false;
 		}
@@ -571,7 +635,13 @@ class ConstantContact_Process_Form {
 		switch ( $status ) {
 
 			case 'success':
-				$message = __( 'Your information has been submitted.', 'constant-contact-forms' );
+
+				/**
+				 * Filters the message for the successful processed form.
+				 *
+				 * @since 1.3.0
+				 */
+				$message = apply_filters( 'ctct_process_form_success', __( 'Your information has been submitted.', 'constant-contact-forms' ), $form_id );
 				break;
 
 			// Generic error.
@@ -597,7 +667,7 @@ class ConstantContact_Process_Form {
 			default:
 				$message = '';
 				break;
-		}
+		} // End switch().
 
 		return array(
 			'status'  => $status,

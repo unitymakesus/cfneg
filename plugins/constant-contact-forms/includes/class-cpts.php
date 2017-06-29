@@ -1,6 +1,6 @@
 <?php
 /**
- * Custom Post Types
+ * Custom Post Types.
  *
  * @package ConstantContact
  * @subpackage CPTS
@@ -20,24 +20,16 @@ class ConstantContact_CPTS {
 	/**
 	 * Parent plugin class.
 	 *
-	 * @var object
 	 * @since 1.0.0
+	 * @var object
 	 */
 	protected $plugin = null;
-
-	/**
-	 * Holds an instance of the object.
-	 *
-	 * @var object ConstantContact_CPTS
-	 * @since 1.0.0
-	 */
-	private static $instance = null;
 
 	/**
 	 * Constructor.
 	 *
 	 * @since 1.0.0
-	 * @param object $plugin this class.
+	 * @param object $plugin Parent class.
 	 */
 	public function __construct( $plugin ) {
 		$this->plugin = $plugin;
@@ -103,7 +95,7 @@ class ConstantContact_CPTS {
 			'show_in_menu'        => true,
 			'menu_position'       => 20,
 			'menu_icon'           => constant_contact()->url . 'assets/images/ctct-icon.png',
-			'show_in_admin_bar'   => false,
+			'show_in_admin_bar'   => true,
 			'show_in_nav_menus'   => false,
 			'can_export'          => true,
 			'has_archive'         => false,
@@ -180,6 +172,7 @@ class ConstantContact_CPTS {
 	 * Custom post udate messages to match CPT naming.
 	 *
 	 * @since 1.0.0
+	 *
 	 * @param array $messages Default update messages.
 	 * @return array appended update messages with custom post types.
 	 */
@@ -208,7 +201,7 @@ class ConstantContact_CPTS {
 			3 => __( 'Custom field deleted.', 'constant-contact-forms' ),
 			4 => __( 'Form updated.', 'constant-contact-forms' ),
 			5 => isset( $_GET['revision'] ) ? sprintf( __( 'Form restored to revision from %s', 'constant-contact-forms' ), wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,  // Input var okay.
-			6 => sprintf( __( 'Success! Here\'s the shortcode: %s. Just paste it into a post or page editor to publish', 'constant-contact-forms' ), '<strong>' . constant_contact_display_shortcode( $post->ID ) . '</strong>' ),
+			6 => sprintf( __( "Success! Here's the shortcode: %s. Just paste it into a post or page editor to publish", 'constant-contact-forms' ), '<strong>' . constant_contact_display_shortcode( $post->ID ) . '</strong>' ),
 			7 => __( 'Form saved.', 'constant-contact-forms' ),
 			8 => __( 'Form submitted.', 'constant-contact-forms' ),
 			9 => __( 'Form scheduled for: <strong>%1$s</strong>.', 'constant-contact-forms' ), date_i18n( 'M j, Y @ G:i', strtotime( $post->post_date ) ),
@@ -222,12 +215,12 @@ class ConstantContact_CPTS {
 	 * Customize the "Enter your title" placeholder text for Title field.
 	 *
 	 * @since 1.0.0
+	 *
 	 * @param string $title Desired placeholder text.
 	 * @return string $title output string
 	 */
 	public function change_default_title( $title ) {
 	    global $post;
-
 
 	    if ( ! isset( $post ) ) {
 	    	return $title;
@@ -252,21 +245,18 @@ class ConstantContact_CPTS {
 
 	/**
 	 * Returns array of form ids.
-	 *
-	 * Can return more information with `true` passed to the first parameter. Caches results, pass `true` to the second
-	 * parameter to bust the cache.
+	 * Can return more information with `true` passed to the first parameter.
+	 * Caches results, pass `true` to the second parameter to bust the cache.
 	 *
 	 * @since 1.0.0
 	 *
 	 * @param bool $expanded_data Set `true` to process the retrieved posts.
 	 * @param bool $bust_cache    Set `true` to bust the cached forms.
-	 *
 	 * @return array
 	 */
 	public function get_forms( $expanded_data = false, $bust_cache = false ) {
 
 		$forms = get_transient( 'constant_contact_shortcode_form_list' );
-
 
 		/**
 		 * Filters whether or not to bypass transient checks.
@@ -321,7 +311,8 @@ class ConstantContact_CPTS {
 
 					// Build up our title for the shortcode form admin.
 					$title = sprintf(
-						esc_html__( '%s (last modified %s ago)', 'constant-contact-forms' ),
+						// translators: Placeholders will be form title and then last modified date.
+						esc_html__( '%1$s (last modified %2$s ago)', 'constant-contact-forms' ),
 						$title,
 						$last_modified
 					);
@@ -332,7 +323,7 @@ class ConstantContact_CPTS {
 			}
 
 			set_transient( 'constant_contact_shortcode_form_list', $forms, 1 * HOUR_IN_SECONDS );
-		}
+		} // End if().
 
 		return $forms;
 	}

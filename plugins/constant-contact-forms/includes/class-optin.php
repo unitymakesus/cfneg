@@ -16,13 +16,25 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * Optin for usage tracking.
+ *
+ * @since 1.2.0
  */
 class ConstantContact_Optin {
+
+	/**
+	 * Parent plugin class.
+	 *
+	 * @since 1.2.0
+	 * @var object
+	 */
+	protected $plugin;
 
 	/**
 	 * Get things going.
 	 *
 	 * @since 1.2.0
+	 *
+	 * @param object $plugin Parent plugin class.
 	 */
 	public function __construct( $plugin ) {
 		$this->plugin = $plugin;
@@ -114,7 +126,7 @@ class ConstantContact_Optin {
 				<div class="ctct-modal-content">
 					<div class="ctct-modal-header">
 						<a href="#" class="ctct-modal-close" aria-hidden="true">&times;</a>
-						<h2 class="ctct-logo"><img src="<?php echo constant_contact()->url . '/assets/images/constant-contact-logo.png' ?>" alt="<?php esc_attr_e( 'Constant Contact logo', 'constant-contact-forms' ); ?>" /></h2>
+						<h2 class="ctct-logo"><img src="<?php echo esc_url( constant_contact()->url ) . '/assets/images/constant-contact-logo.png'; ?>" alt="<?php esc_attr_e( 'Constant Contact logo', 'constant-contact-forms' ); ?>" /></h2>
 					</div>
 					<div class="ctct-modal-body ctct-privacy-modal-body">
 					<?php
@@ -147,5 +159,6 @@ class ConstantContact_Optin {
 			$output = preg_replace( '@<section class=header>.*?</section>@si', '', $output );
 			return $output;
 		}
+		return '';
 	}
 }
