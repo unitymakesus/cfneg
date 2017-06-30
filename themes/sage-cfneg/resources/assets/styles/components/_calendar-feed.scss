@@ -16,3 +16,10 @@
     }
   }
 }
+
+@include breakpoint (small only) {
+  .et_divi_builder #et_builder_outer_content .et_pb_text ol li, .et_divi_builder #et_builder_outer_content .et_pb_toggle_content ol li, .et_divi_builder #et_builder_outer_content .et_pb_blurb_content ol li, .et_divi_builder #et_builder_outer_content .et_pb_promo_description ol li, .et_divi_builder #et_builder_outer_content .et_pb_code ol li, .et_divi_builder #et_builder_outer_content .et_pb_newsletter_description_content ol li, .et_divi_builder #et_builder_outer_content .et_pb_team_member_description ol li, .et_divi_builder #et_builder_outer_content .et_pb_slide_content ol li, .et_divi_builder #et_builder_outer_content .et_pb_tab ol li, .et_divi_builder #et_builder_outer_content .et_pb_testimonial_description_inner ol li, .et_divi_builder #et_builder_outer_content .et_pb_fullwidth_header .header-content ol li {
+    list-style: none;
+    text-align: center;
+  }
+}

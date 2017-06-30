@@ -221,6 +221,10 @@
 
     a {
       color: inherit;
+
+      @include breakpoint (small only) {
+        font-size: 16px;
+      }
     }
   }
 
@@ -333,6 +337,11 @@
     // z-index: 100;
     margin: 0;
     line-height: .7em;
+
+    @include breakpoint (small only) {
+      position: relative;
+
+    }
   }
 
   .background-light-gray {
@@ -380,7 +389,7 @@
 
 }
 
-@include breakpoint(small only) {
+@include breakpoint (small only) {
   .et_divi_builder #et_builder_outer_content .et_pb_blog_grid.et_pb_blog_grid .et_pb_post.et_pb_post .entry-title{
     font-size: 24px;
   }

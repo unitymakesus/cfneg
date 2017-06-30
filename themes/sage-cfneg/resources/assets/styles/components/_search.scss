@@ -17,6 +17,10 @@
   .search-field {
     border: none;
     margin: 0;
+
+    @include breakpoint (small only) {
+      font-size: 13px;
+    }
   }
 
   .search-submit {

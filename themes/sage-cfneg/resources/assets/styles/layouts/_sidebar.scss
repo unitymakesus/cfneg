@@ -19,11 +19,19 @@
   }
   .main {
     @include grid-column(9);
+
+    @include breakpoint(small only) {
+      width: 100%;
+    }
   }
 
   .sidebar {
     @include grid-column(3);
     padding-top: 70px;
+
+    @include breakpoint (small only) {
+      width: 100%;
+    }
 
     h3 {
       @extend .type-medium-bold-blue;
