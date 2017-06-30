@@ -5,10 +5,30 @@
   left: 2%;
   background: url('../images/column.svg') no-repeat top left;
   background-size: cover;
+
+  @include breakpoint(small only) {
+    left: 0;
+  }
 }
 
 #et_builder_outer_content {
   .et_pb_section {
+    &:not(.pattern):not(.background-light-gray):not(.background-light-blue) {
+      @include breakpoint(medium down) {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+    }
+
+    &.pattern, &.background-light-gray, &.background-light-blue {
+      @include breakpoint(medium down) {
+        & > .et_pb_row {
+          padding-left: 10px;
+          padding-right: 10px;
+        }
+      }
+    }
+
     &.pattern {
       @include pattern;
       background-color: $white;
@@ -70,6 +90,10 @@
           left: -5%;
           top: -25px;
           bottom: -25px;
+
+          @include breakpoint(small only) {
+            width: 25%;
+          }
         }
       }
     }
@@ -77,6 +101,10 @@
 
   .et_pb_blurb {
     &[class*="impact-"] {
+      @include breakpoint(small only) {
+        max-width: 300px;
+        margin: 0 auto 30px;
+      }
       .et_pb_main_blurb_image {
         margin: 0;
 
@@ -108,7 +136,7 @@
             padding: 0;
 
             @include breakpoint(medium only) {
-                    font-size: 20px;
+              font-size: 15px;
             }
           }
         }
@@ -126,6 +154,10 @@
             font-weight: bold;
             padding: 20px 0;
             display: block;
+
+            @include breakpoint(medium only) {
+              font-size: 15px;
+            }
           }
         }
       }
@@ -161,5 +193,38 @@
 @include breakpoint (small only) {
   .et_divi_builder #et_builder_outer_content .et_pb_module p {
     font-size: 18px !important;
+  }
+}
+
+
+//About page styling
+@include breakpoint(medium only) {
+  .et_divi_builder #et_builder_outer_content ol.cfneg-calendar-feed {
+    margin-left: 95px;
+  }
+
+  .et_divi_builder #et_builder_outer_content .et_pb_blog_grid.et_pb_blog_grid .et_pb_post.et_pb_post .entry-title{
+    font-size: 25px;
+  }
+
+  .et_divi_builder #et_builder_outer_content .et_pb_blog_grid.et_pb_blog_grid.blog-feed .et_pb_post.et_pb_post {
+    font-size: 16px;
+  }
+
+  .et_divi_builder #et_builder_outer_content .et_pb_section_6.et_pb_section {
+    padding-left: 25px !important;
+    padding-top: 10px !important;
+
+  }
+
+}
+
+@include breakpoint (small only) {
+  .et_divi_builder #et_builder_outer_content .et_pb_blog_grid.et_pb_blog_grid .et_pb_post.et_pb_post .entry-title{
+    font-size: 24px;
+  }
+
+  .et_divi_builder #et_builder_outer_content .et_pb_blog_grid.et_pb_blog_grid.blog-feed .et_pb_post.et_pb_post {
+    font-size: 16px;
   }
 }

@@ -61,11 +61,11 @@
       }
 
       &:first-child {
-        margin-left: -10px;
+        padding-left: 0px !important;
       }
 
       &:last-child {
-        margin-right: -10px;
+        padding-right: 0px !important;
       }
     }
 
@@ -94,7 +94,7 @@
         margin: 0 10px;
         margin-bottom: 0 !important;
 
-        @include breakpoint (medium only) {
+        @include breakpoint (medium down) {
           margin: 0px;
         }
 
@@ -265,8 +265,12 @@
   .inner-content {
     display: flex;
     @include clearfix;
-    @include flex-grid-layout(3, '.hentry');
     margin: 0 -#{rem-calc(15/2)};
+    @include flex-grid-layout(1, '.hentry');
+
+    @include breakpoint(medium) {
+      @include flex-grid-layout(3, '.hentry');
+    }
   }
 
   .hentry {
@@ -353,48 +357,15 @@
     position: relative;
     padding: 0 10px;
     @include clearfix;
-    @include flex-grid-layout(3, '.hentry');
     display: flex;
+    @include flex-grid-layout(1, '.hentry');
+
+    @include breakpoint(medium) {
+      @include flex-grid-layout(3, '.hentry');
+    }
   }
 
   .hentry {
     @include blog-tiles;
-  }
-}
-
-
-//About page styling
-@include breakpoint(medium only) {
-  .et_divi_builder #et_builder_outer_content ol.cfneg-calendar-feed {
-    margin-left: 95px;
-  }
-
-  .et_divi_builder #et_builder_outer_content .et_pb_blog_grid.et_pb_blog_grid .et_pb_post.et_pb_post .entry-title{
-    font-size: 25px;
-  }
-
-  .et_divi_builder #et_builder_outer_content .et_pb_blog_grid.et_pb_blog_grid.blog-feed .et_pb_post.et_pb_post {
-    font-size: 16px;
-  }
-
-  .et_divi_builder #et_builder_outer_content .et_pb_section_6.et_pb_section {
-    padding-left: 25px !important;
-    padding-top: 10px !important;
-
-  }
-
-    .et_divi_builder #et_builder_outer_content .et_pb_module p {
-      padding: 0 15px;
-    }
-
-}
-
-@include breakpoint (small only) {
-  .et_divi_builder #et_builder_outer_content .et_pb_blog_grid.et_pb_blog_grid .et_pb_post.et_pb_post .entry-title{
-    font-size: 24px;
-  }
-
-  .et_divi_builder #et_builder_outer_content .et_pb_blog_grid.et_pb_blog_grid.blog-feed .et_pb_post.et_pb_post {
-    font-size: 16px;
   }
 }

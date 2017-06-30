@@ -166,19 +166,11 @@ $contact-panel-right-offset: 0;
     .et_pb_column_1_3 {
       @include grid-column(5);
       margin: 0;
-
-      @media only screen and (max-width: 768px) {
-              padding-left: 35%;
-      }
     }
 
     .et_pb_column_2_3 {
       @include grid-column(7);
       margin: 0;
-
-      @media only screen and (max-width: 768px) {
-              padding-left: 19%;              
-      }
     }
 
     .ctct-form {
@@ -206,6 +198,18 @@ $contact-panel-right-offset: 0;
 
       a.ctct-button {
         display: none;
+      }
+    }
+
+    @media only screen and (max-width: 768px) {
+      .et_pb_column_1_3 {
+        p {
+          padding: 0;
+        }
+      }
+      
+      .et_pb_column_2_3 {
+        padding-left: 19%;
       }
     }
   }

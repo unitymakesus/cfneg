@@ -3,7 +3,8 @@
     $category = get_the_category();
     $related = new WP_Query([
       'posts_per_page' => 3,
-      'category' => $category[0]->slug
+      'category' => $category[0]->slug,
+      'post__not_in' => [get_the_id()]
     ]);
   @endphp
 
@@ -44,7 +45,7 @@
     </div>
   </div>
 
-  <div class="row">
+  <div class="row hide-for-small-only">
     <nav class="footer-menu">
       @if (has_nav_menu('primary_navigation'))
         {!! wp_nav_menu(['theme_location' => 'primary_navigation', 'container' => false, 'menu_class' => '', 'depth' => 2]) !!}
